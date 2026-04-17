@@ -407,6 +407,53 @@ button{font-family:var(--fb);border:none;cursor:pointer}
   border-radius:9px;padding:11px 28px;
   font-size:14px;font-weight:600;cursor:pointer;
 }
+
+/* ── NOTES ── */
+#notes-panel{display:none;flex-direction:column;height:calc(100vh - 280px);min-height:500px}
+#notes-panel.active{display:flex;flex-direction:column;gap:16px}
+.notes-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.notes-toolbar-left{display:flex;align-items:center;gap:10px}
+.notes-title-input{
+  background:transparent;border:none;outline:none;
+  font-family:var(--fh);font-weight:600;font-size:20px;
+  color:var(--tx);letter-spacing:-.5px;
+  width:100%;max-width:340px;
+}
+.notes-title-input::placeholder{color:var(--tx2)}
+.notes-saved{font-size:12px;color:var(--teal);opacity:0;transition:opacity .3s}
+.notes-saved.show{opacity:1}
+.notes-actions{display:flex;gap:8px}
+.notes-action-btn{
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:8px;padding:7px 14px;
+  font-size:12px;font-weight:600;color:var(--tx2);
+  cursor:pointer;transition:all .2s;
+}
+.notes-action-btn:hover{border-color:var(--teal);color:var(--teal)}
+.notes-action-btn.danger:hover{border-color:#F87171;color:#F87171}
+.notes-area{
+  flex:1;background:var(--bg2);border:1.5px solid var(--bdr);
+  border-radius:14px;padding:24px;
+  color:var(--tx);font-family:var(--fb);font-size:15px;
+  line-height:1.8;outline:none;resize:none;
+  transition:border-color .2s;
+  overflow-y:auto;
+}
+.notes-area:focus{border-color:var(--teal)}
+.notes-area::placeholder{color:var(--tx2)}
+.notes-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--tx2);flex-wrap:wrap;gap:8px;
+}
+.notes-ai-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,191,199,.08);border:1px solid rgba(0,191,199,.2);
+  border-radius:100px;padding:4px 12px;
+  font-size:11px;font-weight:600;color:var(--teal);
+}
 </style>
 </head>
 <body>
@@ -469,6 +516,7 @@ button{font-family:var(--fb);border:none;cursor:pointer}
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('news',this)">News Feed</button>
       <button class="tab-btn" onclick="switchTab('chat',this)">AI Assistant</button>
+      <button class="tab-btn" onclick="switchTab('notes',this)">Notes</button>
     </div>
 
     <!-- NEWS PANEL -->
@@ -538,6 +586,42 @@ button{font-family:var(--fb);border:none;cursor:pointer}
           oninput="autoResize(this)"
         ></textarea>
         <button class="chat-send" id="sendBtn" onclick="sendMsg()">Send →</button>
+      </div>
+    </div>
+
+
+    <!-- NOTES PANEL -->
+    <div id="notes-panel">
+      <div class="notes-toolbar">
+        <div class="notes-toolbar-left">
+          <input class="notes-title-input" id="notesTitleInput" placeholder="My Notes" value="Lab Notes" />
+          <span class="notes-saved" id="notesSaved">Saved ✓</span>
+        </div>
+        <div class="notes-actions">
+          <button class="notes-action-btn" onclick="copyNotes()">Copy All</button>
+          <button class="notes-action-btn" onclick="sendNotesToAI()">Send to AI →</button>
+          <button class="notes-action-btn danger" onclick="clearNotes()">Clear</button>
+        </div>
+      </div>
+      <textarea
+        class="notes-area"
+        id="notesArea"
+        placeholder="Use this space to capture ideas, client info, AI responses, business goals, or anything you want your AI assistant to know about...
+
+Examples:
+• Working on pitching Nicole for ANUME website
+• Current focus: Proactive Digital outreach in Charleston WV group
+• Goal: Land 2 web clients this month
+• Pricing reminder: Custom builds quote based on complexity
+
+Your notes are automatically shared with the AI Assistant as context."
+        oninput="autoSaveNotes()"
+      ></textarea>
+      <div class="notes-footer">
+        <div class="notes-ai-badge">
+          <span>✦</span> Notes are shared with AI Assistant automatically
+        </div>
+        <span id="notesWordCount">0 words</span>
       </div>
     </div>
 
@@ -722,6 +806,7 @@ function initDashboard() {
   updateClock();
   setInterval(updateClock, 1000);
   loadNews();
+  initNotes();
 }
 
 // Allow Enter on password field
@@ -733,13 +818,16 @@ document.getElementById('passInput').addEventListener('keydown', e => {
 function switchTab(tab, el) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
+  document.getElementById('news-panel').classList.add('hidden');
+  document.getElementById('chat-panel').classList.remove('active');
+  document.getElementById('notes-panel').classList.remove('active');
   if (tab === 'news') {
     document.getElementById('news-panel').classList.remove('hidden');
-    document.getElementById('chat-panel').classList.remove('active');
-  } else {
-    document.getElementById('news-panel').classList.add('hidden');
+  } else if (tab === 'chat') {
     document.getElementById('chat-panel').classList.add('active');
     checkApiKey();
+  } else if (tab === 'notes') {
+    document.getElementById('notes-panel').classList.add('active');
   }
 }
 
@@ -852,7 +940,7 @@ async function sendMsg() {
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 1024,
-        system: 'You are a sharp, direct business assistant for Todd Blackwell — entrepreneur, web designer, B2B sales professional based in Chesterfield, VA. He runs Proactive Digital (web design), Proactive Vending Blueprint (digital product), and is the IT Director for Angels of Snow Hill Cemetery. Keep responses concise, practical, and actionable. No fluff.',
+        system: `You are a sharp, direct business assistant for Todd Blackwell — entrepreneur, web designer, B2B sales professional based in Chesterfield, VA. He runs Proactive Digital (web design), Proactive Vending Blueprint (digital product), and is the IT Director for Angels of Snow Hill Cemetery. Keep responses concise, practical, and actionable. No fluff.${getNotes() ? '\n\nCurrent context from Todd\'s notes:\n' + getNotes() : ''}`,
         messages: chatHistory
       })
     });
@@ -875,6 +963,73 @@ async function sendMsg() {
   btn.disabled = false;
   document.getElementById('chatInput').focus();
 }
+
+
+/* ── NOTES ── */
+let notesSaveTimer = null;
+
+function initNotes() {
+  const saved = localStorage.getItem('lab_notes') || '';
+  const title = localStorage.getItem('lab_notes_title') || 'Lab Notes';
+  document.getElementById('notesArea').value = saved;
+  document.getElementById('notesTitleInput').value = title;
+  updateWordCount();
+}
+
+function autoSaveNotes() {
+  clearTimeout(notesSaveTimer);
+  updateWordCount();
+  notesSaveTimer = setTimeout(() => {
+    localStorage.setItem('lab_notes', document.getElementById('notesArea').value);
+    localStorage.setItem('lab_notes_title', document.getElementById('notesTitleInput').value);
+    const saved = document.getElementById('notesSaved');
+    saved.classList.add('show');
+    setTimeout(() => saved.classList.remove('show'), 2000);
+  }, 800);
+}
+
+function updateWordCount() {
+  const text = document.getElementById('notesArea').value;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('notesWordCount').textContent = words + ' words';
+}
+
+function copyNotes() {
+  const text = document.getElementById('notesArea').value;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy All', 2000);
+  });
+}
+
+function clearNotes() {
+  if (confirm('Clear all notes? This cannot be undone.')) {
+    document.getElementById('notesArea').value = '';
+    localStorage.removeItem('lab_notes');
+    updateWordCount();
+  }
+}
+
+function sendNotesToAI() {
+  const notes = document.getElementById('notesArea').value.trim();
+  if (!notes) {
+    alert('No notes to send. Add some notes first.');
+    return;
+  }
+  // Switch to AI tab and pre-fill with notes context
+  const chatTab = document.querySelectorAll('.tab-btn')[1];
+  switchTab('chat', chatTab);
+  document.getElementById('chatInput').value = 'Here are my current notes and context: ' + notes + '\n\nPlease acknowledge you have this context and are ready to help.';
+  sendMsg();
+}
+
+function getNotes() {
+  return localStorage.getItem('lab_notes') || '';
+}
+
+// Override initDashboard to also init notes
+const _origInit = initDashboard;
 
 </script>
 </body>
