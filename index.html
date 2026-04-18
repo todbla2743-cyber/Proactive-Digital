@@ -963,34 +963,6 @@ footer {
   .hero-metrics { flex-wrap:wrap; gap:20px }
   .stats-g { grid-template-columns:1fr 1fr }
 }
-
-/* Guarantee Box */
-.guarantee-box{
-  background:linear-gradient(135deg,rgba(0,191,199,.06) 0%,rgba(33,89,224,.06) 100%);
-  border:1px solid rgba(0,191,199,.2);
-  border-radius:18px;padding:40px 32px;
-}
-.gb-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:28px;
-}
-.gb-item{text-align:center}
-.gb-icon{
-  width:60px;height:60px;border-radius:50%;
-  background:rgba(0,191,199,.1);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 16px;border:1px solid rgba(0,191,199,.2);
-}
-.gb-title{
-  font-family:var(--fh);font-weight:600;font-size:18px;
-  letter-spacing:-.3px;margin-bottom:8px;color:var(--tx);
-}
-.gb-text{
-  color:var(--tx2);font-size:14px;line-height:1.7;
-}
-@media(max-width:768px){
-  .gb-grid{grid-template-columns:1fr;gap:24px}
-  .guarantee-box{padding:32px 24px}
-}
 </style>
 </head>
 <body>
@@ -1566,11 +1538,11 @@ footer {
     <!-- Starting From Banner -->
     <div class="price-banner rv">
       <div class="pb-left">
-        <div class="pb-eyebrow">Lock In Your Build Slot</div>
-        <div class="pb-text">Start for as little as</div>
-        <div class="pb-sub">$99 reserves your slot · Split the rest into payments · Delivered in 7–14 days</div>
+        <div class="pb-eyebrow">Entry Point</div>
+        <div class="pb-text">Simple one-page sites start at</div>
+        <div class="pb-sub">50% deposit to kick things off · Balance due at launch</div>
       </div>
-      <div class="pb-price">$99 <span>to start</span></div>
+      <div class="pb-price">$440 <span>/ site</span></div>
       <a href="#contact" class="btn btn-p">Get a Quote →</a>
     </div>
 
@@ -1585,7 +1557,7 @@ footer {
       <div class="pr-card rv" style="transition-delay:.04s">
         <div class="pr-tier">Starter</div>
         <div class="pr-price"><sup>$</sup>440</div>
-        <div class="pr-dep">$99 to start · 3 easy payments</div>
+        <div class="pr-dep">$220 deposit to start</div>
         <div class="pr-div"></div>
         <ul class="pr-feats">
           <li class="on">Single-page website</li>
@@ -1604,7 +1576,7 @@ footer {
         <div class="pr-pop">Most Popular</div>
         <div class="pr-tier">Growth</div>
         <div class="pr-price"><sup>$</sup>750</div>
-        <div class="pr-dep">$99 to start · Split the rest</div>
+        <div class="pr-dep">$375 deposit to start</div>
         <div class="pr-div"></div>
         <ul class="pr-feats">
           <li class="on">Up to 4 pages</li>
@@ -1622,7 +1594,7 @@ footer {
       <div class="pr-card rv" style="transition-delay:.12s">
         <div class="pr-tier">Pro</div>
         <div class="pr-price"><sup>$</sup>1,200</div>
-        <div class="pr-dep">$99 to start · Split the rest</div>
+        <div class="pr-dep">$600 deposit to start</div>
         <div class="pr-div"></div>
         <ul class="pr-feats">
           <li class="on">Up to 6 pages</li>
@@ -1638,37 +1610,7 @@ footer {
       </div>
     </div>
 
-
-    <!-- Risk Removal Block -->
-    <div class="rv" style="margin-bottom:56px">
-      <div class="guarantee-box">
-        <div class="gb-grid">
-          <div class="gb-item">
-            <div class="gb-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#00BFC7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.48 0 4.73 1.01 6.36 2.64"/></svg>
-            </div>
-            <div class="gb-title">Free Mock-Up First</div>
-            <div class="gb-text">See your site before you commit. No obligation. No cost. If you don't love it, you pay nothing.</div>
-          </div>
-          <div class="gb-item">
-            <div class="gb-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#00BFC7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M1 4h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
-            </div>
-            <div class="gb-title">Flexible Payments</div>
-            <div class="gb-text">$99 to start. Split the rest into easy payments. No financing applications, no credit checks.</div>
-          </div>
-          <div class="gb-item">
-            <div class="gb-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#00BFC7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="28" height="28"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </div>
-            <div class="gb-title">30 Days of Free Support</div>
-            <div class="gb-text">After launch, we handle text changes, small edits, and any fixes for free for a full month. You're never alone with your site.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-        <!-- What drives the price -->
+    <!-- What drives the price -->
     <div class="rv" style="margin-bottom:28px">
       <div class="eyebrow">What Drives the Price</div>
       <h3 style="font-family:var(--fh);font-weight:600;font-size:24px;letter-spacing:-.5px;margin-bottom:6px">More features = more build time. Simple as that.</h3>
@@ -1855,9 +1797,9 @@ footer {
         </div>
       </div>
       <div class="rv-r">
-        <form class="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitForm(event)">
-          <input type="hidden" name="form-name" value="contact"/>
-          <p style="display:none"><label>Don't fill this out: <input name="bot-field"/></label></p>
+        <form class="cform" name="proactive-contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="submitForm(event)">
+          <input type="hidden" name="form-name" value="proactive-contact"/>
+          <p style="display:none"><label>Don't fill this out if you're human: <input name="bot-field"/></label></p>
           <div class="fr">
             <div class="fg"><label>First Name</label><input type="text" name="first-name" placeholder="Todd" required/></div>
             <div class="fg"><label>Last Name</label><input type="text" name="last-name" placeholder="Blackwell" required/></div>
@@ -1866,13 +1808,11 @@ footer {
           <div class="fg"><label>Business Name</label><input type="text" name="business-name" placeholder="Your Business"/></div>
           <div class="fg">
             <label>I'm Interested In</label>
-            <select name="package-interest">
+            <select name="package">
               <option value="">Select a package...</option>
-              <option>I just need a simple website</option>
-              <option>I need a full business website</option>
-              <option>I run a food or service business</option>
-              <option>I sell a product or course online</option>
-              <option>I run a nonprofit or complex organization</option>
+              <option>Starter — $440</option>
+              <option>Growth — $750</option>
+              <option>Pro — $1,200</option>
               <option>Not sure yet, let's talk</option>
             </select>
           </div>
@@ -2006,16 +1946,29 @@ function closeMob(){document.getElementById('mob').classList.remove('open')}
 function submitForm(e){
   e.preventDefault();
   const form = e.target;
+  const btn = form.querySelector('.fsub');
+  const originalBtnText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = 'Sending…';
+
   const data = new FormData(form);
+  const body = new URLSearchParams(data).toString();
+
   fetch('/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(data).toString()
-  }).then(() => {
-    document.querySelector('.cform').style.display='none';
-    document.getElementById('fsuccess').style.display='block';
-  }).catch(err => {
-    alert('Error sending message. Please try again or email hello@getproactivedigital.com');
+    body: body
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('Submit failed: ' + response.status);
+    form.style.display = 'none';
+    document.getElementById('fsuccess').style.display = 'block';
+  })
+  .catch(err => {
+    console.error(err);
+    btn.disabled = false;
+    btn.innerHTML = originalBtnText;
+    alert("Something went wrong — please email hello@getproactivedigital.com directly. Sorry about that.");
   });
 }
 
