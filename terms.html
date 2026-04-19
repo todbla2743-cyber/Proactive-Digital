@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Terms of Service · Proactive Digital</title>
+<meta name="description" content="Terms of Service for Proactive Digital: the agreement between us and you."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --teal:#00BFC7; --blue:#2159E0;
+  --grad:linear-gradient(120deg,#00BFC7 0%,#2159E0 100%);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --fh:'Outfit',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+}
+[data-theme="dark"] {
+  --bg:#080B13; --bg2:#0C1020; --bg3:#111827; --surf:#161D2E;
+  --bdr:rgba(255,255,255,0.06); --bdr2:rgba(255,255,255,0.12);
+  --tx:#E8EAF6; --tx2:#6B7A99; --tx3:#8A96B0;
+}
+[data-theme="light"] {
+  --bg:#F8F9FE; --bg2:#F0F2FC; --bg3:#E8EBF8; --surf:#FFFFFF;
+  --bdr:rgba(0,0,0,0.07); --bdr2:rgba(0,0,0,0.14);
+  --tx:#0C1020; --tx2:#5A6480; --tx3:#7A8499;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body {
+  background:var(--bg); color:var(--tx);
+  font-family:var(--fb); font-size:16px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  transition:background .35s var(--ease), color .35s var(--ease);
+}
+a { color:var(--teal); text-decoration:none; transition:opacity .2s var(--ease) }
+a:hover { opacity:.75 }
+
+.top {
+  position:sticky; top:0; z-index:10;
+  background:rgba(8,11,19,.8); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--bdr);
+}
+[data-theme="light"] .top { background:rgba(248,249,254,.9) }
+.top-in {
+  max-width:1120px; margin:0 auto; padding:16px 32px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.logo {
+  font-family:var(--fh); font-weight:700; font-size:18px;
+  letter-spacing:-.5px; color:var(--tx);
+}
+.logo span { background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent }
+.back {
+  font-size:14px; color:var(--tx2);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.back:hover { color:var(--teal) }
+
+.hero {
+  padding:100px 32px 60px;
+  text-align:center;
+  max-width:1120px; margin:0 auto;
+  position:relative;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 50% 40% at 50% 30%, rgba(0,191,199,.08), transparent 60%);
+  pointer-events:none;
+}
+.eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:12px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--teal); font-weight:600; margin-bottom:20px;
+}
+.eyebrow::before { content:''; width:18px; height:1px; background:var(--teal) }
+h1 {
+  font-family:var(--fh); font-weight:700;
+  font-size:clamp(40px,5vw,56px);
+  letter-spacing:-1.5px; line-height:1.1;
+  margin-bottom:20px;
+}
+h1 .g { background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent }
+.updated { color:var(--tx2); font-size:14px; margin-top:8px }
+
+.body {
+  max-width:780px; margin:0 auto;
+  padding:40px 32px 120px;
+}
+h2 {
+  font-family:var(--fh); font-weight:600;
+  font-size:26px; letter-spacing:-.5px;
+  margin:48px 0 14px; color:var(--tx);
+}
+h2:first-child { margin-top:0 }
+h3 {
+  font-family:var(--fh); font-weight:600;
+  font-size:18px; margin:28px 0 10px;
+  color:var(--tx);
+}
+p { margin-bottom:16px; color:var(--tx2) }
+strong { color:var(--tx); font-weight:600 }
+ul { margin:12px 0 20px 24px }
+li { margin-bottom:8px; color:var(--tx2) }
+
+.card {
+  background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:14px; padding:24px 28px; margin:24px 0;
+}
+.card p:last-child { margin-bottom:0 }
+
+footer {
+  border-top:1px solid var(--bdr);
+  padding:40px 32px;
+  text-align:center;
+  color:var(--tx2); font-size:13px;
+}
+footer a { color:var(--tx2); margin:0 12px }
+footer a:hover { color:var(--teal); opacity:1 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a href="/" class="logo">PROACTIVE <span>DIGITAL</span></a>
+    <a href="/" class="back">← Back to site</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Legal</div>
+  <h1>Terms of <span class="g">Service</span></h1>
+  <p class="updated">Last updated: April 18, 2026</p>
+</section>
+
+<main class="body">
+
+<div class="card">
+  <p><strong>Plain-English summary:</strong> These terms cover what you can expect from us and what we expect from you. If you hire us, we deliver a website that meets what we agreed to build. You pay on the agreed schedule. You own what we deliver. We don't guarantee specific business results (we're not magic). If there's a dispute, we try to work it out directly first.</p>
+</div>
+
+<h2>1. Agreement</h2>
+<p>By using getproactivedigital.com or hiring Proactive Digital for services, you agree to these Terms. If you don't agree, please don't use the site or hire us.</p>
+<p>Proactive Digital is operated by Todd Blackwell Jr. under TRB Family Business, based in Chesterfield, Virginia. References to "we," "us," or "our" mean Proactive Digital. "You" means the visitor or client.</p>
+
+<h2>2. Services we offer</h2>
+<p>We design and build websites for small businesses, including:</p>
+<ul>
+  <li>Custom web design and development</li>
+  <li>Mobile-responsive builds</li>
+  <li>SEO foundation setup</li>
+  <li>Lead capture forms and integrations</li>
+  <li>E-commerce and payment setup</li>
+  <li>Ongoing maintenance (if contracted)</li>
+</ul>
+<p>Specific scope, timeline, and deliverables for any project are defined in a separate written proposal or agreement between us and you.</p>
+
+<h2>3. Pricing and payment</h2>
+<p>Our package pricing is displayed on the website. For custom projects, you receive a written quote before work begins. We offer three ways to pay, so you can choose what fits your cash flow:</p>
+
+<h3>Option 1: $99 Down</h3>
+<p>Get started for $99. The remaining balance is split across project milestones, typically at draft approval and at final delivery. Best for smaller businesses who want to move forward without fronting a large deposit. Available on Starter and Growth packages.</p>
+
+<h3>Option 2: 50% Deposit</h3>
+<p>Half upfront, half on completion. Standard two-payment structure. Best for clients who prefer a simple pay-on-delivery arrangement. Available on all packages.</p>
+
+<h3>Option 3: Milestone Payment Plan</h3>
+<p>An initial deposit followed by the remainder split across 2–3 installments tied to project milestones (deposit → draft approval → launch). Best for larger projects or clients who prefer smaller regular payments. Available on all packages.</p>
+
+<h3>Payment terms (regardless of option)</h3>
+<ul>
+  <li>Invoicing is handled through a secure payment processor or as otherwise agreed</li>
+  <li>The specific payment option for your project is confirmed in writing before work begins</li>
+  <li>Deposits are non-refundable once work has begun</li>
+  <li>Late payments may pause active work until brought current</li>
+  <li><strong>Final site delivery and launch occur only after the balance is paid in full.</strong> This means your finished site is shown to you in a preview or staging environment, you approve it, and the site goes live on your domain when the final invoice clears.</li>
+</ul>
+<p>If you cancel the project after work has started, you are responsible for payment for work completed up to that point.</p>
+
+<h2>4. What you provide</h2>
+<p>For us to deliver on time and on budget, you agree to:</p>
+<ul>
+  <li>Provide content (text, photos, logos) in a timely manner</li>
+  <li>Respond to questions and review requests within a reasonable timeframe (typically 48–72 hours)</li>
+  <li>Give honest, actionable feedback at each review milestone</li>
+  <li>Cover any third-party costs (domain, hosting, premium fonts, paid stock photos) unless included in your quote</li>
+</ul>
+<p>If delays are caused by slow feedback or missing content, project timelines may shift accordingly.</p>
+
+<h2>5. Revisions and scope</h2>
+<p>Each project includes a defined number of revision rounds, specified in your proposal. Additional changes beyond that scope are billed at our hourly rate or quoted separately before work begins.</p>
+<p>"Scope creep" (significant additions or changes to the project after work has begun) will be addressed with a change order and may affect price and timeline.</p>
+
+<h2>6. Ownership and rights</h2>
+<p><strong>What you own:</strong> Upon final payment, you own the final delivered website (the design, code, and content) and can use it however you'd like. You can transfer it, migrate it, or hire anyone else to work on it.</p>
+<p><strong>What we retain:</strong></p>
+<ul>
+  <li>The right to showcase the project in our portfolio and marketing</li>
+  <li>Any generic, reusable code patterns or internal tools developed during the project (these are not unique to your business)</li>
+  <li>Any third-party assets (fonts, plugins, stock photos) which remain under their original licenses</li>
+</ul>
+
+<h2>7. Revisions after launch</h2>
+<p>Our packages include a brief post-launch window (typically 7–14 days) for bug fixes and minor corrections. After that window, changes are handled as either:</p>
+<ul>
+  <li>A separate billable request, or</li>
+  <li>Included in an ongoing maintenance agreement, if you have one</li>
+</ul>
+
+<h2>8. What we can't guarantee</h2>
+<p>We build high-quality websites that are designed to convert. We <strong>don't</strong> guarantee:</p>
+<ul>
+  <li>Specific rankings on Google or other search engines</li>
+  <li>A specific number of leads, sales, or revenue outcomes</li>
+  <li>That third-party services (payment processors, email tools, hosting) will always be available</li>
+</ul>
+<p>Business results depend on many factors outside our control: your offer, your market, your follow-up process, and ongoing marketing. We do our part; the rest is up to you.</p>
+
+<h2>9. Third-party services</h2>
+<p>Your site may integrate with third-party services (payment processors, scheduling tools, email platforms, analytics, hosting, etc.). Those services have their own terms and policies. We're not responsible for their availability, pricing changes, or any data they handle.</p>
+
+<h2>10. Limitation of liability</h2>
+<p>To the maximum extent allowed by law, our total liability for any claim related to our services is limited to the amount you paid us for the specific project in question. We're not liable for indirect, incidental, or consequential damages, including lost profits or data.</p>
+<p>Nothing in these Terms limits liability for anything that can't be legally excluded, including gross negligence, willful misconduct, fraud, or personal injury.</p>
+
+<h2>11. Termination</h2>
+<p>Either party can end the working relationship in writing. If you terminate after work has begun, you're responsible for payment for work completed. If we terminate (for example, due to non-payment or client conduct that makes the project unworkable), we'll provide reasonable notice and work completed through that point remains payable.</p>
+
+<h2>12. Confidentiality</h2>
+<p>We treat all client information (business plans, strategy, credentials, internal discussions) as confidential. We don't share it with anyone outside our work on your project. This applies both during and after our working relationship.</p>
+
+<h2>13. Governing law</h2>
+<p>These Terms are governed by the laws of the Commonwealth of Virginia, United States. Any disputes will first be addressed through direct communication. If that fails, disputes will be resolved in the appropriate courts of Virginia.</p>
+
+<h2>14. Changes to these terms</h2>
+<p>We may update these Terms occasionally. The "Last updated" date at the top reflects the most recent change. For active clients, material changes will be communicated directly. Continued use of the site or services after changes means you accept them.</p>
+
+<h2>15. Contact</h2>
+<p>Questions about these Terms:</p>
+<p><strong>Proactive Digital</strong><br/>
+Todd Blackwell Jr.<br/>
+Chesterfield, VA<br/>
+<a href="mailto:hello@getproactivedigital.com">hello@getproactivedigital.com</a></p>
+
+<div class="card" style="margin-top:40px">
+  <p><strong>Not legal advice.</strong> This Terms of Service document is provided for use on getproactivedigital.com. It's based on common practices for small web design businesses but hasn't been reviewed by an attorney. If you're operating in a highly regulated industry or have specific legal concerns, consider having it reviewed by a lawyer.</p>
+</div>
+
+</main>
+
+<footer>
+  <a href="/">Home</a>
+  <a href="/privacy.html">Privacy</a>
+  <a href="/terms.html">Terms</a>
+  <a href="mailto:hello@getproactivedigital.com">Contact</a>
+  <div style="margin-top:16px">© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Privacy Policy · Proactive Digital</title>
+<meta name="description" content="Privacy Policy for Proactive Digital: how we collect, use, and protect your information."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --teal:#00BFC7; --blue:#2159E0;
+  --grad:linear-gradient(120deg,#00BFC7 0%,#2159E0 100%);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --fh:'Outfit',sans-serif;
+  --fb:'Plus Jakarta Sans',sans-serif;
+}
+[data-theme="dark"] {
+  --bg:#080B13; --bg2:#0C1020; --bg3:#111827; --surf:#161D2E;
+  --bdr:rgba(255,255,255,0.06); --bdr2:rgba(255,255,255,0.12);
+  --tx:#E8EAF6; --tx2:#6B7A99; --tx3:#8A96B0;
+}
+[data-theme="light"] {
+  --bg:#F8F9FE; --bg2:#F0F2FC; --bg3:#E8EBF8; --surf:#FFFFFF;
+  --bdr:rgba(0,0,0,0.07); --bdr2:rgba(0,0,0,0.14);
+  --tx:#0C1020; --tx2:#5A6480; --tx3:#7A8499;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body {
+  background:var(--bg); color:var(--tx);
+  font-family:var(--fb); font-size:16px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  transition:background .35s var(--ease), color .35s var(--ease);
+}
+a { color:var(--teal); text-decoration:none; transition:opacity .2s var(--ease) }
+a:hover { opacity:.75 }
+
+/* Top bar */
+.top {
+  position:sticky; top:0; z-index:10;
+  background:rgba(8,11,19,.8); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--bdr);
+}
+[data-theme="light"] .top { background:rgba(248,249,254,.9) }
+.top-in {
+  max-width:1120px; margin:0 auto; padding:16px 32px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.logo {
+  font-family:var(--fh); font-weight:700; font-size:18px;
+  letter-spacing:-.5px; color:var(--tx);
+}
+.logo span { background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent }
+.back {
+  font-size:14px; color:var(--tx2);
+  display:inline-flex; align-items:center; gap:8px;
+}
+.back:hover { color:var(--teal) }
+
+/* Hero band */
+.hero {
+  padding:100px 32px 60px;
+  text-align:center;
+  max-width:1120px; margin:0 auto;
+  position:relative;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 50% 40% at 50% 30%, rgba(0,191,199,.08), transparent 60%);
+  pointer-events:none;
+}
+.eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:12px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--teal); font-weight:600; margin-bottom:20px;
+}
+.eyebrow::before { content:''; width:18px; height:1px; background:var(--teal) }
+h1 {
+  font-family:var(--fh); font-weight:700;
+  font-size:clamp(40px,5vw,56px);
+  letter-spacing:-1.5px; line-height:1.1;
+  margin-bottom:20px;
+}
+h1 .g { background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent }
+.updated { color:var(--tx2); font-size:14px; margin-top:8px }
+
+/* Content body */
+.body {
+  max-width:780px; margin:0 auto;
+  padding:40px 32px 120px;
+}
+h2 {
+  font-family:var(--fh); font-weight:600;
+  font-size:26px; letter-spacing:-.5px;
+  margin:48px 0 14px; color:var(--tx);
+}
+h2:first-child { margin-top:0 }
+h3 {
+  font-family:var(--fh); font-weight:600;
+  font-size:18px; margin:28px 0 10px;
+  color:var(--tx);
+}
+p { margin-bottom:16px; color:var(--tx2) }
+strong { color:var(--tx); font-weight:600 }
+ul { margin:12px 0 20px 24px }
+li { margin-bottom:8px; color:var(--tx2) }
+
+.card {
+  background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:14px; padding:24px 28px; margin:24px 0;
+}
+.card p:last-child { margin-bottom:0 }
+
+/* Footer */
+footer {
+  border-top:1px solid var(--bdr);
+  padding:40px 32px;
+  text-align:center;
+  color:var(--tx2); font-size:13px;
+}
+footer a { color:var(--tx2); margin:0 12px }
+footer a:hover { color:var(--teal); opacity:1 }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a href="/" class="logo">PROACTIVE <span>DIGITAL</span></a>
+    <a href="/" class="back">← Back to site</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Legal</div>
+  <h1>Privacy <span class="g">Policy</span></h1>
+  <p class="updated">Last updated: April 18, 2026</p>
+</section>
+
+<main class="body">
+
+<div class="card">
+  <p><strong>The short version:</strong> We collect the info you give us when you contact us or work with us. We use it to respond to you and deliver your project. We don't sell it, share it with advertisers, or do anything weird with it. If you want us to delete your data, just email us.</p>
+</div>
+
+<h2>1. Who we are</h2>
+<p>Proactive Digital ("we," "us," "our") is a web design service based in Chesterfield, Virginia, operated by Todd Blackwell Jr. under TRB Family Business. Our website is <a href="https://getproactivedigital.com">getproactivedigital.com</a>. You can reach us at <a href="mailto:hello@getproactivedigital.com">hello@getproactivedigital.com</a>.</p>
+
+<h2>2. What information we collect</h2>
+
+<h3>Information you give us directly</h3>
+<p>When you fill out our contact form, email us, or book a call, we collect:</p>
+<ul>
+  <li>Your name</li>
+  <li>Your email address</li>
+  <li>Your business name (if provided)</li>
+  <li>Any message or project details you share</li>
+  <li>Which package you're interested in</li>
+</ul>
+
+<h3>Information collected automatically</h3>
+<p>Like most websites, we collect basic technical info when you visit:</p>
+<ul>
+  <li>IP address and approximate location</li>
+  <li>Browser and device type</li>
+  <li>Pages visited and time spent</li>
+  <li>Referrer (the link that sent you here)</li>
+</ul>
+<p>This is standard analytics data that helps us understand how people find and use the site.</p>
+
+<h3>During a client project</h3>
+<p>If you hire us, we'll collect whatever information is needed to build your site: logos, photos, business content, payment details for invoicing, and any login credentials you share for third-party services we integrate. We only collect what the project requires.</p>
+
+<h2>3. How we use your information</h2>
+<ul>
+  <li><strong>To respond to your inquiries.</strong> If you fill out a form, we use your info to reply, answer questions, and send quotes.</li>
+  <li><strong>To deliver your project.</strong> For clients, we use your content and credentials to build and launch your site.</li>
+  <li><strong>To send occasional updates.</strong> You may get follow-up emails about your project or future improvements. You can opt out any time.</li>
+  <li><strong>To improve the site.</strong> Anonymous analytics help us understand what's working and what isn't.</li>
+</ul>
+<p>We do <strong>not</strong> sell your data, rent your email list, or share your info with advertisers.</p>
+
+<h2>4. Tools we use</h2>
+<p>We rely on trusted third-party services to operate the business, which may include:</p>
+<ul>
+  <li>A website hosting and form-submission provider</li>
+  <li>Analytics tools for anonymous traffic data</li>
+  <li>A scheduling platform if you book a call with us</li>
+  <li>An email marketing platform if you opt in to our list</li>
+  <li>A payment processor for invoicing and client billing</li>
+</ul>
+<p>These providers are selected for their security and privacy standards. Specific providers may change over time without affecting this policy. Contact us if you'd like to know which service handles a specific piece of your data.</p>
+
+<h2>5. Cookies</h2>
+<p>We use minimal cookies, mostly for analytics and remembering your theme preference (light/dark mode). You can block cookies in your browser settings. It won't break the site.</p>
+
+<h2>6. How long we keep your data</h2>
+<p>Contact form submissions stay in our hosting platform's dashboard indefinitely unless you ask us to delete them. Client project data is kept for as long as we're working with you, plus a reasonable archive period for reference. If you want anything deleted, just ask.</p>
+
+<h2>7. Your rights</h2>
+<p>You have the right to:</p>
+<ul>
+  <li>Ask what information we have about you</li>
+  <li>Correct anything that's wrong</li>
+  <li>Request deletion of your data</li>
+  <li>Opt out of any marketing emails (every email has an unsubscribe link)</li>
+</ul>
+<p>To exercise any of these rights, email <a href="mailto:hello@getproactivedigital.com">hello@getproactivedigital.com</a> and we'll handle it within a reasonable timeframe.</p>
+
+<h2>8. Security</h2>
+<p>We take reasonable steps to protect your data, including HTTPS encryption, secure password practices, and working with reputable service providers. That said, no system is 100% secure. If we ever become aware of a data breach that affects you, we'll let you know promptly.</p>
+
+<h2>9. Children's privacy</h2>
+<p>This site isn't directed at children under 13, and we don't knowingly collect information from them. If you believe a child has sent us information, email us and we'll delete it.</p>
+
+<h2>10. Changes to this policy</h2>
+<p>We may update this policy from time to time. The "Last updated" date at the top will tell you when. Significant changes get a notice on the homepage or by email if you're a client.</p>
+
+<h2>11. Contact</h2>
+<p>Questions, concerns, or data requests:</p>
+<p><strong>Proactive Digital</strong><br/>
+Todd Blackwell Jr.<br/>
+Chesterfield, VA<br/>
+<a href="mailto:hello@getproactivedigital.com">hello@getproactivedigital.com</a></p>
+
+</main>
+
+<footer>
+  <a href="/">Home</a>
+  <a href="/privacy.html">Privacy</a>
+  <a href="/terms.html">Terms</a>
+  <a href="mailto:hello@getproactivedigital.com">Contact</a>
+  <div style="margin-top:16px">© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
+</footer>
+
+</body>
+</html>

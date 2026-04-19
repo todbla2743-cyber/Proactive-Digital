@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -722,6 +721,90 @@ img { display: block; max-width: 100% }
 .pr-feats li.on { color:var(--tx) }
 .pr-feats li::before { content:'✓'; color:var(--teal); font-weight:700; min-width:14px; flex-shrink:0 }
 .pr-feats li.off::before { content:'—'; color:var(--bdr2) }
+
+/* ═══════ PAYMENT OPTIONS CARD ═══════ */
+.pay-options {
+  background:linear-gradient(135deg, rgba(0,191,199,0.04) 0%, rgba(33,89,224,0.04) 100%);
+  border:1px solid var(--bdr);
+  border-radius:20px;
+  padding:44px 40px;
+  position:relative;
+  overflow:hidden;
+}
+.pay-options::before {
+  content:''; position:absolute; top:-40%; right:-20%;
+  width:400px; height:400px;
+  background:radial-gradient(circle, rgba(0,191,199,0.08), transparent 70%);
+  pointer-events:none;
+}
+.pay-head { margin-bottom:32px; position:relative; z-index:1 }
+.pay-grid {
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:20px;
+  position:relative; z-index:1;
+}
+.pay-card {
+  background:var(--bg2);
+  border:1px solid var(--bdr2);
+  border-radius:14px;
+  padding:24px 22px;
+  position:relative;
+  transition:transform .3s var(--ease), border-color .3s var(--ease);
+}
+.pay-card:hover {
+  transform:translateY(-3px);
+  border-color:var(--teal);
+}
+.pay-card.pay-featured {
+  border-color:var(--teal);
+  background:linear-gradient(135deg, var(--bg2) 0%, rgba(0,191,199,0.06) 100%);
+  box-shadow:0 8px 32px rgba(0,191,199,0.12);
+}
+.pay-badge {
+  position:absolute; top:-10px; right:16px;
+  background:var(--grad);
+  color:#fff; font-weight:600; font-size:10px;
+  padding:4px 10px; border-radius:20px;
+  letter-spacing:.5px; text-transform:uppercase;
+}
+.pay-amt {
+  font-family:var(--fh); font-weight:700;
+  font-size:44px; letter-spacing:-1.5px;
+  line-height:1; margin-bottom:4px;
+  background:var(--grad);
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.pay-amt sup { font-size:22px; font-weight:400; vertical-align:super }
+.pay-pct { font-size:22px; font-weight:500 }
+.pay-label {
+  font-family:var(--fh); font-weight:600;
+  font-size:14px; color:var(--tx);
+  text-transform:uppercase; letter-spacing:1.2px;
+  margin-bottom:14px;
+}
+.pay-desc {
+  font-size:13.5px; line-height:1.6;
+  color:var(--tx2); margin-bottom:14px;
+  min-height:64px;
+}
+.pay-avail {
+  font-size:11.5px; color:var(--teal);
+  font-weight:600; text-transform:uppercase;
+  letter-spacing:.8px;
+  padding-top:12px; border-top:1px solid var(--bdr);
+}
+.pay-footnote {
+  margin-top:24px; text-align:center;
+  font-size:12.5px; color:var(--tx2); font-style:italic;
+  position:relative; z-index:1;
+}
+@media(max-width:860px){
+  .pay-options { padding:32px 24px }
+  .pay-grid { grid-template-columns:1fr; gap:16px }
+  .pay-desc { min-height:auto }
+}
 @media(max-width:960px){
   .pr-card.hot { transform:none }
   .pr-card.hot:hover { transform:translateY(-5px) }
@@ -999,8 +1082,7 @@ footer {
       <a href="#services">Services</a>
       <a href="#portfolio">Portfolio</a>
       <a href="#about">About</a>
-      <a href="#about">About</a>
-        <a href="#why">Process</a>
+      <a href="#why">Process</a>
       <a href="#pricing">Pricing</a>
       <a href="#testimonials">Reviews</a>
     </nav>
@@ -1385,7 +1467,7 @@ footer {
     <div class="ai-banner rv">
       <div>
         <div class="ai-b-title">Yes, AI exists. Here's the difference.</div>
-        <p class="ai-b-text">Anyone can open an AI tool and prompt their way to a basic page. What you see above isn't a basic page, it's <strong>Stripe payments, email funnels, event calendars, loyalty programs, and conversion-focused design</strong> delivered end-to-end, tested, deployed, and handed off ready to run. AI builds files. <strong>We deliver outcomes.</strong></p>
+        <p class="ai-b-text">Anyone can open an AI tool and prompt their way to a basic page. What you see above isn't a basic page, it's <strong>payment integrations, email funnels, event calendars, loyalty programs, and conversion-focused design</strong> delivered end-to-end, tested, deployed, and handed off ready to run. AI builds files. <strong>We deliver outcomes.</strong></p>
       </div>
       <a href="#contact" class="btn btn-p" style="flex-shrink:0">Let's Talk →</a>
     </div>
@@ -1558,7 +1640,7 @@ footer {
       <div class="pr-card rv" style="transition-delay:.04s">
         <div class="pr-tier">Starter</div>
         <div class="pr-price"><sup>$</sup>440</div>
-        <div class="pr-dep">$220 deposit to start</div>
+        <div class="pr-dep">Start for <strong style="color:var(--teal)">$99</strong> · or 50% deposit</div>
         <div class="pr-div"></div>
         <ul class="pr-feats">
           <li class="on">Single-page website</li>
@@ -1577,7 +1659,7 @@ footer {
         <div class="pr-pop">Most Popular</div>
         <div class="pr-tier">Growth</div>
         <div class="pr-price"><sup>$</sup>750</div>
-        <div class="pr-dep">$375 deposit to start</div>
+        <div class="pr-dep">Start for <strong style="color:var(--teal)">$99</strong> · or 50% deposit</div>
         <div class="pr-div"></div>
         <ul class="pr-feats">
           <li class="on">Up to 4 pages</li>
@@ -1595,7 +1677,7 @@ footer {
       <div class="pr-card rv" style="transition-delay:.12s">
         <div class="pr-tier">Pro</div>
         <div class="pr-price"><sup>$</sup>1,200</div>
-        <div class="pr-dep">$600 deposit to start</div>
+        <div class="pr-dep">$600 deposit · or milestone plan</div>
         <div class="pr-div"></div>
         <ul class="pr-feats">
           <li class="on">Up to 6 pages</li>
@@ -1608,6 +1690,39 @@ footer {
           <li class="on">Priority support</li>
         </ul>
         <a href="#contact" class="btn btn-g" style="width:100%;justify-content:center">Get Started</a>
+      </div>
+    </div>
+
+    <!-- ═══════ THREE WAYS TO PAY ═══════ -->
+    <div class="rv" style="margin:48px 0 40px">
+      <div class="pay-options">
+        <div class="pay-head">
+          <div class="eyebrow" style="margin-bottom:12px">Flexible Payment</div>
+          <h3 style="font-family:var(--fh);font-weight:600;font-size:26px;letter-spacing:-.5px;margin-bottom:8px">Three ways to pay.</h3>
+          <p style="color:var(--tx2);font-size:15px;max-width:600px">Not every business can front a full deposit. Pick the option that fits your cash flow, we'll honor it.</p>
+        </div>
+        <div class="pay-grid">
+          <div class="pay-card pay-featured">
+            <div class="pay-badge">Most Popular</div>
+            <div class="pay-amt"><sup>$</sup>99</div>
+            <div class="pay-label">Down</div>
+            <p class="pay-desc">Get started for $99. Remainder split across project milestones. Best for businesses who want to move now without fronting a big deposit.</p>
+            <div class="pay-avail">Available on Starter & Growth</div>
+          </div>
+          <div class="pay-card">
+            <div class="pay-amt">50<span class="pay-pct">%</span></div>
+            <div class="pay-label">Deposit</div>
+            <p class="pay-desc">Standard two-payment plan. Half upfront, half at launch. Best for clients who prefer a simple commit.</p>
+            <div class="pay-avail">Available on all packages</div>
+          </div>
+          <div class="pay-card">
+            <div class="pay-amt">3<span class="pay-pct">×</span></div>
+            <div class="pay-label">Milestone Plan</div>
+            <p class="pay-desc">Deposit plus 2–3 installments tied to draft, approval, and launch. Best for larger projects or smaller regular payments.</p>
+            <div class="pay-avail">Available on all packages</div>
+          </div>
+        </div>
+        <p class="pay-footnote">Final site launches when balance is paid in full. Deposits are non-refundable once work begins.</p>
       </div>
     </div>
 
@@ -1724,7 +1839,7 @@ footer {
     <div class="quote-cta rv">
       <div>
         <div class="qc-title">Not sure what you need? That's fine.</div>
-        <p class="qc-text">Tell us about your business and what you're trying to accomplish. We'll give you a <strong>straight, honest quote</strong> no discovery call bait-and-switch, no surprise invoices. All projects include a 50% deposit to start, balance due at launch.</p>
+        <p class="qc-text">Tell us about your business and what you're trying to accomplish. We'll give you a <strong>straight, honest quote</strong> no discovery call bait-and-switch, no surprise invoices. Flexible payment: <strong>$99 Down</strong> (Starter/Growth), 50% deposit, or milestone plan. Final site launches when balance is paid.</p>
       </div>
       <a href="#contact" class="btn btn-p" style="flex-shrink:0">Get My Quote →</a>
     </div>
@@ -1748,12 +1863,13 @@ footer {
           <div><div class="t-name">Brenda S.</div><div class="t-biz">In Great Taste Catering · Richmond, VA</div></div>
         </div>
       </div>
-      <div class="t-card rv" style="transition-delay:.08s">
-        <div class="t-stars">★★★★★</div>
-        <p class="t-q">"He sent a full mock-up before we talked money. That told me everything about how he operates. Solid work, fast turnaround."</p>
+      <div class="t-card rv" style="transition-delay:.08s;border:1px dashed rgba(0,191,199,0.4);background:linear-gradient(to bottom right,rgba(0,191,199,0.04),transparent)">
+        <div class="t-stars" style="opacity:.35">★★★★★</div>
+        <p class="t-q" style="font-style:normal;color:var(--tx)">Want to be our third review?</p>
+        <p class="t-q" style="font-size:14px;color:var(--tx2);margin-top:-4px">Early clients get our full attention and founder-level pricing. Let's build something worth writing about.</p>
         <div class="t-auth">
-          <div class="t-av">J</div>
-          <div><div class="t-name">Jazz Barber</div><div class="t-biz">Jazz Barber & Beauty Salon · Chester, VA</div></div>
+          <div class="t-av" style="background:linear-gradient(120deg,#00BFC7,#2159E0);color:#fff;font-weight:700">+</div>
+          <div><div class="t-name">Be an early client</div><a href="#contact" class="t-biz" style="color:var(--teal);text-decoration:none">Let's Talk →</a></div>
         </div>
       </div>
       <div class="t-card rv" style="transition-delay:.12s">
@@ -1765,7 +1881,6 @@ footer {
         </div>
       </div>
     </div>
-    <p class="rv" style="text-align:center;color:var(--tx2);margin-top:40px;font-size:14px;transition-delay:.16s">More reviews coming. We're just getting started.</p>
   </div>
 </section>
 
@@ -1802,8 +1917,8 @@ footer {
           <input type="hidden" name="form-name" value="proactive-contact"/>
           <p style="display:none"><label>Don't fill this out if you're human: <input name="bot-field"/></label></p>
           <div class="fr">
-            <div class="fg"><label>First Name</label><input type="text" name="first-name" placeholder="Todd" required/></div>
-            <div class="fg"><label>Last Name</label><input type="text" name="last-name" placeholder="Blackwell" required/></div>
+            <div class="fg"><label>First Name</label><input type="text" name="first-name" placeholder="Your first name" required/></div>
+            <div class="fg"><label>Last Name</label><input type="text" name="last-name" placeholder="Your last name" required/></div>
           </div>
           <div class="fg"><label>Email Address</label><input type="email" name="email" placeholder="you@yourbusiness.com" required/></div>
           <div class="fg"><label>Business Name</label><input type="text" name="business-name" placeholder="Your Business"/></div>
@@ -1848,9 +1963,9 @@ footer {
         <a href="#services">Services</a>
         <a href="#portfolio">Portfolio</a>
         <a href="#about">About</a>
-      <a href="#about">About</a>
         <a href="#why">Process</a>
         <a href="#pricing">Pricing</a>
+        <a href="#testimonials">Reviews</a>
         <a href="#contact">Contact</a>
       </div>
       <div class="foot-col">
@@ -1864,15 +1979,13 @@ footer {
         <div class="foot-col-t">Connect</div>
         <a href="mailto:hello@getproactivedigital.com">Email Us</a>
         <a href="https://calendly.com/getproactivedigital" target="_blank">Book a Call</a>
-        <a href="#" target="_blank">Facebook</a>
-        <a href="#" target="_blank">LinkedIn</a>
       </div>
     </div>
     <div class="foot-bot">
       <div class="foot-copy">© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
       <div class="foot-leg">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Service</a>
       </div>
     </div>
   </div>
