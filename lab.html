@@ -8,202 +8,1770 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --teal:  #00BFC7; --blue:  #2159E0; --grad:  linear-gradient(120deg,#00BFC7,#2159E0);
-  --bg:    #080B13; --bg2:   #0C1020; --bg3:   #111827; --surf:  #161D2E;
-  --bdr:   rgba(255,255,255,0.06); --bdr2:  rgba(255,255,255,0.12);
-  --tx:    #E8EAF6; --tx2:   #6B7A99; --fh:    'Outfit',sans-serif; --fb:    'Plus Jakarta Sans',sans-serif;
+  --teal:  #00BFC7;
+  --blue:  #2159E0;
+  --grad:  linear-gradient(120deg,#00BFC7,#2159E0);
+  --bg:    #080B13;
+  --bg2:   #0C1020;
+  --bg3:   #111827;
+  --surf:  #161D2E;
+  --bdr:   rgba(255,255,255,0.06);
+  --bdr2:  rgba(255,255,255,0.12);
+  --tx:    #E8EAF6;
+  --tx2:   #6B7A99;
+  --fh:    'Outfit',sans-serif;
+  --fb:    'Plus Jakarta Sans',sans-serif;
   --ease:  cubic-bezier(.22,1,.36,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--tx);
+  font-family:var(--fb);font-size:15px;
+  line-height:1.65;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{text-decoration:none;color:inherit}
 button{font-family:var(--fb);border:none;cursor:pointer}
 
-/* ── LOGIN ── */
-#login-screen {position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;transition:opacity .5s var(--ease)}
-#login-screen.out{opacity:0;pointer-events:none}
-.login-card{background:var(--surf);border:1px solid var(--bdr2);border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.5)}
-.login-input{width:100%;background:var(--bg2);border:1.5px solid var(--bdr2);border-radius:9px;padding:13px 16px;color:var(--tx);outline:none;margin-top:20px}
-.login-btn{width:100%;margin-top:20px;padding:14px;background:var(--grad);color:#fff;border-radius:9px;font-weight:600}
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  position:fixed;inset:0;
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;
+  transition:opacity .5s var(--ease),transform .5s var(--ease);
+}
+#login-screen.out{opacity:0;transform:scale(1.04);pointer-events:none}
+.login-wrap{
+  width:100%;max-width:400px;padding:24px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:0;
+}
+/* Mesh behind login */
+.login-mesh{
+  position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 50% 40% at 70% 20%,rgba(0,191,199,.1) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 35% at 20% 80%,rgba(33,89,224,.08) 0%,transparent 60%);
+  animation:mesh 10s ease-in-out infinite alternate;
+}
+@keyframes mesh{0%{opacity:.7}100%{opacity:1}}
+.login-logo{
+  margin-bottom:36px;
+  animation:fadeUp .7s var(--ease) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.login-card{
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:16px;padding:40px 36px;
+  width:100%;
+  animation:fadeUp .7s .1s var(--ease) both;
+  box-shadow:0 32px 80px rgba(0,0,0,.5);
+}
+.login-title{
+  font-family:var(--fh);font-weight:600;
+  font-size:22px;letter-spacing:-.5px;
+  margin-bottom:6px;text-align:center;
+}
+.login-sub{color:var(--tx2);font-size:13px;text-align:center;margin-bottom:28px}
+.login-label{
+  display:block;font-size:11px;font-weight:700;
+  color:var(--tx2);letter-spacing:1.5px;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.login-input{
+  width:100%;background:var(--bg2);
+  border:1.5px solid var(--bdr2);border-radius:9px;
+  padding:13px 16px;color:var(--tx);
+  font-family:var(--fb);font-size:15px;
+  outline:none;transition:all .25s var(--ease);
+  letter-spacing:2px;
+}
+.login-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,191,199,.1)}
+.login-btn{
+  width:100%;margin-top:20px;padding:14px;
+  background:var(--grad);color:#fff;
+  border-radius:9px;font-family:var(--fh);
+  font-size:15px;font-weight:600;
+  transition:all .25s var(--ease);
+}
+.login-btn:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,191,199,.3)}
+.login-error{
+  color:#F87171;font-size:13px;text-align:center;
+  margin-top:12px;display:none;
+}
 
 /* ── DASHBOARD ── */
 #dashboard{display:none}
-.lab-nav{position:sticky;top:0;z-index:100;background:rgba(8,11,19,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:14px 0}
-.lab-nav-in{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
-.tab-nav{display:flex;gap:8px;margin-bottom:32px;border-bottom:1px solid var(--bdr)}
-.tab-btn{padding:10px 24px;font-size:14px;font-weight:600;color:var(--tx2);background:none;border-bottom:2px solid transparent;cursor:pointer}
+#dashboard.show{display:block}
+
+/* NAV */
+.lab-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,11,19,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bdr);
+  padding:14px 0;
+}
+.lab-nav-in{
+  max-width:1200px;margin:0 auto;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.lab-nav-left{display:flex;align-items:center;gap:16px}
+.lab-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(0,191,199,.1);border:1px solid rgba(0,191,199,.2);
+  border-radius:100px;padding:5px 14px;
+  font-size:11px;font-weight:700;color:var(--teal);
+  letter-spacing:1.5px;text-transform:uppercase;
+}
+.lab-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,191,199,.5)}50%{box-shadow:0 0 0 5px rgba(0,191,199,0)}}
+.lab-title{font-family:var(--fh);font-weight:600;font-size:16px;letter-spacing:-.3px}
+.lab-nav-right{display:flex;align-items:center;gap:12px}
+.nav-time{color:var(--tx2);font-size:13px;font-family:monospace}
+.logout-btn{
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:7px;padding:7px 16px;
+  font-size:13px;font-weight:600;color:var(--tx2);
+  transition:all .2s;
+}
+.logout-btn:hover{color:var(--tx);border-color:var(--bdr2)}
+
+/* MAIN */
+.lab-main{max-width:1200px;margin:0 auto;padding:36px 28px}
+
+/* HEADER */
+.lab-header{margin-bottom:36px}
+.lab-greeting{
+  font-family:var(--fh);font-weight:600;
+  font-size:clamp(28px,4vw,42px);
+  letter-spacing:-1.5px;margin-bottom:8px;
+}
+.lab-greeting span{
+  background:var(--grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.lab-date{color:var(--tx2);font-size:14px}
+
+/* CATEGORY FILTERS */
+.cat-bar{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;
+}
+.cat-btn{
+  padding:7px 18px;border-radius:100px;
+  font-size:13px;font-weight:600;
+  background:var(--surf);border:1px solid var(--bdr2);
+  color:var(--tx2);transition:all .2s var(--ease);
+}
+.cat-btn:hover{border-color:var(--teal);color:var(--teal)}
+.cat-btn.active{
+  background:var(--grad);color:#fff;border-color:transparent;
+}
+
+/* TOOLBAR */
+.news-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;flex-wrap:wrap;gap:12px;
+}
+.news-count{color:var(--tx2);font-size:13px}
+.refresh-btn{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:8px;padding:9px 18px;
+  font-size:13px;font-weight:600;color:var(--tx2);
+  transition:all .25s var(--ease);
+}
+.refresh-btn:hover{border-color:var(--teal);color:var(--teal)}
+.refresh-btn svg{transition:transform .5s var(--ease)}
+.refresh-btn.spinning svg{animation:spin .7s linear}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* NEWS GRID */
+.news-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:18px;
+}
+.news-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:14px;padding:24px;
+  transition:all .3s var(--ease);
+  display:flex;flex-direction:column;gap:12px;
+  position:relative;overflow:hidden;
+  cursor:pointer;
+}
+.news-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--grad);transform:scaleX(0);transform-origin:left;
+  transition:transform .35s var(--ease);
+}
+.news-card:hover{
+  transform:translateY(-4px);border-color:var(--bdr2);
+  box-shadow:0 16px 48px rgba(0,0,0,.3);
+}
+.news-card:hover::before{transform:scaleX(1)}
+.news-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.news-source-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:100px;padding:3px 10px;
+  font-size:11px;font-weight:700;color:var(--teal);
+  letter-spacing:.5px;white-space:nowrap;
+}
+.news-time{color:var(--tx2);font-size:11px;white-space:nowrap}
+.news-title{
+  font-family:var(--fh);font-weight:600;
+  font-size:16px;line-height:1.4;letter-spacing:-.2px;
+  color:var(--tx);
+}
+.news-desc{color:var(--tx2);font-size:13px;line-height:1.7;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:4px;
+}
+.news-cat{
+  font-size:11px;font-weight:600;color:var(--tx2);
+  letter-spacing:1px;text-transform:uppercase;
+}
+.news-link{
+  display:flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:600;color:var(--teal);
+  transition:gap .2s;
+}
+.news-link:hover{gap:8px}
+
+/* LOADING */
+.loading-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:18px;
+}
+.skeleton{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:14px;padding:24px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.skel-line{
+  height:12px;border-radius:6px;
+  background:linear-gradient(90deg,var(--bg2) 0%,var(--bg3) 50%,var(--bg2) 100%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-line.s{width:35%}.skel-line.m{width:70%}.skel-line.l{width:90%}.skel-line.xl{width:100%}
+.skel-line.h{height:18px}
+
+/* EMPTY STATE */
+.empty-state{
+  text-align:center;padding:80px 20px;
+  grid-column:1/-1;
+}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+.empty-title{font-family:var(--fh);font-weight:600;font-size:20px;margin-bottom:8px}
+.empty-sub{color:var(--tx2);font-size:14px}
+
+/* FEATURED (first card bigger) */
+.news-card.featured{
+  grid-column:span 2;
+  flex-direction:row;gap:24px;align-items:flex-start;
+}
+.news-card.featured .news-title{font-size:20px}
+.news-card.featured .news-desc{-webkit-line-clamp:3}
+
+@media(max-width:768px){
+  .news-card.featured{grid-column:span 1;flex-direction:column}
+  .lab-greeting{font-size:26px}
+}
+@media(max-width:500px){
+  .lab-main{padding:24px 16px}
+  .news-grid{grid-template-columns:1fr}
+  .cat-bar{gap:6px}
+  .cat-btn{padding:6px 14px;font-size:12px}
+}
+
+/* ── TAB NAV ── */
+.tab-nav{
+  display:flex;gap:8px;margin-bottom:32px;
+  border-bottom:1px solid var(--bdr);padding-bottom:0;
+}
+.tab-btn{
+  padding:10px 24px;font-size:14px;font-weight:600;
+  color:var(--tx2);background:none;border:none;
+  border-bottom:2px solid transparent;
+  margin-bottom:-1px;transition:all .2s;cursor:pointer;
+}
+.tab-btn:hover{color:var(--tx)}
 .tab-btn.active{color:var(--teal);border-bottom-color:var(--teal)}
 
-/* ── CLIENTS ── */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:18px 20px}
-.stat-value{font-family:var(--fh);font-weight:600;font-size:28px}
-.client-card{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin-bottom:12px}
-.pay-schedule{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:14px 0}
-.pay-block{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px;cursor:pointer}
-.pay-block.paid{border-color:var(--teal);background:rgba(0,191,199,0.05)}
+/* ── CLAUDE CHAT ── */
+#chat-panel{display:none;flex-direction:column;height:calc(100vh - 280px);min-height:500px}
+#chat-panel.active{display:flex}
+#news-panel{display:block}
+#news-panel.hidden{display:none}
+.chat-messages{
+  flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:16px;
+  padding:24px;background:var(--bg2);border-radius:14px 14px 0 0;
+  border:1px solid var(--bdr);border-bottom:none;
+}
+.chat-messages::-webkit-scrollbar{width:4px}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px}
+.msg{display:flex;gap:12px;align-items:flex-start;animation:msgIn .3s var(--ease)}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.msg.user{flex-direction:row-reverse}
+.msg-avatar{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;
+}
+.msg.assistant .msg-avatar{background:var(--grad);color:#fff}
+.msg.user .msg-avatar{background:var(--surf);border:1px solid var(--bdr2);color:var(--teal);font-size:11px}
+.msg-bubble{
+  max-width:75%;padding:14px 18px;border-radius:14px;
+  font-size:14px;line-height:1.75;
+}
+.msg.assistant .msg-bubble{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:4px 14px 14px 14px;color:var(--tx);
+}
+.msg.user .msg-bubble{
+  background:var(--grad);color:#fff;
+  border-radius:14px 4px 14px 14px;
+}
+.msg-bubble code{background:rgba(0,0,0,.3);padding:2px 6px;border-radius:4px;font-size:12px;font-family:monospace}
+.chat-typing{display:none;align-items:center;gap:8px;padding:0 24px 12px;color:var(--tx2);font-size:13px}
+.chat-typing.show{display:flex}
+.typing-dots{display:flex;gap:4px}
+.typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:dot 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.chat-input-row{
+  display:flex;gap:10px;padding:16px;
+  background:var(--surf);border:1px solid var(--bdr);border-radius:0 0 14px 14px;
+}
+.chat-input{
+  flex:1;background:var(--bg2);border:1.5px solid var(--bdr2);
+  border-radius:9px;padding:12px 16px;
+  color:var(--tx);font-family:var(--fb);font-size:14px;
+  outline:none;resize:none;transition:border-color .2s;
+  min-height:46px;max-height:120px;line-height:1.5;
+}
+.chat-input:focus{border-color:var(--teal)}
+.chat-send{
+  background:var(--grad);color:#fff;border:none;
+  border-radius:9px;padding:12px 20px;
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:all .25s var(--ease);white-space:nowrap;
+}
+.chat-send:hover{opacity:.9;transform:translateY(-1px)}
+.chat-send:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.chat-welcome{
+  text-align:center;padding:48px 20px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.chat-welcome-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--grad);display:flex;align-items:center;
+  justify-content:center;font-size:24px;margin-bottom:4px;
+}
+.chat-welcome-title{font-family:var(--fh);font-weight:600;font-size:20px}
+.chat-welcome-sub{color:var(--tx2);font-size:14px;max-width:360px;line-height:1.7}
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.sugg{
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:100px;padding:7px 16px;
+  font-size:13px;color:var(--tx2);cursor:pointer;transition:all .2s;
+}
+.sugg:hover{border-color:var(--teal);color:var(--teal)}
+.api-setup{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:14px;padding:32px;text-align:center;
+}
+.api-setup-title{font-family:var(--fh);font-weight:600;font-size:18px;margin-bottom:8px}
+.api-setup-sub{color:var(--tx2);font-size:14px;margin-bottom:20px;line-height:1.7}
+.api-key-field{
+  width:100%;max-width:440px;background:var(--bg2);
+  border:1.5px solid var(--bdr2);border-radius:9px;
+  padding:12px 16px;color:var(--tx);font-family:monospace;
+  font-size:13px;outline:none;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;
+  transition:border-color .2s;
+}
+.api-key-field:focus{border-color:var(--teal)}
+.api-save-btn{
+  background:var(--grad);color:#fff;border:none;
+  border-radius:9px;padding:11px 28px;
+  font-size:14px;font-weight:600;cursor:pointer;
+}
 
-/* ── MODALS ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center}
+/* ── NOTES ── */
+#notes-panel{display:none;flex-direction:column;height:calc(100vh - 280px);min-height:500px}
+#notes-panel.active{display:flex;flex-direction:column;gap:16px}
+.notes-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+}
+.notes-toolbar-left{display:flex;align-items:center;gap:10px}
+.notes-title-input{
+  background:transparent;border:none;outline:none;
+  font-family:var(--fh);font-weight:600;font-size:20px;
+  color:var(--tx);letter-spacing:-.5px;
+  width:100%;max-width:340px;
+}
+.notes-title-input::placeholder{color:var(--tx2)}
+.notes-saved{font-size:12px;color:var(--teal);opacity:0;transition:opacity .3s}
+.notes-saved.show{opacity:1}
+.notes-actions{display:flex;gap:8px}
+.notes-action-btn{
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:8px;padding:7px 14px;
+  font-size:12px;font-weight:600;color:var(--tx2);
+  cursor:pointer;transition:all .2s;
+}
+.notes-action-btn:hover{border-color:var(--teal);color:var(--teal)}
+.notes-action-btn.danger:hover{border-color:#F87171;color:#F87171}
+.notes-area{
+  flex:1;background:var(--bg2);border:1.5px solid var(--bdr);
+  border-radius:14px;padding:24px;
+  color:var(--tx);font-family:var(--fb);font-size:15px;
+  line-height:1.8;outline:none;resize:none;
+  transition:border-color .2s;
+  overflow-y:auto;
+}
+.notes-area:focus{border-color:var(--teal)}
+.notes-area::placeholder{color:var(--tx2)}
+.notes-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:var(--tx2);flex-wrap:wrap;gap:8px;
+}
+.notes-ai-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,191,199,.08);border:1px solid rgba(0,191,199,.2);
+  border-radius:100px;padding:4px 12px;
+  font-size:11px;font-weight:600;color:var(--teal);
+}
+
+/* ── CLIENTS TAB ── */
+#clients-panel{display:none}
+#clients-panel.active{display:block}
+
+/* Dashboard stats */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;
+}
+.stat-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:12px;padding:18px 20px;
+  transition:all .2s;
+}
+.stat-card:hover{border-color:var(--bdr2)}
+.stat-label{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-family:var(--fh);font-weight:600;font-size:28px;letter-spacing:-1px;color:var(--tx)}
+.stat-value.green{color:#4ADE80}
+.stat-value.orange{color:#FB923C}
+.stat-value.blue{color:var(--teal)}
+
+/* Add Client Button */
+.clients-toolbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;
+}
+.clients-section-title{
+  font-family:var(--fh);font-weight:600;font-size:18px;letter-spacing:-.3px;
+}
+.add-client-btn{
+  background:var(--grad);color:#fff;border:none;
+  border-radius:9px;padding:10px 20px;font-weight:600;
+  font-size:13px;cursor:pointer;transition:all .2s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.add-client-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,191,199,.25)}
+
+/* Client Cards */
+.clients-grid{display:grid;gap:12px}
+.client-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:14px;padding:22px;
+  transition:all .2s;position:relative;
+}
+.client-card:hover{border-color:var(--bdr2);transform:translateY(-2px)}
+.client-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:10px;margin-bottom:14px;flex-wrap:wrap;
+}
+.client-name{font-family:var(--fh);font-weight:600;font-size:17px;color:var(--tx)}
+.client-project{font-size:13px;color:var(--tx2);margin-top:3px}
+.client-status{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 11px;border-radius:100px;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  white-space:nowrap;
+}
+.client-status.active{background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25)}
+.client-status.pending{background:rgba(251,146,60,.12);color:#FB923C;border:1px solid rgba(251,146,60,.25)}
+.client-status.complete{background:rgba(107,122,153,.12);color:var(--tx2);border:1px solid var(--bdr2)}
+.client-status.late{background:rgba(248,113,113,.12);color:#F87171;border:1px solid rgba(248,113,113,.25)}
+
+/* Payment Schedule */
+.pay-schedule{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));
+  gap:8px;margin:14px 0;
+}
+.pay-block{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:8px;padding:10px 12px;
+  display:flex;flex-direction:column;gap:3px;
+  cursor:pointer;transition:all .2s;
+}
+.pay-block:hover{border-color:var(--bdr2)}
+.pay-block.paid{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25)}
+.pay-block.due-soon{background:rgba(251,146,60,.08);border-color:rgba(251,146,60,.3)}
+.pay-block.late{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.3)}
+.pay-num{font-size:10px;color:var(--tx2);font-weight:600;letter-spacing:.5px}
+.pay-amt{font-family:var(--fh);font-weight:600;font-size:15px}
+.pay-date{font-size:10px;color:var(--tx2);margin-top:1px}
+.pay-block.paid .pay-amt::after{content:' ✓';color:#4ADE80;font-size:13px}
+
+/* Client actions */
+.client-actions{
+  display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;
+  padding-top:12px;border-top:1px solid var(--bdr);
+}
+.ca-btn{
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:7px;padding:6px 12px;
+  font-size:11px;font-weight:600;color:var(--tx2);cursor:pointer;
+  transition:all .2s;
+}
+.ca-btn:hover{border-color:var(--teal);color:var(--teal)}
+.ca-btn.danger:hover{border-color:#F87171;color:#F87171}
+
+/* Empty state */
+.clients-empty{
+  text-align:center;padding:60px 20px;
+  background:var(--surf);border:1.5px dashed var(--bdr2);
+  border-radius:14px;
+}
+.ce-icon{font-size:42px;margin-bottom:12px;opacity:.5}
+.ce-title{font-family:var(--fh);font-weight:600;font-size:18px;margin-bottom:6px}
+.ce-sub{color:var(--tx2);font-size:13px;margin-bottom:20px}
+
+/* Modal */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
+}
 .modal-overlay.show{display:flex}
-.modal{background:var(--surf);padding:32px;border-radius:16px;width:100%;max-width:480px}
-.modal-input,.modal-select{width:100%;background:var(--bg2);border:1px solid var(--bdr2);padding:12px;border-radius:8px;color:#fff;margin-bottom:12px}
+.modal{
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:16px;padding:32px;
+  max-width:480px;width:100%;max-height:90vh;overflow-y:auto;
+  animation:modalIn .3s var(--ease);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.modal-title{
+  font-family:var(--fh);font-weight:600;font-size:20px;
+  letter-spacing:-.5px;margin-bottom:6px;
+}
+.modal-sub{color:var(--tx2);font-size:13px;margin-bottom:22px}
+.modal-field{margin-bottom:14px}
+.modal-label{
+  display:block;font-size:11px;font-weight:700;color:var(--tx2);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;
+}
+.modal-input,.modal-select{
+  width:100%;background:var(--bg2);border:1.5px solid var(--bdr2);
+  border-radius:9px;padding:11px 14px;
+  color:var(--tx);font-family:var(--fb);font-size:14px;
+  outline:none;transition:border-color .2s;
+}
+.modal-input:focus,.modal-select:focus{border-color:var(--teal)}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.modal-btn{
+  flex:1;padding:12px;border-radius:9px;
+  font-weight:600;font-size:13px;cursor:pointer;
+  transition:all .2s;border:none;
+}
+.modal-btn.primary{background:var(--grad);color:#fff}
+.modal-btn.primary:hover{opacity:.9}
+.modal-btn.secondary{background:var(--bg2);border:1px solid var(--bdr2);color:var(--tx2)}
+.modal-btn.secondary:hover{color:var(--tx);border-color:var(--bdr2)}
 
-/* Rest of standard Lab styles... */
+/* Contract output */
+.contract-box{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:9px;padding:16px;
+  font-size:12px;line-height:1.7;color:var(--tx);
+  max-height:300px;overflow-y:auto;
+  font-family:monospace;white-space:pre-wrap;
+}
+
+@media(max-width:700px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── SAVED ARTICLES ── */
+.save-btn{
+  position:absolute;top:10px;right:10px;
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:50%;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;z-index:2;
+}
+.save-btn:hover{background:rgba(0,191,199,.1);border-color:var(--teal)}
+.save-btn.saved{background:var(--teal);border-color:var(--teal)}
+.save-btn.saved svg{fill:#fff;stroke:#fff}
+.news-card{position:relative}
+
 </style>
 </head>
 <body>
 
+<!-- ── LOGIN ── -->
 <div id="login-screen">
-  <div class="login-card">
-    <h2 style="text-align:center">The Lab</h2>
-    <input type="password" class="login-input" id="passInput" placeholder="Access Code"/>
-    <button class="login-btn" onclick="tryLogin()">Enter →</button>
+  <div class="login-mesh"></div>
+  <div class="login-wrap">
+    <div class="login-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 54" height="40">
+        <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00BFC7"/><stop offset="100%" stop-color="#2159E0"/></linearGradient></defs>
+        <g transform="translate(0,6)"><rect x="0" y="0" width="3.5" height="30" rx="1.75" fill="url(#lg)"/><rect x="0" y="0" width="15" height="3.5" rx="1.75" fill="url(#lg)"/><rect x="0" y="15" width="15" height="3.5" rx="1.75" fill="url(#lg)"/><rect x="11.5" y="0" width="3.5" height="18.5" rx="1.75" fill="url(#lg)"/><polygon points="19,18 26,25 19,32" fill="none" stroke="url(#lg)" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/></g>
+        <text x="38" y="28" font-family="'Outfit',sans-serif" font-weight="500" font-size="21" letter-spacing="3" fill="#E8EAF6">PROACTIVE</text>
+        <text x="39.5" y="46" font-family="'Outfit',sans-serif" font-weight="300" font-size="13" letter-spacing="9" fill="url(#lg)">DIGITAL</text>
+      </svg>
+    </div>
+    <div class="login-card">
+      <div class="login-title">The Lab</div>
+      <div class="login-sub">Private access only</div>
+      <label class="login-label">Access Code</label>
+      <input
+        type="password"
+        class="login-input"
+        id="passInput"
+        placeholder="Enter access code"
+        autocomplete="off"
+        onkeydown="if(event.key==='Enter')tryLogin()"
+      />
+      <button class="login-btn" onclick="tryLogin()">Enter The Lab →</button>
+      <div class="login-error" id="loginErr">Incorrect access code. Try again.</div>
+    </div>
   </div>
 </div>
 
+<!-- ── DASHBOARD ── -->
 <div id="dashboard">
+
   <nav class="lab-nav">
     <div class="lab-nav-in">
-      <div><strong>Command Center</strong></div>
-      <button onclick="location.reload()" style="background:none;color:var(--tx2)">Sign Out</button>
+      <div class="lab-nav-left">
+        <div class="lab-badge"><span class="lab-dot"></span>The Lab</div>
+        <div class="lab-title">Command Center</div>
+      </div>
+      <div class="lab-nav-right">
+        <div class="nav-time" id="clock"></div>
+        <button class="logout-btn" onclick="logout()">Sign Out</button>
+      </div>
     </div>
   </nav>
 
-  <main style="max-width:1200px;margin:0 auto;padding:36px 28px">
+  <main class="lab-main">
+
+    <div class="lab-header">
+      <div class="lab-greeting">Good <span id="greeting-time">morning</span>, Todd.</div>
+      <div class="lab-date" id="lab-date"></div>
+    </div>
+
+    <!-- Category filters -->
+    <!-- TAB NAV -->
     <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('clients',this)">Clients</button>
-      <button class="tab-btn" onclick="switchTab('news',this)">News</button>
-      <button class="tab-btn" onclick="switchTab('ai',this)">AI Assistant</button>
+      <button class="tab-btn active" onclick="switchTab('news',this)">News Feed</button>
+      <button class="tab-btn" onclick="switchTab('chat',this)">AI Assistant</button>
       <button class="tab-btn" onclick="switchTab('notes',this)">Notes</button>
+      <button class="tab-btn" onclick="switchTab('clients',this)">Clients</button>
     </div>
 
-    <div id="clients-panel" class="tab-content active">
-      <div class="stats-row">
-        <div class="stat-card"><div>Active</div><div class="stat-value" id="statActive">0</div></div>
-        <div class="stat-card"><div>Revenue</div><div class="stat-value" id="statPaid">$0</div></div>
-        <div class="stat-card"><div>Due</div><div class="stat-value" id="statDue">$0</div></div>
-        <div class="stat-card"><div>Pipeline</div><div class="stat-value" id="statPipeline">$0</div></div>
+    <!-- NEWS PANEL -->
+    <div id="news-panel">
+    <div class="cat-bar" id="catBar">
+      <button class="cat-btn active" onclick="filterCat('all',this)">All</button>
+      <button class="cat-btn" onclick="filterCat('ai',this)">AI</button>
+      <button class="cat-btn" onclick="filterCat('tech',this)">Tech</button>
+      <button class="cat-btn" onclick="filterCat('business',this)">Business</button>
+      <button class="cat-btn" onclick="filterCat('startups',this)">Startups</button>
+      <button class="cat-btn" onclick="showSavedArticles(this)" style="background:rgba(0,191,199,.08);border-color:rgba(0,191,199,.3);color:var(--teal)">★ Saved</button>
+    </div>
+
+    <div class="news-toolbar">
+      <div class="news-count" id="newsCount">Loading stories...</div>
+      <button class="refresh-btn" id="refreshBtn" onclick="loadNews()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+    </div>
+
+    <div id="newsContainer">
+      <!-- Skeleton loaders -->
+      <div class="loading-grid" id="skeletons">
+        ${Array(6).fill(0).map(()=>`
+        <div class="skeleton">
+          <div style="display:flex;justify-content:space-between">
+            <div class="skel-line s"></div>
+            <div class="skel-line" style="width:60px"></div>
+          </div>
+          <div class="skel-line h l"></div>
+          <div class="skel-line m"></div>
+          <div class="skel-line xl"></div>
+          <div class="skel-line m"></div>
+        </div>`).join('')}
       </div>
-      <button class="login-btn" style="width:auto;padding:10px 20px" onclick="openModal()">+ Add Client</button>
-      <div id="clientsList" style="margin-top:24px"></div>
+      <div class="news-grid" id="newsGrid" style="display:none"></div>
     </div>
 
-    <div id="news-panel" class="tab-content" style="display:none"><h3>Industry News Feed Restored</h3><div id="newsGrid"></div></div>
-    <div id="ai-panel" class="tab-content" style="display:none"><h3>Private AI Restored</h3></div>
-    <div id="notes-panel" class="tab-content" style="display:none"><h3>Notes Restored</h3><textarea style="width:100%;height:400px;background:var(--bg2);color:#fff"></textarea></div>
+    </div><!-- end news-panel -->
+
+    <!-- CHAT PANEL -->
+    <div id="chat-panel">
+      <div id="chatMessages" class="chat-messages">
+        <div class="chat-welcome" id="chatWelcome">
+          <div class="chat-welcome-icon">✦</div>
+          <div class="chat-welcome-title">AI Assistant</div>
+          <p class="chat-welcome-sub">Your private AI assistant, built into The Lab. Ask anything — business strategy, web design, content ideas, research.</p>
+          <div class="chat-suggestions">
+            <span class="sugg" onclick="sendSugg(this)">Help me write a client pitch</span>
+            <span class="sugg" onclick="sendSugg(this)">What should I post this week?</span>
+            <span class="sugg" onclick="sendSugg(this)">Review my pricing strategy</span>
+            <span class="sugg" onclick="sendSugg(this)">Give me 5 business ideas</span>
+          </div>
+        </div>
+      </div>
+      <div class="chat-typing" id="chatTyping">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        Thinking...
+      </div>
+      <div class="chat-input-row">
+        <textarea
+          class="chat-input"
+          id="chatInput"
+          placeholder="Ask anything..."
+          rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="chat-send" id="sendBtn" onclick="sendMsg()">Send →</button>
+      </div>
+    </div>
+
+
+    <!-- NOTES PANEL -->
+    <div id="notes-panel">
+      <div class="notes-toolbar">
+        <div class="notes-toolbar-left">
+          <input class="notes-title-input" id="notesTitleInput" placeholder="My Notes" value="Lab Notes" />
+          <span class="notes-saved" id="notesSaved">Saved ✓</span>
+        </div>
+        <div class="notes-actions">
+          <button class="notes-action-btn" onclick="copyNotes()">Copy All</button>
+          <button class="notes-action-btn" onclick="sendNotesToAI()">Send to AI →</button>
+          <button class="notes-action-btn danger" onclick="clearNotes()">Clear</button>
+        </div>
+      </div>
+      <textarea
+        class="notes-area"
+        id="notesArea"
+        placeholder="Use this space to capture ideas, client info, AI responses, business goals, or anything you want your AI assistant to know about...
+
+Examples:
+• Working on pitching Nicole for ANUME website
+• Current focus: Proactive Digital outreach in Charleston WV group
+• Goal: Land 2 web clients this month
+• Pricing reminder: Custom builds quote based on complexity
+
+Your notes are automatically shared with the AI Assistant as context."
+        oninput="autoSaveNotes()"
+      ></textarea>
+      <div class="notes-footer">
+        <div class="notes-ai-badge">
+          <span>✦</span> Notes are shared with AI Assistant automatically
+        </div>
+        <span id="notesWordCount">0 words</span>
+      </div>
+    </div>
+
+
+    <!-- CLIENTS PANEL -->
+    <div id="clients-panel">
+      <!-- Stats Dashboard -->
+      <div class="stats-row" id="clientStats">
+        <div class="stat-card">
+          <div class="stat-label">Active Clients</div>
+          <div class="stat-value blue" id="statActive">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Paid This Month</div>
+          <div class="stat-value green" id="statPaid">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Due Next 7 Days</div>
+          <div class="stat-value orange" id="statDue">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Pipeline</div>
+          <div class="stat-value" id="statPipeline">$0</div>
+        </div>
+      </div>
+
+      <div class="clients-toolbar">
+        <div class="clients-section-title">Client Projects</div>
+        <button class="add-client-btn" onclick="openClientModal()">+ Add New Client</button>
+      </div>
+
+      <div id="clientsList" class="clients-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Add Client Modal -->
+    <div class="modal-overlay" id="clientModal">
+      <div class="modal">
+        <div class="modal-title" id="modalTitle">Add New Client</div>
+        <div class="modal-sub">Set up a new project with a custom payment plan</div>
+
+        <div class="modal-field">
+          <label class="modal-label">Client / Business Name</label>
+          <input type="text" class="modal-input" id="c_name" placeholder="SLP Masonry LLC"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Contact Name</label>
+          <input type="text" class="modal-input" id="c_contact" placeholder="John Smith"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Project Description</label>
+          <input type="text" class="modal-input" id="c_project" placeholder="Commercial masonry website"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Total Project Value ($)</label>
+          <input type="number" class="modal-input" id="c_total" placeholder="1200"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Deposit Amount ($)</label>
+          <input type="number" class="modal-input" id="c_deposit" placeholder="99" step="0.01" min="0"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Payment Structure</label>
+          <select class="modal-select" id="c_payment_mode" onchange="togglePaymentModeFields()">
+            <option value="equal" selected>Equal payments (2–4)</option>
+            <option value="custom">Custom amount per payment</option>
+          </select>
+        </div>
+
+        <div class="modal-field" id="equalPaymentsField">
+          <label class="modal-label">Number of Payments</label>
+          <select class="modal-select" id="c_payments">
+            <option value="2">2 payments</option>
+            <option value="3" selected>3 payments</option>
+            <option value="4">4 payments</option>
+          </select>
+        </div>
+
+        <div class="modal-field" id="customAmountField" style="display:none">
+          <label class="modal-label">Custom Amount Per Payment ($)</label>
+          <input type="number" class="modal-input" id="c_custom_amount" placeholder="500" step="0.01" min="0.01"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Start Date</label>
+          <input type="date" class="modal-input" id="c_date"/>
+        </div>
+
+        <div class="modal-actions">
+          <button class="modal-btn secondary" onclick="closeClientModal()">Cancel</button>
+          <button class="modal-btn primary" onclick="saveClient()">Create Project</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contract Modal -->
+    <div class="modal-overlay" id="contractModal">
+      <div class="modal" style="max-width:600px">
+        <div class="modal-title">Client Agreement</div>
+        <div class="modal-sub">Copy this and send to your client via email</div>
+        <div class="contract-box" id="contractText"></div>
+        <div class="modal-actions">
+          <button class="modal-btn secondary" onclick="closeContractModal()">Close</button>
+          <button class="modal-btn primary" onclick="copyContract()">Copy to Clipboard</button>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
-<div class="modal-overlay" id="clientModal">
-  <div class="modal">
-    <h3>New Project</h3>
-    <input type="text" id="c_name" class="modal-input" placeholder="Client Name"/>
-    <input type="number" id="c_total" class="modal-input" placeholder="Total Project Value"/>
-    <label style="font-size:12px">Payment Structure</label>
-    <select id="c_payments" class="modal-select" onchange="toggleCustom()">
-      <option value="2">2 Payments</option>
-      <option value="3">3 Payments</option>
-      <option value="custom">Custom Installments</option>
-    </select>
-    <div id="custom_wrap" style="display:none">
-      <input type="number" id="c_custom_amt" class="modal-input" placeholder="Amount Per Payment (e.g. 150)"/>
-    </div>
-    <input type="date" id="c_date" class="modal-input"/>
-    <button class="login-btn" onclick="saveClient()">Create Project</button>
-    <button onclick="closeModal()" style="background:none;color:#fff;margin-top:10px;width:100%">Cancel</button>
-  </div>
-</div>
-
 <script>
+/* ── AUTH ── */
 const PASS = 'TRBFAMILY2014';
-let clients = JSON.parse(localStorage.getItem('lab_clients') || '[]');
+let allArticles = [];
+let currentCat = 'all';
 
-function tryLogin(){
-  if(document.getElementById('passInput').value.toUpperCase() === PASS){
+function tryLogin() {
+  const val = document.getElementById('passInput').value.trim().toUpperCase().replace(/\s+/g,'');
+  if (val === PASS) {
     document.getElementById('login-screen').classList.add('out');
-    document.getElementById('dashboard').style.display = 'block';
-    render();
+    setTimeout(() => {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').classList.add('show');
+      initDashboard();
+    }, 500);
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('passInput').style.borderColor = '#F87171';
+    setTimeout(() => {
+      document.getElementById('passInput').style.borderColor = '';
+    }, 1500);
   }
 }
 
-function switchTab(tab, el){
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+function logout() {
+  document.getElementById('dashboard').classList.remove('show');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-screen').classList.remove('out');
+  document.getElementById('passInput').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+}
+
+/* ── CLOCK ── */
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+/* ── GREETING ── */
+function setGreeting() {
+  const h = new Date().getHours();
+  const g = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  document.getElementById('greeting-time').textContent = g;
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('lab-date').textContent = new Date().toLocaleDateString('en-US', opts);
+}
+
+/* ── NEWS ── */
+// Using multiple free RSS-to-JSON sources
+const FEEDS = [
+  {
+    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.feedburner.com/TechCrunch',
+    source: 'TechCrunch',
+    cat: 'tech'
+  },
+  {
+    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://www.wired.com/feed/rss',
+    source: 'Wired',
+    cat: 'tech'
+  },
+  {
+    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.feedburner.com/venturebeat/SZYF',
+    source: 'VentureBeat',
+    cat: 'ai'
+  },
+  {
+    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://techcrunch.com/category/artificial-intelligence/feed/',
+    source: 'TC/AI',
+    cat: 'ai'
+  },
+  {
+    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://feeds.feedburner.com/entrepreneur/latest',
+    source: 'Entrepreneur',
+    cat: 'business'
+  },
+  {
+    url: 'https://api.rss2json.com/v1/api.json?rss_url=https://techcrunch.com/category/startups/feed/',
+    source: 'TC/Startups',
+    cat: 'startups'
+  }
+];
+
+function timeAgo(dateStr) {
+  const diff = (Date.now() - new Date(dateStr)) / 1000;
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+async function fetchFeed(feed) {
+  try {
+    const res = await fetch(feed.url);
+    const data = await res.json();
+    if (data.status === 'ok' && data.items) {
+      return data.items.slice(0, 5).map(item => ({
+        title: item.title,
+        desc: stripHtml(item.description || item.content || '').slice(0,160),
+        link: item.link,
+        pubDate: item.pubDate,
+        source: feed.source,
+        cat: feed.cat
+      }));
+    }
+  } catch(e) {}
+  return [];
+}
+
+async function loadNews() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  document.getElementById('skeletons').style.display = 'grid';
+  document.getElementById('newsGrid').style.display = 'none';
+  document.getElementById('newsCount').textContent = 'Loading stories...';
+
+  const results = await Promise.allSettled(FEEDS.map(f => fetchFeed(f)));
+  allArticles = results
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value)
+    .filter(a => a.title)
+    .sort((a,b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+  btn.classList.remove('spinning');
+  renderNews(allArticles);
+}
+
+function filterCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById(tab+'-panel').style.display = 'block';
+  const filtered = cat === 'all' ? allArticles : allArticles.filter(a => a.cat === cat);
+  renderNews(filtered);
 }
 
-function toggleCustom(){
-  document.getElementById('custom_wrap').style.display = document.getElementById('c_payments').value === 'custom' ? 'block' : 'none';
+function renderNews(articles) {
+  document.getElementById('skeletons').style.display = 'none';
+  const grid = document.getElementById('newsGrid');
+  grid.style.display = 'grid';
+
+  if (!articles.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📡</div>
+      <div class="empty-title">No stories found</div>
+      <div class="empty-sub">Try refreshing or selecting a different category</div>
+    </div>`;
+    document.getElementById('newsCount').textContent = '0 stories';
+    return;
+  }
+
+  document.getElementById('newsCount').textContent = `${articles.length} stories`;
+
+  grid.innerHTML = articles.map((a, i) => {
+    const saved = isArticleSaved(a.link);
+    const articleJson = JSON.stringify(a).replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+    return `
+    <div class="news-card${i===0?' featured':''}" onclick="window.open('${a.link}','_blank')">
+      <button class="save-btn${saved ? ' saved' : ''}" onclick="toggleSaveArticle('${articleJson}', this)" title="Save for later">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      </button>
+      <div class="news-card-top">
+        <span class="news-source-badge">${a.source}</span>
+        <span class="news-time">${a.pubDate ? timeAgo(a.pubDate) : ''}</span>
+      </div>
+      <div class="news-title">${a.title}</div>
+      ${a.desc ? `<div class="news-desc">${a.desc}</div>` : ''}
+      <div class="news-footer">
+        <span class="news-cat">${a.cat}</span>
+        <span class="news-link">Read more →</span>
+      </div>
+    </div>
+  `;}).join('');
 }
 
-function openModal(){ document.getElementById('clientModal').classList.add('show'); }
-function closeModal(){ document.getElementById('clientModal').classList.remove('show'); }
+/* ── INIT ── */
+function initDashboard() {
+  setGreeting();
+  updateClock();
+  setInterval(updateClock, 1000);
+  loadNews();
+  initNotes();
+}
 
-function saveClient(){
-  const name = document.getElementById('c_name').value;
-  const total = parseFloat(document.getElementById('c_total').value);
-  const type = document.getElementById('c_payments').value;
-  const start = new Date(document.getElementById('c_date').value);
-  let payments = [];
+// Allow Enter on password field
+document.getElementById('passInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryLogin();
+});
 
-  if(type === 'custom'){
-    const amt = parseFloat(document.getElementById('c_custom_amt').value);
-    let rem = total;
-    let i = 1;
-    while(rem > 0){
-      let current = Math.min(amt, rem);
-      let d = new Date(start); d.setDate(d.getDate() + (i-1)*15);
-      payments.push({num:i, amount:current, dueDate:d.toISOString().split('T')[0], paid:false});
-      rem -= current; i++;
+/* ── TABS ── */
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('news-panel').classList.add('hidden');
+  document.getElementById('chat-panel').classList.remove('active');
+  document.getElementById('notes-panel').classList.remove('active');
+  document.getElementById('clients-panel').classList.remove('active');
+  if (tab === 'news') {
+    document.getElementById('news-panel').classList.remove('hidden');
+  } else if (tab === 'chat') {
+    document.getElementById('chat-panel').classList.add('active');
+    checkApiKey();
+  } else if (tab === 'notes') {
+    document.getElementById('notes-panel').classList.add('active');
+  } else if (tab === 'clients') {
+    document.getElementById('clients-panel').classList.add('active');
+    renderClients();
+    updateStats();
+  }
+}
+
+/* ── CLAUDE CHAT ── */
+let chatHistory = [];
+let apiKey = localStorage.getItem('lab_api_key') || '';
+
+function checkApiKey() {
+  if (!apiKey) {
+    showApiSetup();
+  }
+}
+
+function showApiSetup() {
+  const msgs = document.getElementById('chatMessages');
+  msgs.innerHTML = `
+    <div class="api-setup">
+      <div class="api-setup-title">Enter Your API Key</div>
+      <p class="api-setup-sub">Paste your Anthropic API key below. It's stored locally in your browser and never sent anywhere except directly to the AI API.</p>
+      <input type="password" class="api-key-field" id="apiKeyInput" placeholder="sk-ant-..." />
+      <button class="api-save-btn" onclick="saveApiKey()">Save & Start Chatting</button>
+    </div>`;
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key.startsWith('sk-ant-')) {
+    alert('That doesn\'t look right. API keys start with sk-ant-');
+    return;
+  }
+  apiKey = key;
+  localStorage.setItem('lab_api_key', key);
+  resetChat();
+}
+
+function resetChat() {
+  chatHistory = [];
+  const msgs = document.getElementById('chatMessages');
+  msgs.innerHTML = `
+    <div class="chat-welcome" id="chatWelcome">
+      <div class="chat-welcome-icon">✦</div>
+      <div class="chat-welcome-title">AI Assistant</div>
+      <p class="chat-welcome-sub">Your private AI assistant. Ask anything — business strategy, web design, content ideas, research.</p>
+      <div class="chat-suggestions">
+        <span class="sugg" onclick="sendSugg(this)">Help me write a client pitch</span>
+        <span class="sugg" onclick="sendSugg(this)">What should I post this week?</span>
+        <span class="sugg" onclick="sendSugg(this)">Review my pricing strategy</span>
+        <span class="sugg" onclick="sendSugg(this)">Give me 5 business ideas</span>
+      </div>
+    </div>`;
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function sendSugg(el) {
+  document.getElementById('chatInput').value = el.textContent;
+  sendMsg();
+}
+
+function addMsg(role, content) {
+  const welcome = document.getElementById('chatWelcome');
+  if (welcome) welcome.remove();
+  
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  
+  const avatar = document.createElement('div');
+  avatar.className = 'msg-avatar';
+  avatar.textContent = role === 'assistant' ? '✦' : 'TB';
+  
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.innerHTML = content.replace(/\n/g, '<br>');
+  
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function sendMsg() {
+  const input = document.getElementById('chatInput');
+  const btn = document.getElementById('sendBtn');
+  const msg = input.value.trim();
+  if (!msg || btn.disabled) return;
+  if (!apiKey) { showApiSetup(); return; }
+
+  input.value = '';
+  input.style.height = 'auto';
+  btn.disabled = true;
+
+  addMsg('user', msg);
+  chatHistory.push({ role: 'user', content: msg });
+
+  document.getElementById('chatTyping').classList.add('show');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1024,
+        system: `You are a sharp, direct business assistant for Todd Blackwell — entrepreneur, web designer, B2B sales professional based in Chesterfield, VA. He runs Proactive Digital (web design), Proactive Vending Blueprint (digital product), and is the IT Director for Angels of Snow Hill Cemetery. Keep responses concise, practical, and actionable. No fluff.${getNotes() ? '\n\nCurrent context from Todd\'s notes:\n' + getNotes() : ''}`,
+        messages: chatHistory
+      })
+    });
+
+    const data = await res.json();
+    document.getElementById('chatTyping').classList.remove('show');
+
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      chatHistory.push({ role: 'assistant', content: reply });
+      addMsg('assistant', reply);
+    } else if (data.error) {
+      addMsg('assistant', `Error: ${data.error.message}`);
+    }
+  } catch(e) {
+    document.getElementById('chatTyping').classList.remove('show');
+    addMsg('assistant', 'Connection error. Check your API key and try again.');
+  }
+
+  btn.disabled = false;
+  document.getElementById('chatInput').focus();
+}
+
+
+/* ── NOTES ── */
+let notesSaveTimer = null;
+
+function initNotes() {
+  const saved = localStorage.getItem('lab_notes') || '';
+  const title = localStorage.getItem('lab_notes_title') || 'Lab Notes';
+  document.getElementById('notesArea').value = saved;
+  document.getElementById('notesTitleInput').value = title;
+  updateWordCount();
+}
+
+function autoSaveNotes() {
+  clearTimeout(notesSaveTimer);
+  updateWordCount();
+  notesSaveTimer = setTimeout(() => {
+    localStorage.setItem('lab_notes', document.getElementById('notesArea').value);
+    localStorage.setItem('lab_notes_title', document.getElementById('notesTitleInput').value);
+    const saved = document.getElementById('notesSaved');
+    saved.classList.add('show');
+    setTimeout(() => saved.classList.remove('show'), 2000);
+  }, 800);
+}
+
+function updateWordCount() {
+  const text = document.getElementById('notesArea').value;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('notesWordCount').textContent = words + ' words';
+}
+
+function copyNotes() {
+  const text = document.getElementById('notesArea').value;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy All', 2000);
+  });
+}
+
+function clearNotes() {
+  if (confirm('Clear all notes? This cannot be undone.')) {
+    document.getElementById('notesArea').value = '';
+    localStorage.removeItem('lab_notes');
+    updateWordCount();
+  }
+}
+
+function sendNotesToAI() {
+  const notes = document.getElementById('notesArea').value.trim();
+  if (!notes) {
+    alert('No notes to send. Add some notes first.');
+    return;
+  }
+  // Switch to AI tab and pre-fill with notes context
+  const chatTab = document.querySelectorAll('.tab-btn')[1];
+  switchTab('chat', chatTab);
+  document.getElementById('chatInput').value = 'Here are my current notes and context: ' + notes + '\n\nPlease acknowledge you have this context and are ready to help.';
+  sendMsg();
+}
+
+function getNotes() {
+  return localStorage.getItem('lab_notes') || '';
+}
+
+// Override initDashboard to also init notes
+const _origInit = initDashboard;
+
+
+/* ══════════════════════════════════════════════
+   CLIENT MANAGEMENT SYSTEM
+   ══════════════════════════════════════════════ */
+let clients = JSON.parse(localStorage.getItem('lab_clients') || '[]');
+let editingClientId = null;
+
+function saveClients() {
+  localStorage.setItem('lab_clients', JSON.stringify(clients));
+}
+
+function roundMoney(value) {
+  return Math.round((Number(value) + Number.EPSILON) * 100) / 100;
+}
+
+function formatCurrency(value) {
+  const amount = Number(value) || 0;
+  return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function buildPaymentSchedule(total, depositAmount, mode, payCount, customAmount, startDate) {
+  const safeTotal = roundMoney(total);
+  const safeDeposit = roundMoney(Math.min(Math.max(depositAmount, 0), safeTotal));
+  const remaining = roundMoney(safeTotal - safeDeposit);
+  const payments = [];
+  const start = new Date(startDate + 'T00:00:00');
+
+  payments.push({
+    num: 1,
+    amount: safeDeposit,
+    dueDate: startDate,
+    paid: false
+  });
+
+  if (remaining <= 0) return payments;
+
+  if (mode === 'custom') {
+    const safeCustom = roundMoney(customAmount);
+    if (!safeCustom || safeCustom <= 0) {
+      throw new Error('Please enter a valid custom amount per payment.');
+    }
+
+    let balance = remaining;
+    let paymentNum = 2;
+    let cycle = 1;
+
+    while (balance > 0.009) {
+      const d = new Date(start);
+      d.setDate(d.getDate() + (cycle * 15));
+      const amount = roundMoney(Math.min(safeCustom, balance));
+      payments.push({
+        num: paymentNum,
+        amount,
+        dueDate: d.toISOString().split('T')[0],
+        paid: false
+      });
+      balance = roundMoney(balance - amount);
+      paymentNum += 1;
+      cycle += 1;
     }
   } else {
-    const qty = parseInt(type);
-    const amt = Math.round(total/qty);
-    for(let i=0; i<qty; i++){
-      let d = new Date(start); d.setDate(d.getDate() + i*15);
-      payments.push({num:i+1, amount:amt, dueDate:d.toISOString().split('T')[0], paid:false});
+    const safePayCount = Math.max(2, Math.min(4, Number(payCount) || 3));
+    const remainingSlots = safePayCount - 1;
+    const baseAmount = roundMoney(remaining / remainingSlots);
+    let balance = remaining;
+
+    for (let i = 1; i <= remainingSlots; i++) {
+      const d = new Date(start);
+      d.setDate(d.getDate() + (i * 15));
+      const isLast = i === remainingSlots;
+      const amount = isLast ? roundMoney(balance) : baseAmount;
+      payments.push({
+        num: i + 1,
+        amount,
+        dueDate: d.toISOString().split('T')[0],
+        paid: false
+      });
+      balance = roundMoney(balance - amount);
     }
   }
 
-  clients.push({id:Date.now(), name, total, payments});
-  localStorage.setItem('lab_clients', JSON.stringify(clients));
-  closeModal(); render();
+  return payments;
 }
 
-function render(){
-  const list = document.getElementById('clientsList');
-  list.innerHTML = clients.map(c => `
-    <div class="client-card">
-      <strong>${c.name}</strong> - $${c.total}
-      <div class="pay-schedule">${c.payments.map(p => `
-        <div class="pay-block ${p.paid?'paid':''}" onclick="togglePay(${c.id},${p.num})">
-          $${p.amount}<br/><small>${p.dueDate}</small>
-        </div>`).join('')}
-      </div>
-    </div>`).join('');
+function togglePaymentModeFields() {
+  const modeEl = document.getElementById('c_payment_mode');
+  if (!modeEl) return;
+  const isCustom = modeEl.value === 'custom';
+  document.getElementById('equalPaymentsField').style.display = isCustom ? 'none' : 'block';
+  document.getElementById('customAmountField').style.display = isCustom ? 'block' : 'none';
+}
+
+function openClientModal(clientId = null) {
+  editingClientId = clientId;
+  const isEditing = clientId !== null;
+  const client = isEditing ? clients.find(c => c.id === clientId) : null;
+
+  document.getElementById('modalTitle').textContent = isEditing ? 'Edit Client' : 'Add New Client';
+  document.getElementById('c_name').value = client?.name || '';
+  document.getElementById('c_contact').value = client?.contact || '';
+  document.getElementById('c_project').value = client?.project || '';
+  document.getElementById('c_total').value = client?.total || '';
+  document.getElementById('c_deposit').value = client?.depositAmount ?? 99;
+  document.getElementById('c_payment_mode').value = client?.paymentMode || 'equal';
+  document.getElementById('c_payments').value = String(client?.requestedPayCount || 3);
+  document.getElementById('c_custom_amount').value = client?.customAmount || '';
+  document.getElementById('c_date').value = client?.startDate || new Date().toISOString().split('T')[0];
+  togglePaymentModeFields();
+  document.getElementById('clientModal').classList.add('show');
+}
+
+function closeClientModal() {
+  document.getElementById('clientModal').classList.remove('show');
+}
+
+function saveClient() {
+  const name = document.getElementById('c_name').value.trim();
+  const contact = document.getElementById('c_contact').value.trim();
+  const project = document.getElementById('c_project').value.trim();
+  const total = roundMoney(parseFloat(document.getElementById('c_total').value));
+  const depositAmount = roundMoney(parseFloat(document.getElementById('c_deposit').value));
+  const mode = document.getElementById('c_payment_mode').value;
+  const payCount = parseInt(document.getElementById('c_payments').value, 10);
+  const customAmount = roundMoney(parseFloat(document.getElementById('c_custom_amount').value));
+  const startDate = document.getElementById('c_date').value;
+
+  if (!name || !total || !startDate) {
+    alert('Please fill in client name, project total, and start date.');
+    return;
+  }
+
+  if (Number.isNaN(total) || total <= 0) {
+    alert('Please enter a valid total project value.');
+    return;
+  }
+
+  if (Number.isNaN(depositAmount) || depositAmount < 0) {
+    alert('Please enter a valid deposit amount.');
+    return;
+  }
+
+  if (depositAmount > total) {
+    alert('Deposit amount cannot be greater than the total project value.');
+    return;
+  }
+
+  if (mode === 'custom' && (Number.isNaN(customAmount) || customAmount <= 0)) {
+    alert('Please enter a valid custom amount per payment.');
+    return;
+  }
+
+  let payments;
+  try {
+    payments = buildPaymentSchedule(total, depositAmount, mode, payCount, customAmount, startDate);
+  } catch (err) {
+    alert(err.message || 'Unable to build payment schedule.');
+    return;
+  }
+
+  const existing = editingClientId !== null ? clients.find(c => c.id === editingClientId) : null;
+  const paidMap = new Map((existing?.payments || []).map(p => [p.num, !!p.paid]));
+  payments = payments.map(p => ({ ...p, paid: paidMap.get(p.num) || false }));
+  const allPaid = payments.length > 0 && payments.every(p => p.paid);
+
+  const client = {
+    id: existing?.id || Date.now(),
+    name,
+    contact,
+    project,
+    total,
+    depositAmount,
+    paymentMode: mode,
+    requestedPayCount: mode === 'equal' ? payCount : null,
+    customAmount: mode === 'custom' ? customAmount : null,
+    startDate,
+    payments,
+    status: allPaid ? 'complete' : 'active',
+    createdAt: existing?.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (existing) {
+    const index = clients.findIndex(c => c.id === editingClientId);
+    clients[index] = client;
+  } else {
+    clients.push(client);
+  }
+
+  saveClients();
+  closeClientModal();
+  renderClients();
   updateStats();
 }
 
-function togglePay(cid, pnum){
-  const c = clients.find(x => x.id === cid);
-  const p = c.payments.find(x => x.num === pnum);
-  p.paid = !p.paid;
-  localStorage.setItem('lab_clients', JSON.stringify(clients));
-  render();
+function togglePayment(clientId, payNum) {
+  const client = clients.find(c => c.id === clientId);
+  if (!client) return;
+  const payment = client.payments.find(p => p.num === payNum);
+  if (payment) {
+    payment.paid = !payment.paid;
+    // Update status
+    const allPaid = client.payments.every(p => p.paid);
+    client.status = allPaid ? 'complete' : 'active';
+    saveClients();
+    renderClients();
+    updateStats();
+  }
 }
 
-function updateStats(){
-  let p=0, d=0, t=0;
-  clients.forEach(c => {
-    t += c.total;
-    c.payments.forEach(pay => { if(pay.paid) p += pay.amount; else d += pay.amount; });
-  });
-  document.getElementById('statActive').textContent = clients.length;
-  document.getElementById('statPaid').textContent = '$'+p;
-  document.getElementById('statDue').textContent = '$'+d;
-  document.getElementById('statPipeline').textContent = '$'+t;
+function deleteClient(clientId) {
+  if (!confirm('Delete this client? This cannot be undone.')) return;
+  clients = clients.filter(c => c.id !== clientId);
+  saveClients();
+  renderClients();
+  updateStats();
 }
+
+function getDateStatus(dueDate, paid) {
+  if (paid) return 'paid';
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const due = new Date(dueDate);
+  const diffDays = Math.floor((due - today) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return 'late';
+  if (diffDays <= 7) return 'due-soon';
+  return '';
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+}
+
+function renderClients() {
+  const list = document.getElementById('clientsList');
+  
+  if (clients.length === 0) {
+    list.innerHTML = `
+      <div class="clients-empty">
+        <div class="ce-icon">📋</div>
+        <div class="ce-title">No clients yet</div>
+        <div class="ce-sub">Add your first client to start tracking payments and projects</div>
+        <button class="add-client-btn" onclick="openClientModal()">+ Add Your First Client</button>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = clients.map(c => {
+    const paid = c.payments.filter(p => p.paid).reduce((s,p) => s + p.amount, 0);
+    const hasLate = c.payments.some(p => !p.paid && getDateStatus(p.dueDate, false) === 'late');
+    
+    let statusBadge = 'active';
+    let statusText = 'Active';
+    if (c.status === 'complete') { statusBadge = 'complete'; statusText = 'Complete'; }
+    else if (hasLate) { statusBadge = 'late'; statusText = 'Payment Late'; }
+
+    return `
+      <div class="client-card">
+        <div class="client-head">
+          <div>
+            <div class="client-name">${c.name}</div>
+            <div class="client-project">${c.project || 'No description'} · $${c.total.toLocaleString()}</div>
+          </div>
+          <span class="client-status ${statusBadge}">${statusText}</span>
+        </div>
+        
+        <div class="pay-schedule">
+          ${c.payments.map(p => {
+            const status = getDateStatus(p.dueDate, p.paid);
+            return `
+              <div class="pay-block ${status}" onclick="togglePayment(${c.id}, ${p.num})">
+                <div class="pay-num">Payment ${p.num}</div>
+                <div class="pay-amt">$${formatCurrency(p.amount)}</div>
+                <div class="pay-date">${p.paid ? 'Paid' : formatDate(p.dueDate)}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div style="font-size:12px;color:var(--tx2);margin-top:6px">
+          $${formatCurrency(paid)} of $${formatCurrency(c.total)} received
+        </div>
+
+        <div class="client-actions">
+          <button class="ca-btn" onclick="openClientModal(${c.id})">Edit</button>
+          <button class="ca-btn" onclick="viewContract(${c.id})">📄 Generate Contract</button>
+          <button class="ca-btn danger" onclick="deleteClient(${c.id})">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateStats() {
+  const active = clients.filter(c => c.status === 'active').length;
+  
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  
+  let paidThisMonth = 0;
+  let dueNext7 = 0;
+  let pipeline = 0;
+  
+  clients.forEach(c => {
+    pipeline += c.total;
+    c.payments.forEach(p => {
+      const d = new Date(p.dueDate);
+      if (p.paid && d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+        paidThisMonth += p.amount;
+      }
+      if (!p.paid) {
+        const diff = Math.floor((d - now) / (1000 * 60 * 60 * 24));
+        if (diff >= 0 && diff <= 7) dueNext7 += p.amount;
+      }
+    });
+  });
+
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statPaid').textContent = '$' + formatCurrency(paidThisMonth);
+  document.getElementById('statDue').textContent = '$' + formatCurrency(dueNext7);
+  document.getElementById('statPipeline').textContent = '$' + formatCurrency(pipeline);
+}
+
+/* ── CONTRACT GENERATION ── */
+function viewContract(clientId) {
+  const client = clients.find(c => c.id === clientId);
+  if (!client) return;
+
+  const paymentSchedule = client.payments.map(p => 
+    `  Payment ${p.num}: $${formatCurrency(p.amount)} — Due ${formatDate(p.dueDate)}`
+  ).join('\n');
+
+  const contract = `PROACTIVE DIGITAL — WEB DESIGN AGREEMENT
+
+Client: ${client.name}
+Contact: ${client.contact || '[Contact Name]'}
+Project: ${client.project || 'Web Design Project'}
+Total Investment: $${formatCurrency(client.total)}
+Agreement Date: ${formatDate(client.createdAt.split('T')[0])}
+
+═══════════════════════════════════════════════
+
+SCOPE OF WORK
+Proactive Digital will design and develop a custom website for the Client as outlined above. This includes design, development, mobile responsiveness, and deployment to the Client's domain.
+
+PAYMENT SCHEDULE
+Total Project Cost: $${formatCurrency(client.total)}
+
+${paymentSchedule}
+
+Payments will be processed automatically via Stripe on the scheduled dates. Client authorizes Proactive Digital to set up automatic payments on their payment method of record.
+
+TERMS & CONDITIONS
+
+1. PROJECT COMMENCEMENT
+Work begins upon receipt of the initial payment of $${formatCurrency(client.payments[0].amount)}. This payment reserves the Client's build slot and covers initial setup and mock-up development.
+
+2. PAYMENT TERMS
+Client agrees to automatic payments on the schedule above. If any payment fails or is declined, work on the project will be paused until the payment is resolved. Failed payments will be automatically retried by Stripe within 48 hours.
+
+3. DEPLOYMENT & DELIVERY
+The completed website will be deployed to the Client's domain upon receipt of the final scheduled payment. Proactive Digital reserves the right to hold deployment until all outstanding payments are received.
+
+4. MOCK-UP APPROVAL
+Client will receive a free initial mock-up for review. Upon approval, development begins. If Client does not approve the initial mock-up, they may cancel with a full refund of the initial payment (minus any third-party costs such as domain registration).
+
+5. REVISIONS
+The project includes up to two rounds of revisions. Additional revisions may be billed at an hourly rate.
+
+6. OWNERSHIP
+Upon final payment, all rights to the completed website, including code, design, and content, transfer to the Client. The Client owns their domain, hosting account, and all assets.
+
+7. POST-LAUNCH SUPPORT
+Proactive Digital will provide 30 days of free minor edits and fixes following launch. After 30 days, updates may be billed separately or covered by a monthly support plan.
+
+8. CANCELLATION
+Either party may cancel this agreement in writing. Cancellation by the Client after the mock-up has been approved forfeits all payments made to date. No refunds on completed work.
+
+9. COMMUNICATION
+Primary communication will occur via email and text. Client agrees to respond to project-related communications within 48 hours.
+
+═══════════════════════════════════════════════
+
+By returning this agreement signed, or by making the initial payment, Client acknowledges acceptance of these terms.
+
+Client Signature: _______________________________
+Date: _______________
+
+Todd Blackwell Jr.
+Founder | Proactive Digital
+hello@getproactivedigital.com
+getproactivedigital.com`;
+
+  document.getElementById('contractText').textContent = contract;
+  document.getElementById('contractModal').classList.add('show');
+}
+
+function closeContractModal() {
+  document.getElementById('contractModal').classList.remove('show');
+}
+
+function copyContract() {
+  const text = document.getElementById('contractText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   SAVED ARTICLES
+   ══════════════════════════════════════════════ */
+let savedArticles = JSON.parse(localStorage.getItem('lab_saved_articles') || '[]');
+
+function toggleSaveArticle(articleJson, btn) {
+  event.stopPropagation();
+  const article = JSON.parse(articleJson);
+  const existingIdx = savedArticles.findIndex(a => a.link === article.link);
+  
+  if (existingIdx >= 0) {
+    savedArticles.splice(existingIdx, 1);
+    btn.classList.remove('saved');
+  } else {
+    savedArticles.push(article);
+    btn.classList.add('saved');
+  }
+  localStorage.setItem('lab_saved_articles', JSON.stringify(savedArticles));
+}
+
+function isArticleSaved(link) {
+  return savedArticles.some(a => a.link === link);
+}
+
+
+function showSavedArticles(el) {
+  currentCat = 'saved';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderNews(savedArticles);
+}
+
 </script>
 </body>
 </html>
