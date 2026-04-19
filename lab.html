@@ -454,6 +454,180 @@ button{font-family:var(--fb);border:none;cursor:pointer}
   border-radius:100px;padding:4px 12px;
   font-size:11px;font-weight:600;color:var(--teal);
 }
+
+/* ── CLIENTS TAB ── */
+#clients-panel{display:none}
+#clients-panel.active{display:block}
+
+/* Dashboard stats */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;
+}
+.stat-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:12px;padding:18px 20px;
+  transition:all .2s;
+}
+.stat-card:hover{border-color:var(--bdr2)}
+.stat-label{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-family:var(--fh);font-weight:600;font-size:28px;letter-spacing:-1px;color:var(--tx)}
+.stat-value.green{color:#4ADE80}
+.stat-value.orange{color:#FB923C}
+.stat-value.blue{color:var(--teal)}
+
+/* Add Client Button */
+.clients-toolbar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:20px;flex-wrap:wrap;gap:10px;
+}
+.clients-section-title{
+  font-family:var(--fh);font-weight:600;font-size:18px;letter-spacing:-.3px;
+}
+.add-client-btn{
+  background:var(--grad);color:#fff;border:none;
+  border-radius:9px;padding:10px 20px;font-weight:600;
+  font-size:13px;cursor:pointer;transition:all .2s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.add-client-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,191,199,.25)}
+
+/* Client Cards */
+.clients-grid{display:grid;gap:12px}
+.client-card{
+  background:var(--surf);border:1px solid var(--bdr);
+  border-radius:14px;padding:22px;
+  transition:all .2s;position:relative;
+}
+.client-card:hover{border-color:var(--bdr2);transform:translateY(-2px)}
+.client-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:10px;margin-bottom:14px;flex-wrap:wrap;
+}
+.client-name{font-family:var(--fh);font-weight:600;font-size:17px;color:var(--tx)}
+.client-project{font-size:13px;color:var(--tx2);margin-top:3px}
+.client-status{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 11px;border-radius:100px;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  white-space:nowrap;
+}
+.client-status.active{background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25)}
+.client-status.pending{background:rgba(251,146,60,.12);color:#FB923C;border:1px solid rgba(251,146,60,.25)}
+.client-status.complete{background:rgba(107,122,153,.12);color:var(--tx2);border:1px solid var(--bdr2)}
+.client-status.late{background:rgba(248,113,113,.12);color:#F87171;border:1px solid rgba(248,113,113,.25)}
+
+/* Payment Schedule */
+.pay-schedule{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));
+  gap:8px;margin:14px 0;
+}
+.pay-block{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:8px;padding:10px 12px;
+  display:flex;flex-direction:column;gap:3px;
+  cursor:pointer;transition:all .2s;
+}
+.pay-block:hover{border-color:var(--bdr2)}
+.pay-block.paid{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25)}
+.pay-block.due-soon{background:rgba(251,146,60,.08);border-color:rgba(251,146,60,.3)}
+.pay-block.late{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.3)}
+.pay-num{font-size:10px;color:var(--tx2);font-weight:600;letter-spacing:.5px}
+.pay-amt{font-family:var(--fh);font-weight:600;font-size:15px}
+.pay-date{font-size:10px;color:var(--tx2);margin-top:1px}
+.pay-block.paid .pay-amt::after{content:' ✓';color:#4ADE80;font-size:13px}
+
+/* Client actions */
+.client-actions{
+  display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;
+  padding-top:12px;border-top:1px solid var(--bdr);
+}
+.ca-btn{
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:7px;padding:6px 12px;
+  font-size:11px;font-weight:600;color:var(--tx2);cursor:pointer;
+  transition:all .2s;
+}
+.ca-btn:hover{border-color:var(--teal);color:var(--teal)}
+.ca-btn.danger:hover{border-color:#F87171;color:#F87171}
+
+/* Empty state */
+.clients-empty{
+  text-align:center;padding:60px 20px;
+  background:var(--surf);border:1.5px dashed var(--bdr2);
+  border-radius:14px;
+}
+.ce-icon{font-size:42px;margin-bottom:12px;opacity:.5}
+.ce-title{font-family:var(--fh);font-weight:600;font-size:18px;margin-bottom:6px}
+.ce-sub{color:var(--tx2);font-size:13px;margin-bottom:20px}
+
+/* Modal */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.show{display:flex}
+.modal{
+  background:var(--surf);border:1px solid var(--bdr2);
+  border-radius:16px;padding:32px;
+  max-width:480px;width:100%;max-height:90vh;overflow-y:auto;
+  animation:modalIn .3s var(--ease);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.modal-title{
+  font-family:var(--fh);font-weight:600;font-size:20px;
+  letter-spacing:-.5px;margin-bottom:6px;
+}
+.modal-sub{color:var(--tx2);font-size:13px;margin-bottom:22px}
+.modal-field{margin-bottom:14px}
+.modal-label{
+  display:block;font-size:11px;font-weight:700;color:var(--tx2);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;
+}
+.modal-input,.modal-select{
+  width:100%;background:var(--bg2);border:1.5px solid var(--bdr2);
+  border-radius:9px;padding:11px 14px;
+  color:var(--tx);font-family:var(--fb);font-size:14px;
+  outline:none;transition:border-color .2s;
+}
+.modal-input:focus,.modal-select:focus{border-color:var(--teal)}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.modal-btn{
+  flex:1;padding:12px;border-radius:9px;
+  font-weight:600;font-size:13px;cursor:pointer;
+  transition:all .2s;border:none;
+}
+.modal-btn.primary{background:var(--grad);color:#fff}
+.modal-btn.primary:hover{opacity:.9}
+.modal-btn.secondary{background:var(--bg2);border:1px solid var(--bdr2);color:var(--tx2)}
+.modal-btn.secondary:hover{color:var(--tx);border-color:var(--bdr2)}
+
+/* Contract output */
+.contract-box{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:9px;padding:16px;
+  font-size:12px;line-height:1.7;color:var(--tx);
+  max-height:300px;overflow-y:auto;
+  font-family:monospace;white-space:pre-wrap;
+}
+
+@media(max-width:700px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── SAVED ARTICLES ── */
+.save-btn{
+  position:absolute;top:10px;right:10px;
+  background:var(--bg2);border:1px solid var(--bdr2);
+  border-radius:50%;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;z-index:2;
+}
+.save-btn:hover{background:rgba(0,191,199,.1);border-color:var(--teal)}
+.save-btn.saved{background:var(--teal);border-color:var(--teal)}
+.save-btn.saved svg{fill:#fff;stroke:#fff}
+.news-card{position:relative}
+
 </style>
 </head>
 <body>
@@ -517,6 +691,7 @@ button{font-family:var(--fb);border:none;cursor:pointer}
       <button class="tab-btn active" onclick="switchTab('news',this)">News Feed</button>
       <button class="tab-btn" onclick="switchTab('chat',this)">AI Assistant</button>
       <button class="tab-btn" onclick="switchTab('notes',this)">Notes</button>
+      <button class="tab-btn" onclick="switchTab('clients',this)">Clients</button>
     </div>
 
     <!-- NEWS PANEL -->
@@ -527,6 +702,7 @@ button{font-family:var(--fb);border:none;cursor:pointer}
       <button class="cat-btn" onclick="filterCat('tech',this)">Tech</button>
       <button class="cat-btn" onclick="filterCat('business',this)">Business</button>
       <button class="cat-btn" onclick="filterCat('startups',this)">Startups</button>
+      <button class="cat-btn" onclick="showSavedArticles(this)" style="background:rgba(0,191,199,.08);border-color:rgba(0,191,199,.3);color:var(--teal)">★ Saved</button>
     </div>
 
     <div class="news-toolbar">
@@ -622,6 +798,99 @@ Your notes are automatically shared with the AI Assistant as context."
           <span>✦</span> Notes are shared with AI Assistant automatically
         </div>
         <span id="notesWordCount">0 words</span>
+      </div>
+    </div>
+
+
+    <!-- CLIENTS PANEL -->
+    <div id="clients-panel">
+      <!-- Stats Dashboard -->
+      <div class="stats-row" id="clientStats">
+        <div class="stat-card">
+          <div class="stat-label">Active Clients</div>
+          <div class="stat-value blue" id="statActive">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Paid This Month</div>
+          <div class="stat-value green" id="statPaid">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Due Next 7 Days</div>
+          <div class="stat-value orange" id="statDue">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Pipeline</div>
+          <div class="stat-value" id="statPipeline">$0</div>
+        </div>
+      </div>
+
+      <div class="clients-toolbar">
+        <div class="clients-section-title">Client Projects</div>
+        <button class="add-client-btn" onclick="openClientModal()">+ Add New Client</button>
+      </div>
+
+      <div id="clientsList" class="clients-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+
+    <!-- Add Client Modal -->
+    <div class="modal-overlay" id="clientModal">
+      <div class="modal">
+        <div class="modal-title" id="modalTitle">Add New Client</div>
+        <div class="modal-sub">Set up a new project with a custom payment plan</div>
+
+        <div class="modal-field">
+          <label class="modal-label">Client / Business Name</label>
+          <input type="text" class="modal-input" id="c_name" placeholder="SLP Masonry LLC"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Contact Name</label>
+          <input type="text" class="modal-input" id="c_contact" placeholder="John Smith"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Project Description</label>
+          <input type="text" class="modal-input" id="c_project" placeholder="Commercial masonry website"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Total Project Value ($)</label>
+          <input type="number" class="modal-input" id="c_total" placeholder="1200"/>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Number of Payments</label>
+          <select class="modal-select" id="c_payments">
+            <option value="2">2 payments</option>
+            <option value="3" selected>3 payments</option>
+            <option value="4">4 payments</option>
+          </select>
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">Start Date</label>
+          <input type="date" class="modal-input" id="c_date"/>
+        </div>
+
+        <div class="modal-actions">
+          <button class="modal-btn secondary" onclick="closeClientModal()">Cancel</button>
+          <button class="modal-btn primary" onclick="saveClient()">Create Project</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contract Modal -->
+    <div class="modal-overlay" id="contractModal">
+      <div class="modal" style="max-width:600px">
+        <div class="modal-title">Client Agreement</div>
+        <div class="modal-sub">Copy this and send to your client via email</div>
+        <div class="contract-box" id="contractText"></div>
+        <div class="modal-actions">
+          <button class="modal-btn secondary" onclick="closeContractModal()">Close</button>
+          <button class="modal-btn primary" onclick="copyContract()">Copy to Clipboard</button>
+        </div>
       </div>
     </div>
 
@@ -784,8 +1053,14 @@ function renderNews(articles) {
 
   document.getElementById('newsCount').textContent = `${articles.length} stories`;
 
-  grid.innerHTML = articles.map((a, i) => `
+  grid.innerHTML = articles.map((a, i) => {
+    const saved = isArticleSaved(a.link);
+    const articleJson = JSON.stringify(a).replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+    return `
     <div class="news-card${i===0?' featured':''}" onclick="window.open('${a.link}','_blank')">
+      <button class="save-btn${saved ? ' saved' : ''}" onclick="toggleSaveArticle('${articleJson}', this)" title="Save for later">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      </button>
       <div class="news-card-top">
         <span class="news-source-badge">${a.source}</span>
         <span class="news-time">${a.pubDate ? timeAgo(a.pubDate) : ''}</span>
@@ -797,7 +1072,7 @@ function renderNews(articles) {
         <span class="news-link">Read more →</span>
       </div>
     </div>
-  `).join('');
+  `;}).join('');
 }
 
 /* ── INIT ── */
@@ -821,6 +1096,7 @@ function switchTab(tab, el) {
   document.getElementById('news-panel').classList.add('hidden');
   document.getElementById('chat-panel').classList.remove('active');
   document.getElementById('notes-panel').classList.remove('active');
+  document.getElementById('clients-panel').classList.remove('active');
   if (tab === 'news') {
     document.getElementById('news-panel').classList.remove('hidden');
   } else if (tab === 'chat') {
@@ -828,6 +1104,10 @@ function switchTab(tab, el) {
     checkApiKey();
   } else if (tab === 'notes') {
     document.getElementById('notes-panel').classList.add('active');
+  } else if (tab === 'clients') {
+    document.getElementById('clients-panel').classList.add('active');
+    renderClients();
+    updateStats();
   }
 }
 
@@ -1030,6 +1310,340 @@ function getNotes() {
 
 // Override initDashboard to also init notes
 const _origInit = initDashboard;
+
+
+/* ══════════════════════════════════════════════
+   CLIENT MANAGEMENT SYSTEM
+   ══════════════════════════════════════════════ */
+let clients = JSON.parse(localStorage.getItem('lab_clients') || '[]');
+let editingClientId = null;
+
+function saveClients() {
+  localStorage.setItem('lab_clients', JSON.stringify(clients));
+}
+
+function openClientModal() {
+  editingClientId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Client';
+  document.getElementById('c_name').value = '';
+  document.getElementById('c_contact').value = '';
+  document.getElementById('c_project').value = '';
+  document.getElementById('c_total').value = '';
+  document.getElementById('c_payments').value = '3';
+  document.getElementById('c_date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('clientModal').classList.add('show');
+}
+
+function closeClientModal() {
+  document.getElementById('clientModal').classList.remove('show');
+}
+
+function saveClient() {
+  const name = document.getElementById('c_name').value.trim();
+  const contact = document.getElementById('c_contact').value.trim();
+  const project = document.getElementById('c_project').value.trim();
+  const total = parseFloat(document.getElementById('c_total').value);
+  const payCount = parseInt(document.getElementById('c_payments').value);
+  const startDate = document.getElementById('c_date').value;
+
+  if (!name || !total || !startDate) {
+    alert('Please fill in client name, project total, and start date.');
+    return;
+  }
+
+  // Calculate payment schedule
+  const firstPayment = 99;
+  const remaining = total - firstPayment;
+  const perRemainingPayment = remaining / (payCount - 1);
+  
+  const payments = [];
+  const start = new Date(startDate);
+  
+  // First payment due today
+  payments.push({
+    num: 1,
+    amount: Math.round(firstPayment),
+    dueDate: startDate,
+    paid: false
+  });
+
+  // Remaining payments every 15 days
+  for (let i = 1; i < payCount; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + (i * 15));
+    payments.push({
+      num: i + 1,
+      amount: Math.round(perRemainingPayment),
+      dueDate: d.toISOString().split('T')[0],
+      paid: false
+    });
+  }
+
+  const client = {
+    id: Date.now(),
+    name: name,
+    contact: contact,
+    project: project,
+    total: total,
+    payments: payments,
+    status: 'active',
+    createdAt: new Date().toISOString()
+  };
+
+  clients.push(client);
+  saveClients();
+  closeClientModal();
+  renderClients();
+  updateStats();
+}
+
+function togglePayment(clientId, payNum) {
+  const client = clients.find(c => c.id === clientId);
+  if (!client) return;
+  const payment = client.payments.find(p => p.num === payNum);
+  if (payment) {
+    payment.paid = !payment.paid;
+    // Update status
+    const allPaid = client.payments.every(p => p.paid);
+    client.status = allPaid ? 'complete' : 'active';
+    saveClients();
+    renderClients();
+    updateStats();
+  }
+}
+
+function deleteClient(clientId) {
+  if (!confirm('Delete this client? This cannot be undone.')) return;
+  clients = clients.filter(c => c.id !== clientId);
+  saveClients();
+  renderClients();
+  updateStats();
+}
+
+function getDateStatus(dueDate, paid) {
+  if (paid) return 'paid';
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const due = new Date(dueDate);
+  const diffDays = Math.floor((due - today) / (1000 * 60 * 60 * 24));
+  if (diffDays < 0) return 'late';
+  if (diffDays <= 7) return 'due-soon';
+  return '';
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+}
+
+function renderClients() {
+  const list = document.getElementById('clientsList');
+  
+  if (clients.length === 0) {
+    list.innerHTML = `
+      <div class="clients-empty">
+        <div class="ce-icon">📋</div>
+        <div class="ce-title">No clients yet</div>
+        <div class="ce-sub">Add your first client to start tracking payments and projects</div>
+        <button class="add-client-btn" onclick="openClientModal()">+ Add Your First Client</button>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = clients.map(c => {
+    const paid = c.payments.filter(p => p.paid).reduce((s,p) => s + p.amount, 0);
+    const hasLate = c.payments.some(p => !p.paid && getDateStatus(p.dueDate, false) === 'late');
+    
+    let statusBadge = 'active';
+    let statusText = 'Active';
+    if (c.status === 'complete') { statusBadge = 'complete'; statusText = 'Complete'; }
+    else if (hasLate) { statusBadge = 'late'; statusText = 'Payment Late'; }
+
+    return `
+      <div class="client-card">
+        <div class="client-head">
+          <div>
+            <div class="client-name">${c.name}</div>
+            <div class="client-project">${c.project || 'No description'} · $${c.total.toLocaleString()}</div>
+          </div>
+          <span class="client-status ${statusBadge}">${statusText}</span>
+        </div>
+        
+        <div class="pay-schedule">
+          ${c.payments.map(p => {
+            const status = getDateStatus(p.dueDate, p.paid);
+            return `
+              <div class="pay-block ${status}" onclick="togglePayment(${c.id}, ${p.num})">
+                <div class="pay-num">Payment ${p.num}</div>
+                <div class="pay-amt">$${p.amount}</div>
+                <div class="pay-date">${p.paid ? 'Paid' : formatDate(p.dueDate)}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div style="font-size:12px;color:var(--tx2);margin-top:6px">
+          $${paid.toLocaleString()} of $${c.total.toLocaleString()} received
+        </div>
+
+        <div class="client-actions">
+          <button class="ca-btn" onclick="viewContract(${c.id})">📄 Generate Contract</button>
+          <button class="ca-btn danger" onclick="deleteClient(${c.id})">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateStats() {
+  const active = clients.filter(c => c.status === 'active').length;
+  
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  
+  let paidThisMonth = 0;
+  let dueNext7 = 0;
+  let pipeline = 0;
+  
+  clients.forEach(c => {
+    pipeline += c.total;
+    c.payments.forEach(p => {
+      const d = new Date(p.dueDate);
+      if (p.paid && d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+        paidThisMonth += p.amount;
+      }
+      if (!p.paid) {
+        const diff = Math.floor((d - now) / (1000 * 60 * 60 * 24));
+        if (diff >= 0 && diff <= 7) dueNext7 += p.amount;
+      }
+    });
+  });
+
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statPaid').textContent = '$' + paidThisMonth.toLocaleString();
+  document.getElementById('statDue').textContent = '$' + dueNext7.toLocaleString();
+  document.getElementById('statPipeline').textContent = '$' + pipeline.toLocaleString();
+}
+
+/* ── CONTRACT GENERATION ── */
+function viewContract(clientId) {
+  const client = clients.find(c => c.id === clientId);
+  if (!client) return;
+
+  const paymentSchedule = client.payments.map(p => 
+    `  Payment ${p.num}: $${p.amount} — Due ${formatDate(p.dueDate)}`
+  ).join('\n');
+
+  const contract = `PROACTIVE DIGITAL — WEB DESIGN AGREEMENT
+
+Client: ${client.name}
+Contact: ${client.contact || '[Contact Name]'}
+Project: ${client.project || 'Web Design Project'}
+Total Investment: $${client.total.toLocaleString()}
+Agreement Date: ${formatDate(client.createdAt.split('T')[0])}
+
+═══════════════════════════════════════════════
+
+SCOPE OF WORK
+Proactive Digital will design and develop a custom website for the Client as outlined above. This includes design, development, mobile responsiveness, and deployment to the Client's domain.
+
+PAYMENT SCHEDULE
+Total Project Cost: $${client.total.toLocaleString()}
+
+${paymentSchedule}
+
+Payments will be processed automatically via Stripe on the scheduled dates. Client authorizes Proactive Digital to set up automatic payments on their payment method of record.
+
+TERMS & CONDITIONS
+
+1. PROJECT COMMENCEMENT
+Work begins upon receipt of the initial payment of $${client.payments[0].amount}. This payment reserves the Client's build slot and covers initial setup and mock-up development.
+
+2. PAYMENT TERMS
+Client agrees to automatic payments on the schedule above. If any payment fails or is declined, work on the project will be paused until the payment is resolved. Failed payments will be automatically retried by Stripe within 48 hours.
+
+3. DEPLOYMENT & DELIVERY
+The completed website will be deployed to the Client's domain upon receipt of the final scheduled payment. Proactive Digital reserves the right to hold deployment until all outstanding payments are received.
+
+4. MOCK-UP APPROVAL
+Client will receive a free initial mock-up for review. Upon approval, development begins. If Client does not approve the initial mock-up, they may cancel with a full refund of the initial payment (minus any third-party costs such as domain registration).
+
+5. REVISIONS
+The project includes up to two rounds of revisions. Additional revisions may be billed at an hourly rate.
+
+6. OWNERSHIP
+Upon final payment, all rights to the completed website, including code, design, and content, transfer to the Client. The Client owns their domain, hosting account, and all assets.
+
+7. POST-LAUNCH SUPPORT
+Proactive Digital will provide 30 days of free minor edits and fixes following launch. After 30 days, updates may be billed separately or covered by a monthly support plan.
+
+8. CANCELLATION
+Either party may cancel this agreement in writing. Cancellation by the Client after the mock-up has been approved forfeits all payments made to date. No refunds on completed work.
+
+9. COMMUNICATION
+Primary communication will occur via email and text. Client agrees to respond to project-related communications within 48 hours.
+
+═══════════════════════════════════════════════
+
+By returning this agreement signed, or by making the initial payment, Client acknowledges acceptance of these terms.
+
+Client Signature: _______________________________
+Date: _______________
+
+Todd Blackwell Jr.
+Founder | Proactive Digital
+hello@getproactivedigital.com
+getproactivedigital.com`;
+
+  document.getElementById('contractText').textContent = contract;
+  document.getElementById('contractModal').classList.add('show');
+}
+
+function closeContractModal() {
+  document.getElementById('contractModal').classList.remove('show');
+}
+
+function copyContract() {
+  const text = document.getElementById('contractText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to Clipboard', 2000);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   SAVED ARTICLES
+   ══════════════════════════════════════════════ */
+let savedArticles = JSON.parse(localStorage.getItem('lab_saved_articles') || '[]');
+
+function toggleSaveArticle(articleJson, btn) {
+  event.stopPropagation();
+  const article = JSON.parse(articleJson);
+  const existingIdx = savedArticles.findIndex(a => a.link === article.link);
+  
+  if (existingIdx >= 0) {
+    savedArticles.splice(existingIdx, 1);
+    btn.classList.remove('saved');
+  } else {
+    savedArticles.push(article);
+    btn.classList.add('saved');
+  }
+  localStorage.setItem('lab_saved_articles', JSON.stringify(savedArticles));
+}
+
+function isArticleSaved(link) {
+  return savedArticles.some(a => a.link === link);
+}
+
+
+function showSavedArticles(el) {
+  currentCat = 'saved';
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderNews(savedArticles);
+}
 
 </script>
 </body>
