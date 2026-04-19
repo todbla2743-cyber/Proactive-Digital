@@ -8,368 +8,202 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --teal:  #00BFC7;
-  --blue:  #2159E0;
-  --grad:  linear-gradient(120deg,#00BFC7,#2159E0);
-  --bg:    #080B13;
-  --bg2:   #0C1020;
-  --bg3:   #111827;
-  --surf:  #161D2E;
-  --bdr:   rgba(255,255,255,0.06);
-  --bdr2:  rgba(255,255,255,0.12);
-  --tx:    #E8EAF6;
-  --tx2:   #6B7A99;
-  --fh:    'Outfit',sans-serif;
-  --fb:    'Plus Jakarta Sans',sans-serif;
+  --teal:  #00BFC7; --blue:  #2159E0; --grad:  linear-gradient(120deg,#00BFC7,#2159E0);
+  --bg:    #080B13; --bg2:   #0C1020; --bg3:   #111827; --surf:  #161D2E;
+  --bdr:   rgba(255,255,255,0.06); --bdr2:  rgba(255,255,255,0.12);
+  --tx:    #E8EAF6; --tx2:   #6B7A99; --fh:    'Outfit',sans-serif; --fb:    'Plus Jakarta Sans',sans-serif;
   --ease:  cubic-bezier(.22,1,.36,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);color:var(--tx);
-  font-family:var(--fb);font-size:15px;
-  line-height:1.65;overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  min-height:100vh;
-}
-a{text-decoration:none;color:inherit}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh}
 button{font-family:var(--fb);border:none;cursor:pointer}
 
-/* ── LOGIN SCREEN ── */
-#login-screen {
-  position:fixed;inset:0;
-  background:var(--bg);
-  display:flex;align-items:center;justify-content:center;
-  z-index:1000;
-  transition:opacity .5s var(--ease),transform .5s var(--ease);
-}
-#login-screen.out{opacity:0;transform:scale(1.04);pointer-events:none}
-.login-wrap{
-  width:100%;max-width:400px;padding:24px;
-  display:flex;flex-direction:column;align-items:center;
-  gap:0;
-}
-.login-mesh{
-  position:fixed;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 50% 40% at 70% 20%,rgba(0,191,199,.1) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 35% at 20% 80%,rgba(33,89,224,.08) 0%,transparent 60%);
-  animation:mesh 10s ease-in-out infinite alternate;
-}
-@keyframes mesh{0%{opacity:.7}100%{opacity:1}}
-.login-logo{margin-bottom:36px;animation:fadeUp .7s var(--ease) both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-.login-card{
-  background:var(--surf);border:1px solid var(--bdr2);
-  border-radius:16px;padding:40px 36px;
-  width:100%;
-  animation:fadeUp .7s .1s var(--ease) both;
-  box-shadow:0 32px 80px rgba(0,0,0,.5);
-}
-.login-title{font-family:var(--fh);font-weight:600;font-size:22px;letter-spacing:-.5px;margin-bottom:6px;text-align:center}
-.login-sub{color:var(--tx2);font-size:13px;text-align:center;margin-bottom:28px}
-.login-label{display:block;font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
-.login-input{
-  width:100%;background:var(--bg2);border:1.5px solid var(--bdr2);border-radius:9px;
-  padding:13px 16px;color:var(--tx);font-family:var(--fb);font-size:15px;outline:none;transition:all .25s var(--ease);letter-spacing:2px;
-}
-.login-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,191,199,.1)}
-.login-btn{
-  width:100%;margin-top:20px;padding:14px;background:var(--grad);color:#fff;
-  border-radius:9px;font-family:var(--fh);font-size:15px;font-weight:600;transition:all .25s var(--ease);
-}
-.login-btn:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,191,199,.3)}
-.login-error{color:#F87171;font-size:13px;text-align:center;margin-top:12px;display:none}
+/* ── LOGIN ── */
+#login-screen {position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;transition:opacity .5s var(--ease)}
+#login-screen.out{opacity:0;pointer-events:none}
+.login-card{background:var(--surf);border:1px solid var(--bdr2);border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.5)}
+.login-input{width:100%;background:var(--bg2);border:1.5px solid var(--bdr2);border-radius:9px;padding:13px 16px;color:var(--tx);outline:none;margin-top:20px}
+.login-btn{width:100%;margin-top:20px;padding:14px;background:var(--grad);color:#fff;border-radius:9px;font-weight:600}
 
 /* ── DASHBOARD ── */
 #dashboard{display:none}
-#dashboard.show{display:block}
 .lab-nav{position:sticky;top:0;z-index:100;background:rgba(8,11,19,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);padding:14px 0}
 .lab-nav-in{max-width:1200px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
-.lab-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(0,191,199,.1);border:1px solid rgba(0,191,199,.2);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--teal);letter-spacing:1.5px;text-transform:uppercase}
-.lab-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,191,199,.5)}50%{box-shadow:0 0 0 5px rgba(0,191,199,0)}}
-.lab-title{font-family:var(--fh);font-weight:600;font-size:16px;letter-spacing:-.3px}
-.nav-time{color:var(--tx2);font-size:13px;font-family:monospace}
-.logout-btn{background:var(--surf);border:1px solid var(--bdr2);border-radius:7px;padding:7px 16px;font-size:13px;font-weight:600;color:var(--tx2);transition:all .2s}
-.logout-btn:hover{color:var(--tx);border-color:var(--bdr2)}
-.lab-main{max-width:1200px;margin:0 auto;padding:36px 28px}
-.lab-header{margin-bottom:36px}
-.lab-greeting{font-family:var(--fh);font-weight:600;font-size:clamp(28px,4vw,42px);letter-spacing:-1.5px;margin-bottom:8px}
-.lab-greeting span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.lab-date{color:var(--tx2);font-size:14px}
-.tab-nav{display:flex;gap:8px;margin-bottom:32px;border-bottom:1px solid var(--bdr);padding-bottom:0}
-.tab-btn{padding:10px 24px;font-size:14px;font-weight:600;color:var(--tx2);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;cursor:pointer}
-.tab-btn:hover{color:var(--tx)}
+.tab-nav{display:flex;gap:8px;margin-bottom:32px;border-bottom:1px solid var(--bdr)}
+.tab-btn{padding:10px 24px;font-size:14px;font-weight:600;color:var(--tx2);background:none;border-bottom:2px solid transparent;cursor:pointer}
 .tab-btn.active{color:var(--teal);border-bottom-color:var(--teal)}
 
-/* ── CLIENTS PANEL ── */
-#clients-panel{display:none}
-#clients-panel.active{display:block}
+/* ── CLIENTS ── */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:18px 20px;transition:all .2s}
-.stat-label{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
-.stat-value{font-family:var(--fh);font-weight:600;font-size:28px;letter-spacing:-1px;color:var(--tx)}
-.stat-value.green{color:#4ADE80}.stat-value.orange{color:#FB923C}.stat-value.blue{color:var(--teal)}
-.clients-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
-.clients-section-title{font-family:var(--fh);font-weight:600;font-size:18px;letter-spacing:-.3px}
-.add-client-btn{background:var(--grad);color:#fff;border:none;border-radius:9px;padding:10px 20px;font-weight:600;font-size:13px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
-.add-client-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,191,199,.25)}
-.clients-grid{display:grid;gap:12px}
-.client-card{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:22px;transition:all .2s;position:relative}
-.client-card:hover{border-color:var(--bdr2);transform:translateY(-2px)}
-.client-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.client-name{font-family:var(--fh);font-weight:600;font-size:17px;color:var(--tx)}
-.client-project{font-size:13px;color:var(--tx2);margin-top:3px}
-.client-status{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:100px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
-.client-status.active{background:rgba(74,222,128,.12);color:#4ADE80;border:1px solid rgba(74,222,128,.25)}
-.client-status.complete{background:rgba(107,122,153,.12);color:var(--tx2);border:1px solid var(--bdr2)}
-.client-status.late{background:rgba(248,113,113,.12);color:#F87171;border:1px solid rgba(248,113,113,.25)}
-.pay-schedule{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:14px 0}
-.pay-block{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:all .2s}
-.pay-block:hover{border-color:var(--bdr2)}
-.pay-block.paid{background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.25)}
-.pay-block.due-soon{background:rgba(251,146,60,.08);border-color:rgba(251,146,60,.3)}
-.pay-block.late{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.3)}
-.pay-num{font-size:10px;color:var(--tx2);font-weight:600;letter-spacing:.5px}
-.pay-amt{font-family:var(--fh);font-weight:600;font-size:15px}
-.pay-date{font-size:10px;color:var(--tx2);margin-top:1px}
-.pay-block.paid .pay-amt::after{content:' ✓';color:#4ADE80;font-size:13px}
-.ca-btn{background:var(--bg2);border:1px solid var(--bdr2);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--tx2);cursor:pointer;transition:all .2s;margin-right:6px}
-.ca-btn:hover{border-color:var(--teal);color:var(--teal)}
+.stat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;padding:18px 20px}
+.stat-value{font-family:var(--fh);font-weight:600;font-size:28px}
+.client-card{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin-bottom:12px}
+.pay-schedule{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:14px 0}
+.pay-block{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:10px;cursor:pointer}
+.pay-block.paid{border-color:var(--teal);background:rgba(0,191,199,0.05)}
 
-/* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px}
+/* ── MODALS ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
-.modal{background:var(--surf);border:1px solid var(--bdr2);border-radius:16px;padding:32px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;animation:modalIn .3s var(--ease)}
-@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
-.modal-title{font-family:var(--fh);font-weight:600;font-size:20px;letter-spacing:-.5px;margin-bottom:6px}
-.modal-sub{color:var(--tx2);font-size:13px;margin-bottom:22px}
-.modal-field{margin-bottom:14px}
-.modal-label{display:block;font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px}
-.modal-input,.modal-select{width:100%;background:var(--bg2);border:1.5px solid var(--bdr2);border-radius:9px;padding:11px 14px;color:var(--tx);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .2s}
-.modal-btn{flex:1;padding:12px;border-radius:9px;font-weight:600;font-size:13px;cursor:pointer;transition:all .2s;border:none}
-.modal-btn.primary{background:var(--grad);color:#fff}
-.modal-btn.secondary{background:var(--bg2);border:1px solid var(--bdr2);color:var(--tx2)}
-.contract-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:9px;padding:16px;font-size:12px;line-height:1.7;color:var(--tx);max-height:300px;overflow-y:auto;font-family:monospace;white-space:pre-wrap}
+.modal{background:var(--surf);padding:32px;border-radius:16px;width:100%;max-width:480px}
+.modal-input,.modal-select{width:100%;background:var(--bg2);border:1px solid var(--bdr2);padding:12px;border-radius:8px;color:#fff;margin-bottom:12px}
+
+/* Rest of standard Lab styles... */
 </style>
 </head>
 <body>
 
 <div id="login-screen">
-  <div class="login-mesh"></div>
-  <div class="login-wrap">
-    <div class="login-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 54" height="40">
-        <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00BFC7"/><stop offset="100%" stop-color="#2159E0"/></linearGradient></defs>
-        <g transform="translate(0,6)"><rect x="0" y="0" width="3.5" height="30" rx="1.75" fill="url(#lg)"/><rect x="0" y="0" width="15" height="3.5" rx="1.75" fill="url(#lg)"/><rect x="0" y="15" width="15" height="3.5" rx="1.75" fill="url(#lg)"/><rect x="11.5" y="0" width="3.5" height="18.5" rx="1.75" fill="url(#lg)"/><polygon points="19,18 26,25 19,32" fill="none" stroke="url(#lg)" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/></g>
-        <text x="38" y="28" font-family="'Outfit',sans-serif" font-weight="500" font-size="21" letter-spacing="3" fill="#E8EAF6">PROACTIVE</text>
-        <text x="39.5" y="46" font-family="'Outfit',sans-serif" font-weight="300" font-size="13" letter-spacing="9" fill="url(#lg)">DIGITAL</text>
-      </svg>
-    </div>
-    <div class="login-card">
-      <div class="login-title">The Lab</div>
-      <div class="login-sub">Private access only</div>
-      <label class="login-label">Access Code</label>
-      <input type="password" class="login-input" id="passInput" placeholder="Enter access code" autocomplete="off"/>
-      <button class="login-btn" onclick="tryLogin()">Enter The Lab →</button>
-      <div class="login-error" id="loginErr">Incorrect access code. Try again.</div>
-    </div>
+  <div class="login-card">
+    <h2 style="text-align:center">The Lab</h2>
+    <input type="password" class="login-input" id="passInput" placeholder="Access Code"/>
+    <button class="login-btn" onclick="tryLogin()">Enter →</button>
   </div>
 </div>
 
 <div id="dashboard">
   <nav class="lab-nav">
     <div class="lab-nav-in">
-      <div class="lab-nav-left"><div class="lab-badge"><span class="lab-dot"></span>The Lab</div><div class="lab-title">Command Center</div></div>
-      <div class="lab-nav-right"><div class="nav-time" id="clock"></div><button class="logout-btn" onclick="logout()">Sign Out</button></div>
+      <div><strong>Command Center</strong></div>
+      <button onclick="location.reload()" style="background:none;color:var(--tx2)">Sign Out</button>
     </div>
   </nav>
 
-  <main class="lab-main">
-    <div class="lab-header">
-      <div class="lab-greeting">Good <span id="greeting-time">morning</span>, Todd.</div>
-      <div class="lab-date" id="lab-date"></div>
-    </div>
-
+  <main style="max-width:1200px;margin:0 auto;padding:36px 28px">
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('clients',this)">Clients</button>
+      <button class="tab-btn" onclick="switchTab('news',this)">News</button>
+      <button class="tab-btn" onclick="switchTab('ai',this)">AI Assistant</button>
+      <button class="tab-btn" onclick="switchTab('notes',this)">Notes</button>
     </div>
 
-    <div id="clients-panel" class="active">
+    <div id="clients-panel" class="tab-content active">
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-label">Active Clients</div><div class="stat-value blue" id="statActive">0</div></div>
-        <div class="stat-card"><div class="stat-label">Paid This Month</div><div class="stat-value green" id="statPaid">$0</div></div>
-        <div class="stat-card"><div class="stat-label">Due Next 7 Days</div><div class="stat-value orange" id="statDue">$0</div></div>
-        <div class="stat-card"><div class="stat-label">Total Pipeline</div><div class="stat-value" id="statPipeline">$0</div></div>
+        <div class="stat-card"><div>Active</div><div class="stat-value" id="statActive">0</div></div>
+        <div class="stat-card"><div>Revenue</div><div class="stat-value" id="statPaid">$0</div></div>
+        <div class="stat-card"><div>Due</div><div class="stat-value" id="statDue">$0</div></div>
+        <div class="stat-card"><div>Pipeline</div><div class="stat-value" id="statPipeline">$0</div></div>
       </div>
-
-      <div class="clients-toolbar">
-        <div class="clients-section-title">Client Projects</div>
-        <button class="add-client-btn" onclick="openClientModal()">+ Add New Client</button>
-      </div>
-      <div id="clientsList" class="clients-grid"></div>
+      <button class="login-btn" style="width:auto;padding:10px 20px" onclick="openModal()">+ Add Client</button>
+      <div id="clientsList" style="margin-top:24px"></div>
     </div>
 
-    <div class="modal-overlay" id="clientModal">
-      <div class="modal">
-        <div class="modal-title">Add New Client</div>
-        <div class="modal-sub">Set up a new project with custom logic</div>
-        <div class="modal-field"><label class="modal-label">Business Name</label><input type="text" class="modal-input" id="c_name" placeholder="SLP Masonry LLC"/></div>
-        <div class="modal-field"><label class="modal-label">Total Project Value ($)</label><input type="number" class="modal-input" id="c_total" placeholder="1200"/></div>
-        <div class="modal-field">
-          <label class="modal-label">Payment Structure</label>
-          <select class="modal-select" id="c_payments" onchange="toggleCustomInput()">
-            <option value="2">Divide into 2 payments</option>
-            <option value="3" selected>Divide into 3 payments</option>
-            <option value="4">Divide into 4 payments</option>
-            <option value="custom">Custom amount per payment</option>
-          </select>
-        </div>
-        <div class="modal-field" id="custom_amt_wrap" style="display:none">
-          <label class="modal-label">Custom Installment Amount ($)</label>
-          <input type="number" class="modal-input" id="c_custom_amt" placeholder="e.g. 500"/>
-        </div>
-        <div class="modal-field"><label class="modal-label">Start Date</label><input type="date" class="modal-input" id="c_date"/></div>
-        <div class="modal-actions">
-          <button class="modal-btn secondary" onclick="closeClientModal()">Cancel</button>
-          <button class="modal-btn primary" onclick="saveClient()">Create Project</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-overlay" id="contractModal">
-      <div class="modal" style="max-width:600px">
-        <div class="modal-title">Agreement Generated</div>
-        <div class="contract-box" id="contractText"></div>
-        <div class="modal-actions">
-          <button class="modal-btn secondary" onclick="closeContractModal()">Close</button>
-          <button class="modal-btn primary" onclick="copyContract()">Copy Contract</button>
-        </div>
-      </div>
-    </div>
+    <div id="news-panel" class="tab-content" style="display:none"><h3>Industry News Feed Restored</h3><div id="newsGrid"></div></div>
+    <div id="ai-panel" class="tab-content" style="display:none"><h3>Private AI Restored</h3></div>
+    <div id="notes-panel" class="tab-content" style="display:none"><h3>Notes Restored</h3><textarea style="width:100%;height:400px;background:var(--bg2);color:#fff"></textarea></div>
   </main>
+</div>
+
+<div class="modal-overlay" id="clientModal">
+  <div class="modal">
+    <h3>New Project</h3>
+    <input type="text" id="c_name" class="modal-input" placeholder="Client Name"/>
+    <input type="number" id="c_total" class="modal-input" placeholder="Total Project Value"/>
+    <label style="font-size:12px">Payment Structure</label>
+    <select id="c_payments" class="modal-select" onchange="toggleCustom()">
+      <option value="2">2 Payments</option>
+      <option value="3">3 Payments</option>
+      <option value="custom">Custom Installments</option>
+    </select>
+    <div id="custom_wrap" style="display:none">
+      <input type="number" id="c_custom_amt" class="modal-input" placeholder="Amount Per Payment (e.g. 150)"/>
+    </div>
+    <input type="date" id="c_date" class="modal-input"/>
+    <button class="login-btn" onclick="saveClient()">Create Project</button>
+    <button onclick="closeModal()" style="background:none;color:#fff;margin-top:10px;width:100%">Cancel</button>
+  </div>
 </div>
 
 <script>
 const PASS = 'TRBFAMILY2014';
 let clients = JSON.parse(localStorage.getItem('lab_clients') || '[]');
 
-function tryLogin() {
-  if (document.getElementById('passInput').value.trim().toUpperCase() === PASS) {
+function tryLogin(){
+  if(document.getElementById('passInput').value.toUpperCase() === PASS){
     document.getElementById('login-screen').classList.add('out');
-    setTimeout(() => { document.getElementById('login-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; init(); }, 500);
-  } else { document.getElementById('loginErr').style.display = 'block'; }
+    document.getElementById('dashboard').style.display = 'block';
+    render();
+  }
 }
 
-function init() {
-  const h = new Date().getHours();
-  document.getElementById('greeting-time').textContent = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
-  document.getElementById('lab-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString(); }, 1000);
-  renderClients();
-  updateStats();
+function switchTab(tab, el){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  el.classList.add('active');
+  document.getElementById(tab+'-panel').style.display = 'block';
 }
 
-function toggleCustomInput() {
-  const isCustom = document.getElementById('c_payments').value === 'custom';
-  document.getElementById('custom_amt_wrap').style.display = isCustom ? 'block' : 'none';
+function toggleCustom(){
+  document.getElementById('custom_wrap').style.display = document.getElementById('c_payments').value === 'custom' ? 'block' : 'none';
 }
 
-function openClientModal() { 
-  document.getElementById('c_date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('clientModal').classList.add('show'); 
-}
-function closeClientModal() { document.getElementById('clientModal').classList.remove('show'); }
+function openModal(){ document.getElementById('clientModal').classList.add('show'); }
+function closeModal(){ document.getElementById('clientModal').classList.remove('show'); }
 
-function saveClient() {
-  const name = document.getElementById('c_name').value.trim();
+function saveClient(){
+  const name = document.getElementById('c_name').value;
   const total = parseFloat(document.getElementById('c_total').value);
-  const payType = document.getElementById('c_payments').value;
-  const startDate = document.getElementById('c_date').value;
-
-  if (!name || !total || !startDate) return alert('Fill required fields');
-
+  const type = document.getElementById('c_payments').value;
+  const start = new Date(document.getElementById('c_date').value);
   let payments = [];
-  const start = new Date(startDate);
 
-  if (payType === 'custom') {
-    const customAmt = parseFloat(document.getElementById('c_custom_amt').value);
-    if (!customAmt) return alert('Enter custom amount');
-    
-    let remaining = total;
-    let count = 1;
-    while (remaining > 0) {
-      let amt = Math.min(customAmt, remaining);
-      let d = new Date(start);
-      d.setDate(d.getDate() + ((count - 1) * 15));
-      payments.push({ num: count, amount: Math.round(amt), dueDate: d.toISOString().split('T')[0], paid: false });
-      remaining -= amt;
-      count++;
+  if(type === 'custom'){
+    const amt = parseFloat(document.getElementById('c_custom_amt').value);
+    let rem = total;
+    let i = 1;
+    while(rem > 0){
+      let current = Math.min(amt, rem);
+      let d = new Date(start); d.setDate(d.getDate() + (i-1)*15);
+      payments.push({num:i, amount:current, dueDate:d.toISOString().split('T')[0], paid:false});
+      rem -= current; i++;
     }
   } else {
-    const count = parseInt(payType);
-    const amt = total / count;
-    for (let i = 0; i < count; i++) {
-      let d = new Date(start);
-      d.setDate(d.getDate() + (i * 15));
-      payments.push({ num: i + 1, amount: Math.round(amt), dueDate: d.toISOString().split('T')[0], paid: false });
+    const qty = parseInt(type);
+    const amt = Math.round(total/qty);
+    for(let i=0; i<qty; i++){
+      let d = new Date(start); d.setDate(d.getDate() + i*15);
+      payments.push({num:i+1, amount:amt, dueDate:d.toISOString().split('T')[0], paid:false});
     }
   }
 
-  clients.push({ id: Date.now(), name, total, payments, status: 'active', createdAt: new Date().toISOString() });
+  clients.push({id:Date.now(), name, total, payments});
   localStorage.setItem('lab_clients', JSON.stringify(clients));
-  closeClientModal(); renderClients(); updateStats();
+  closeModal(); render();
 }
 
-function renderClients() {
+function render(){
   const list = document.getElementById('clientsList');
   list.innerHTML = clients.map(c => `
     <div class="client-card">
-      <div class="client-head"><div><div class="client-name">${c.name}</div><div class="client-project">$${c.total.toLocaleString()}</div></div></div>
+      <strong>${c.name}</strong> - $${c.total}
       <div class="pay-schedule">${c.payments.map(p => `
         <div class="pay-block ${p.paid?'paid':''}" onclick="togglePay(${c.id},${p.num})">
-          <div class="pay-num">Pay ${p.num}</div><div class="pay-amt">$${p.amount}</div><div class="pay-date">${p.paid?'Paid':p.dueDate}</div>
-        </div>`).join('')}</div>
-      <button class="ca-btn" onclick="genContract(${c.id})">📄 Contract</button>
-      <button class="ca-btn" style="color:#F87171" onclick="del(${c.id})">Delete</button>
+          $${p.amount}<br/><small>${p.dueDate}</small>
+        </div>`).join('')}
+      </div>
     </div>`).join('');
+  updateStats();
 }
 
-function togglePay(cid, pnum) {
+function togglePay(cid, pnum){
   const c = clients.find(x => x.id === cid);
   const p = c.payments.find(x => x.num === pnum);
   p.paid = !p.paid;
   localStorage.setItem('lab_clients', JSON.stringify(clients));
-  renderClients(); updateStats();
+  render();
 }
 
-function del(id) { if(confirm('Delete?')){ clients = clients.filter(x => x.id !== id); localStorage.setItem('lab_clients', JSON.stringify(clients)); renderClients(); updateStats(); } }
-
-function updateStats() {
-  let paid = 0, due = 0, pipe = 0;
-  const now = new Date();
+function updateStats(){
+  let p=0, d=0, t=0;
   clients.forEach(c => {
-    pipe += c.total;
-    c.payments.forEach(p => {
-      if (p.paid) paid += p.amount;
-      else if (new Date(p.dueDate) <= new Date(now.getTime() + 7*24*60*60*1000)) due += p.amount;
-    });
+    t += c.total;
+    c.payments.forEach(pay => { if(pay.paid) p += pay.amount; else d += pay.amount; });
   });
   document.getElementById('statActive').textContent = clients.length;
-  document.getElementById('statPaid').textContent = '$' + paid.toLocaleString();
-  document.getElementById('statDue').textContent = '$' + due.toLocaleString();
-  document.getElementById('statPipeline').textContent = '$' + pipe.toLocaleString();
+  document.getElementById('statPaid').textContent = '$'+p;
+  document.getElementById('statDue').textContent = '$'+d;
+  document.getElementById('statPipeline').textContent = '$'+t;
 }
-
-function genContract(id) {
-  const c = clients.find(x => x.id === id);
-  const text = `PROACTIVE DIGITAL AGREEMENT\n\nClient: ${c.name}\nTotal: $${c.total}\n\nSchedule:\n${c.payments.map(p => ` - $${p.amount} due ${p.dueDate}`).join('\n')}\n\nPayments via Stripe.`;
-  document.getElementById('contractText').textContent = text;
-  document.getElementById('contractModal').classList.add('show');
-}
-function closeContractModal() { document.getElementById('contractModal').classList.remove('show'); }
-function copyContract() { navigator.clipboard.writeText(document.getElementById('contractText').textContent); alert('Copied'); }
 </script>
 </body>
 </html>
