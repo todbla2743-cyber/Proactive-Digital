@@ -330,6 +330,96 @@
 
   .prompt-chip:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
 
+  /* Conversation history */
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0 0.25rem;
+  }
+
+  .new-chat-btn {
+    background: var(--teal-dim);
+    border: 1px solid var(--teal-mid);
+    color: var(--teal);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.68rem;
+    font-family: var(--mono);
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+  }
+
+  .new-chat-btn:hover { background: var(--teal-mid); }
+
+  .chat-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .chat-item:hover { border-color: var(--teal-mid); }
+  .chat-item.active { border-color: var(--teal); background: var(--teal-dim); }
+
+  .chat-item-title {
+    font-size: 0.75rem;
+    color: var(--text);
+    font-weight: 500;
+    line-height: 1.3;
+    margin-right: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chat-item-date {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .chat-item-delete {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 2px 4px;
+    opacity: 0;
+    transition: opacity 0.2s, color 0.2s;
+  }
+
+  .chat-item:hover .chat-item-delete { opacity: 1; }
+  .chat-item-delete:hover { color: var(--danger); }
+
+  .memory-pill {
+    background: var(--teal-dim);
+    border: 1px solid var(--teal-mid);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.68rem;
+    color: var(--teal);
+    font-family: var(--mono);
+    letter-spacing: 0.05em;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .memory-pill:hover { background: var(--teal-mid); }
+
   /* Chat area */
   .ai-main {
     flex: 1;
@@ -1255,6 +1345,17 @@
           <div class="sidebar-label" style="margin-top:0.5rem;">Blueprint</div>
           <div class="prompt-chip" onclick="usePrompt('Write a vending business coaching email. Ask me for the lead name and their current situation.')">Coaching email</div>
           <div class="prompt-chip" onclick="usePrompt('Generate 3 Facebook posts for Proactive Vending Blueprint about real experiences building a vending business.')">Vending posts</div>
+
+          <div class="history-header" style="margin-top:0.75rem;">
+            <div class="sidebar-label" style="padding:0;">History</div>
+            <button class="new-chat-btn" onclick="startNewChat()">+ New</button>
+          </div>
+          <div id="chat-history-list" style="display:flex;flex-direction:column;gap:4px;"></div>
+
+          <div class="memory-pill" onclick="viewMemory()" style="margin-top:0.75rem;">View Memory</div>
+          <div class="memory-pill" onclick="exportBackup()" style="margin-top:4px;">Export Backup</div>
+          <div class="memory-pill" onclick="document.getElementById('import-input').click()" style="margin-top:4px;">Import Backup</div>
+          <input type="file" id="import-input" style="display:none" accept=".json" onchange="importBackup(event)">
         </div>
 
         <!-- Chat -->
@@ -1331,6 +1432,19 @@
       <div class="pipeline-cols" id="pipeline-cols"></div>
     </div>
 
+    <!-- Memory Modal -->
+    <div class="client-modal-overlay" id="memoryModal">
+      <div class="client-modal" style="max-width:600px">
+        <div class="client-modal-title">Long-Term Memory</div>
+        <div class="client-modal-sub">Summaries from past conversations that the AI uses for context</div>
+        <div id="memoryList" style="display:flex;flex-direction:column;gap:10px;max-height:400px;overflow-y:auto;margin-bottom:10px;"></div>
+        <div class="client-modal-actions">
+          <button class="client-modal-btn secondary" onclick="clearAllMemory()">Clear All Memory</button>
+          <button class="client-modal-btn primary" onclick="closeMemoryModal()">Close</button>
+        </div>
+      </div>
+    </div>
+
     <!-- CLIENTS PANEL -->
     <div class="panel" id="panel-clients" style="flex-direction:column; padding:1.5rem; gap:1rem; overflow-y:auto;">
       <div class="panel-header">
@@ -1357,6 +1471,7 @@
         <div class="client-modal-field"><label class="client-modal-label">Contact Name</label><input type="text" class="client-modal-input" id="c_contact" placeholder="John Smith"/></div>
         <div class="client-modal-field"><label class="client-modal-label">Project Description</label><input type="text" class="client-modal-input" id="c_project" placeholder="5-page commercial website"/></div>
         <div class="client-modal-field"><label class="client-modal-label">Total Project Value ($)</label><input type="number" class="client-modal-input" id="c_total" placeholder="1200"/></div>
+        <div class="client-modal-field"><label class="client-modal-label">Deposit / First Payment ($)</label><input type="number" class="client-modal-input" id="c_deposit" placeholder="e.g. 99, 200, 500 — or leave blank to split evenly"/></div>
         <div class="client-modal-field"><label class="client-modal-label">Number of Payments</label>
           <select class="client-modal-select" id="c_payments">
             <option value="2">2 payments</option>
@@ -1485,10 +1600,15 @@ function doLogin() {
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
 function doLogout() {
+  // Summarize current chat before logging out
+  if (currentChatId && chatHistory.length >= 2) {
+    summarizeCurrentChat();
+  }
   document.getElementById('app').classList.remove('visible');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('pw-input').value = '';
   chatHistory = [];
+  currentChatId = null;
   attachedFiles = [];
   document.getElementById('file-chips').innerHTML = '';
   document.getElementById('chat-messages').innerHTML = `
@@ -1521,6 +1641,9 @@ function updateClock() {
 let chatHistory = [];
 let attachedFiles = [];
 let isThinking = false;
+let currentChatId = null;
+let savedChats = JSON.parse(localStorage.getItem('lab_saved_chats') || '[]');
+let memorySummaries = JSON.parse(localStorage.getItem('lab_memory_summaries') || '[]');
 
 function autoResize(el) {
   el.style.height = 'auto';
@@ -1615,11 +1738,342 @@ function removeTyping() {
   if (el) el.remove();
 }
 
+let apiKey = localStorage.getItem('lab_api_key') || '';
+
+function checkApiKey() {
+  if (!apiKey) {
+    const container = document.getElementById('chat-messages');
+    container.innerHTML = `
+      <div class="msg assistant">
+        <div class="msg-avatar">AI</div>
+        <div class="msg-bubble">
+          <p><strong>One-time setup:</strong> Paste your Anthropic API key to activate your private AI assistant.</p>
+          <p style="font-size:0.8rem;color:var(--text-mid);">Your key is stored locally in your browser only — it's never sent anywhere except directly to Anthropic's API.</p>
+          <div style="display:flex;gap:6px;margin-top:10px;">
+            <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--mono);font-size:0.8rem;outline:none;" />
+            <button onclick="saveApiKey()" style="background:var(--teal);color:#0a0a0c;border:none;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-family:var(--font);font-size:0.82rem;">Save</button>
+          </div>
+          <p style="font-size:0.75rem;color:var(--text-dim);margin-top:10px;">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--teal);">console.anthropic.com/settings/keys</a></p>
+        </div>
+      </div>`;
+    return false;
+  }
+  return true;
+}
+
+function saveApiKey() {
+  const input = document.getElementById('api-key-input');
+  const key = input.value.trim();
+  if (!key.startsWith('sk-ant-')) {
+    alert("That doesn't look right. API keys start with sk-ant-");
+    return;
+  }
+  apiKey = key;
+  localStorage.setItem('lab_api_key', key);
+  // Reset to welcome
+  document.getElementById('chat-messages').innerHTML = `
+    <div class="msg assistant">
+      <div class="msg-avatar">AI</div>
+      <div class="msg-bubble">
+        <p>AI key saved. Welcome to <strong>The Lab</strong>, Todd.</p>
+        <p>Drop a file, pick a quick prompt, or just start typing. I've got full context on Proactive Digital, your vending blueprint, and everything else we've worked on.</p>
+        <p>What are we building today?</p>
+      </div>
+    </div>`;
+}
+
+// ============ CONVERSATION HISTORY & MEMORY ============
+function saveChatState() {
+  localStorage.setItem('lab_saved_chats', JSON.stringify(savedChats));
+  localStorage.setItem('lab_memory_summaries', JSON.stringify(memorySummaries));
+}
+
+function generateChatTitle(firstMsg) {
+  if (!firstMsg) return 'New conversation';
+  const text = typeof firstMsg === 'string' ? firstMsg : (firstMsg.find?.(c => c.type === 'text')?.text || 'New conversation');
+  return text.slice(0, 40) + (text.length > 40 ? '...' : '');
+}
+
+function startNewChat() {
+  // Before starting new chat, summarize current if it has content
+  if (currentChatId && chatHistory.length >= 2) {
+    summarizeCurrentChat();
+  }
+  currentChatId = null;
+  chatHistory = [];
+  attachedFiles = [];
+  renderFileChips();
+  document.getElementById('chat-messages').innerHTML = `
+    <div class="msg assistant">
+      <div class="msg-avatar">AI</div>
+      <div class="msg-bubble">
+        <p>Fresh chat started. What's up, Todd?</p>
+        <p style="font-size:0.78rem;color:var(--text-mid);">I've got context on our past conversations baked in. Drop a file or just start typing.</p>
+      </div>
+    </div>`;
+  renderChatHistoryList();
+}
+
+function saveCurrentChat() {
+  if (chatHistory.length === 0) return;
+  if (!currentChatId) {
+    currentChatId = 'chat_' + Date.now();
+    savedChats.unshift({
+      id: currentChatId,
+      title: generateChatTitle(chatHistory[0].content),
+      date: new Date().toISOString(),
+      messages: chatHistory
+    });
+  } else {
+    const existing = savedChats.find(c => c.id === currentChatId);
+    if (existing) {
+      existing.messages = chatHistory;
+      existing.date = new Date().toISOString();
+    }
+  }
+  // Keep max 50 chats
+  if (savedChats.length > 50) savedChats = savedChats.slice(0, 50);
+  saveChatState();
+  renderChatHistoryList();
+}
+
+function loadChat(chatId) {
+  // Summarize current before switching
+  if (currentChatId && currentChatId !== chatId && chatHistory.length >= 2) {
+    summarizeCurrentChat();
+  }
+  const chat = savedChats.find(c => c.id === chatId);
+  if (!chat) return;
+  currentChatId = chatId;
+  chatHistory = [...chat.messages];
+  attachedFiles = [];
+  renderFileChips();
+
+  // Rebuild message view
+  const container = document.getElementById('chat-messages');
+  container.innerHTML = '';
+  chatHistory.forEach(msg => {
+    const role = msg.role;
+    let text = '';
+    let fileNames = [];
+    if (typeof msg.content === 'string') {
+      text = msg.content;
+    } else if (Array.isArray(msg.content)) {
+      msg.content.forEach(part => {
+        if (part.type === 'text') text += part.text;
+        else if (part.type === 'image') fileNames.push('Image');
+        else if (part.type === 'document') fileNames.push('Document');
+      });
+    }
+    appendMsg(role, text, fileNames);
+  });
+  renderChatHistoryList();
+}
+
+function deleteChat(chatId, e) {
+  if (e) e.stopPropagation();
+  if (!confirm('Delete this conversation?')) return;
+  savedChats = savedChats.filter(c => c.id !== chatId);
+  if (currentChatId === chatId) {
+    currentChatId = null;
+    chatHistory = [];
+    startNewChat();
+  }
+  saveChatState();
+  renderChatHistoryList();
+}
+
+function renderChatHistoryList() {
+  const list = document.getElementById('chat-history-list');
+  if (!list) return;
+  if (savedChats.length === 0) {
+    list.innerHTML = '<div style="font-size:0.7rem;color:var(--text-dim);padding:4px 6px;font-family:var(--mono);">No saved chats yet</div>';
+    return;
+  }
+  list.innerHTML = savedChats.slice(0, 15).map(c => {
+    const date = new Date(c.date);
+    const dateStr = date.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    const isActive = c.id === currentChatId;
+    return `
+      <div class="chat-item ${isActive ? 'active' : ''}" onclick="loadChat('${c.id}')">
+        <div class="chat-item-title">${c.title}</div>
+        <div class="chat-item-date">${dateStr}</div>
+        <button class="chat-item-delete" onclick="deleteChat('${c.id}', event)" title="Delete">×</button>
+      </div>`;
+  }).join('');
+}
+
+async function summarizeCurrentChat() {
+  if (!apiKey || chatHistory.length < 2) return;
+  // Don't resummarize if already summarized for this chat
+  if (currentChatId && memorySummaries.find(m => m.chatId === currentChatId)) {
+    // Update existing
+    memorySummaries = memorySummaries.filter(m => m.chatId !== currentChatId);
+  }
+
+  // Build a plain-text transcript
+  const transcript = chatHistory.map(m => {
+    const role = m.role === 'user' ? 'Todd' : 'AI';
+    let text = '';
+    if (typeof m.content === 'string') text = m.content;
+    else if (Array.isArray(m.content)) {
+      text = m.content.filter(c => c.type === 'text').map(c => c.text).join(' ');
+      if (m.content.some(c => c.type === 'image' || c.type === 'document')) text += ' [file attached]';
+    }
+    return `${role}: ${text}`;
+  }).join('\n\n');
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 300,
+        messages: [{
+          role: 'user',
+          content: `Summarize this conversation between Todd and his AI assistant in 3-5 short bullet points. Focus on: (1) what was decided or produced, (2) any ongoing projects/clients mentioned, (3) next steps or pending actions. Be concise — this is for long-term memory.\n\nCONVERSATION:\n${transcript}\n\nReturn ONLY the bullet points, no preamble.`
+        }]
+      })
+    });
+    const data = await resp.json();
+    if (data.content?.[0]?.text) {
+      memorySummaries.unshift({
+        chatId: currentChatId,
+        date: new Date().toISOString(),
+        title: savedChats.find(c => c.id === currentChatId)?.title || 'Untitled',
+        summary: data.content[0].text.trim()
+      });
+      // Keep max 30 summaries
+      if (memorySummaries.length > 30) memorySummaries = memorySummaries.slice(0, 30);
+      saveChatState();
+    }
+  } catch (e) {
+    console.error('Summary failed', e);
+  }
+}
+
+function buildMemoryContext() {
+  if (memorySummaries.length === 0) return '';
+  const summaries = memorySummaries.slice(0, 10).map(m => {
+    const d = new Date(m.date).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    return `[${d} — ${m.title}]\n${m.summary}`;
+  }).join('\n\n');
+  return `\n\nRECENT CONVERSATION MEMORY (most recent first):\n${summaries}`;
+}
+
+function viewMemory() {
+  const list = document.getElementById('memoryList');
+  if (memorySummaries.length === 0) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-dim);font-size:0.85rem;">No memory yet. Memory builds up as you have conversations and start new ones.</div>';
+  } else {
+    list.innerHTML = memorySummaries.map(m => {
+      const d = new Date(m.date).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+      return `
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div style="font-size:0.85rem;font-weight:600;color:var(--text);">${m.title}</div>
+            <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--mono);">${d}</div>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.5;white-space:pre-wrap;">${m.summary}</div>
+        </div>`;
+    }).join('');
+  }
+  document.getElementById('memoryModal').classList.add('show');
+}
+
+function closeMemoryModal() {
+  document.getElementById('memoryModal').classList.remove('show');
+}
+
+function clearAllMemory() {
+  if (!confirm('Clear all long-term memory? This will not delete your saved chats, only the summaries the AI uses for context.')) return;
+  memorySummaries = [];
+  saveChatState();
+  viewMemory();
+}
+
+// ============ BACKUP EXPORT / IMPORT ============
+function exportBackup() {
+  const backup = {
+    version: '1.0',
+    exportDate: new Date().toISOString(),
+    savedChats: savedChats,
+    memorySummaries: memorySummaries,
+    clients: clients,
+    pipeline: pipeline,
+    stocks: stocks
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().split('T')[0];
+  a.href = url;
+  a.download = `proactive-lab-backup-${dateStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const backup = JSON.parse(e.target.result);
+      if (!backup.version) {
+        alert('This does not look like a valid Lab backup file.');
+        return;
+      }
+      const summary = `
+Backup from: ${new Date(backup.exportDate).toLocaleString()}
+Chats: ${backup.savedChats?.length || 0}
+Memory summaries: ${backup.memorySummaries?.length || 0}
+Clients: ${backup.clients?.length || 0}
+Pipeline deals: ${backup.pipeline?.length || 0}
+Stocks: ${backup.stocks?.length || 0}
+
+This will REPLACE your current Lab data. Continue?`;
+      if (!confirm(summary)) {
+        event.target.value = '';
+        return;
+      }
+      // Restore
+      if (backup.savedChats) { savedChats = backup.savedChats; localStorage.setItem('lab_saved_chats', JSON.stringify(savedChats)); }
+      if (backup.memorySummaries) { memorySummaries = backup.memorySummaries; localStorage.setItem('lab_memory_summaries', JSON.stringify(memorySummaries)); }
+      if (backup.clients) { clients = backup.clients; localStorage.setItem('lab_clients', JSON.stringify(clients)); }
+      if (backup.pipeline) { pipeline = backup.pipeline; localStorage.setItem('lab_pipeline', JSON.stringify(pipeline)); }
+      if (backup.stocks) { stocks = backup.stocks; localStorage.setItem('lab_stocks', JSON.stringify(stocks)); }
+      // Re-render everything
+      renderChatHistoryList();
+      renderClients();
+      updateClientStats();
+      renderPipeline();
+      renderStocks();
+      alert('Backup restored successfully.');
+      event.target.value = '';
+    } catch (err) {
+      alert('Failed to read backup file: ' + err.message);
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
 async function sendMessage() {
   if (isThinking) return;
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text && attachedFiles.length === 0) return;
+
+  if (!checkApiKey()) return;
 
   isThinking = true;
   document.getElementById('send-btn').disabled = true;
@@ -1634,8 +2088,7 @@ async function sendMessage() {
   attachedFiles.forEach(f => {
     if (f.type.startsWith('image/')) {
       const b64 = f.data.split(',')[1];
-      const mediaType = f.type;
-      userContent.push({ type: 'image', source: { type: 'base64', media_type: mediaType, data: b64 } });
+      userContent.push({ type: 'image', source: { type: 'base64', media_type: f.type, data: b64 } });
     } else if (f.type === 'application/pdf') {
       const b64 = f.data.split(',')[1];
       userContent.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } });
@@ -1668,14 +2121,19 @@ async function sendMessage() {
 - Army veteran, fitness-focused, planning home purchase in ~18 months
 - Aruba trip April 23-27, 2026
 
-Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd what he needs fast. When writing copy or emails, produce the actual content immediately. When analyzing documents, be specific. You're a business partner, not a formal assistant.`;
+Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd what he needs fast. When writing copy or emails, produce the actual content immediately. When analyzing documents, be specific. You're a business partner, not a formal assistant.${buildMemoryContext()}`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        model: 'claude-sonnet-4-5',
+        max_tokens: 2048,
         system: systemPrompt,
         messages: chatHistory
       })
@@ -1684,12 +2142,19 @@ Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd w
     const data = await resp.json();
     removeTyping();
 
-    const reply = data.content?.map(b => b.text || '').filter(Boolean).join('\n') || 'Something went wrong. Try again.';
-    chatHistory.push({ role: 'assistant', content: reply });
-    appendMsg('assistant', reply);
+    if (data.error) {
+      appendMsg('assistant', `API error: ${data.error.message || 'Unknown error'}. If this is an auth issue, click Logout and log back in to re-enter your key.`);
+      chatHistory.pop(); // remove the failed user message from history
+    } else {
+      const reply = data.content?.map(b => b.text || '').filter(Boolean).join('\n') || 'Empty response. Try again.';
+      chatHistory.push({ role: 'assistant', content: reply });
+      appendMsg('assistant', reply);
+      saveCurrentChat();
+    }
   } catch (err) {
     removeTyping();
-    appendMsg('assistant', 'Connection error. Check your network and try again.');
+    appendMsg('assistant', `Connection error: ${err.message}. Check your network and API key.`);
+    chatHistory.pop();
   }
 
   isThinking = false;
@@ -1898,6 +2363,7 @@ function openClientModal() {
   document.getElementById('c_contact').value = '';
   document.getElementById('c_project').value = '';
   document.getElementById('c_total').value = '';
+  document.getElementById('c_deposit').value = '';
   document.getElementById('c_payments').value = '3';
   document.getElementById('c_date').value = new Date().toISOString().split('T')[0];
   document.getElementById('clientModal').classList.add('show');
@@ -1911,13 +2377,26 @@ function saveClient() {
   const contact = document.getElementById('c_contact').value.trim();
   const project = document.getElementById('c_project').value.trim();
   const total = parseFloat(document.getElementById('c_total').value);
+  const depositInput = document.getElementById('c_deposit').value.trim();
   const payCount = parseInt(document.getElementById('c_payments').value);
   const startDate = document.getElementById('c_date').value;
   if (!name || !total || !startDate) { alert('Please fill in client name, project total, and start date.'); return; }
 
-  const firstPayment = 99;
-  const remaining = total - firstPayment;
-  const perRemaining = remaining / (payCount - 1);
+  // Use custom deposit if provided, otherwise split total evenly
+  let firstPayment, perRemaining;
+  if (depositInput && parseFloat(depositInput) > 0) {
+    firstPayment = parseFloat(depositInput);
+    if (firstPayment >= total) {
+      alert('Deposit must be less than total project value.');
+      return;
+    }
+    perRemaining = (total - firstPayment) / (payCount - 1);
+  } else {
+    // Split evenly across all payments
+    firstPayment = total / payCount;
+    perRemaining = total / payCount;
+  }
+
   const payments = [];
   const start = new Date(startDate);
 
@@ -1927,6 +2406,11 @@ function saveClient() {
     d.setDate(d.getDate() + (i * 15));
     payments.push({ num: i+1, amount: Math.round(perRemaining), dueDate: d.toISOString().split('T')[0], paid: false });
   }
+
+  // Fix any rounding drift on the last payment so it matches total
+  const sumSoFar = payments.reduce((s,p) => s + p.amount, 0);
+  const drift = total - sumSoFar;
+  if (drift !== 0) payments[payments.length - 1].amount += drift;
 
   clients.push({ id: Date.now(), name, contact, project, total, payments, status: 'active', createdAt: new Date().toISOString() });
   saveClients();
@@ -2112,6 +2596,8 @@ function initApp() {
   renderStocks();
   setInterval(tickStocks, 30000);
   renderPipeline();
+  renderChatHistoryList();
+  if (!apiKey) checkApiKey(); // Show API key setup if missing
 }
 </script>
 </body>
