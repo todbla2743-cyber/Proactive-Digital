@@ -1183,9 +1183,35 @@
 
   @media (max-width: 768px) {
     .pipeline-cols { grid-template-columns: 1fr 1fr; }
-    .ai-sidebar { display: none; }
     .nav-tabs { gap: 2px; }
     .nav-tab { padding: 6px 8px; font-size: 0.72rem; }
+
+    /* Mobile: sidebar becomes collapsible top drawer */
+    .ai-layout { flex-direction: column; }
+    .ai-sidebar {
+      width: 100%;
+      max-height: 44px;
+      overflow: hidden;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      transition: max-height 0.3s ease;
+      padding: 0.5rem 1rem;
+    }
+    .ai-sidebar.expanded { max-height: 60vh; overflow-y: auto; }
+    .ai-sidebar::before {
+      content: '⋯ Menu — tap to open';
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--teal);
+      letter-spacing: 0.1em;
+      text-align: center;
+      padding: 6px 0;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .ai-sidebar.expanded::before { content: '× Close menu'; }
   }
   /* ============ CLIENTS PANEL ============ */
   .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
@@ -1332,7 +1358,7 @@
     <div class="panel active" id="panel-ai">
       <div class="ai-layout">
         <!-- Sidebar quick prompts -->
-        <div class="ai-sidebar">
+        <div class="ai-sidebar" id="ai-sidebar" onclick="toggleMobileSidebar(event)">
           <div class="sidebar-label">Quick Prompts</div>
           <div class="prompt-chip" onclick="usePrompt('Write a professional website proposal for a new prospect. Ask me for details.')">Website proposal</div>
           <div class="prompt-chip" onclick="usePrompt('Write a follow-up email for a prospect I sent a proposal to. Ask me for their name and any context.')">Follow-up email</div>
@@ -1780,6 +1806,16 @@ function saveApiKey() {
         <p>What are we building today?</p>
       </div>
     </div>`;
+}
+
+// ============ MOBILE SIDEBAR TOGGLE ============
+function toggleMobileSidebar(e) {
+  // Only toggle if clicking on the sidebar itself (the ::before header) on mobile
+  if (window.innerWidth > 768) return;
+  const sidebar = document.getElementById('ai-sidebar');
+  // If they clicked a button/chip/input inside, don't toggle
+  if (e.target.closest('.prompt-chip, .chat-item, .new-chat-btn, .memory-pill, input, button')) return;
+  sidebar.classList.toggle('expanded');
 }
 
 // ============ CONVERSATION HISTORY & MEMORY ============
