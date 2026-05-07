@@ -507,16 +507,25 @@ img { display: block; max-width: 100% }
   height:210px; position:relative; overflow:hidden;
   display:flex; align-items:center; justify-content:center;
 }
-.pt-inner {
-  width:74%; background:var(--bg2);
-  border:1px solid var(--bdr); border-radius:10px; padding:14px;
+.pt-inner { display:none } /* legacy, replaced by .port-phone */
+.port-phone {
+  width:118px; height:198px; position:relative;
+  background:#0a0a0a; border-radius:18px;
+  border:2px solid #1f1f1f; padding:5px;
+  box-shadow:0 10px 28px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,255,255,.04);
   transition:transform .35s var(--ease);
 }
-.port-card:hover .pt-inner { transform:scale(1.04) }
-.pt-b { height:6px; border-radius:3px; margin-bottom:8px }
-.pt-b.a { background:var(--grad); width:46% }
-.pt-b.l { background:var(--bdr) }
-.pt-b.l.m { width:68% } .pt-b.l.s { width:38% }
+.port-phone::after {
+  content:""; position:absolute; top:8px; left:50%;
+  transform:translateX(-50%); width:32px; height:4px;
+  background:#0a0a0a; border-radius:3px; z-index:2;
+}
+.port-card:hover .port-phone { transform:scale(1.06) translateY(-2px); }
+.port-phone-screen {
+  width:100%; height:100%; border-radius:12px;
+  background-size:cover; background-position:top center;
+  background-color:#000; overflow:hidden;
+}
 .port-ov {
   position:absolute; inset:0;
   background:linear-gradient(to top,rgba(8,11,19,.88) 0%,transparent 55%);
@@ -1313,9 +1322,7 @@ footer {
       <!-- Angels -->
       <div class="port-card rv" style="transition-delay:.04s">
         <div class="port-thumb" style="background:linear-gradient(135deg,#160808,#251010)">
-          <div class="pt-inner">
-            <div class="pt-b a"></div><div class="pt-b l m"></div><div class="pt-b l s"></div>
-          </div>
+          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/angels.webp')"></div></div>
           <div class="port-ov">
             <a href="https://angelsofsnowhillcemetery.com" target="_blank" class="port-ov-link">View Live Site →</a>
           </div>
@@ -1348,9 +1355,7 @@ footer {
       <!-- PVB -->
       <div class="port-card rv" style="transition-delay:.08s">
         <div class="port-thumb" style="background:linear-gradient(135deg,#080F20,#0D1A36)">
-          <div class="pt-inner">
-            <div class="pt-b a"></div><div class="pt-b l m"></div><div class="pt-b l s"></div>
-          </div>
+          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/pvb.webp')"></div></div>
           <div class="port-ov">
             <a href="https://www.proactivevendingblueprint.com" target="_blank" class="port-ov-link">View Live Site →</a>
           </div>
@@ -1381,9 +1386,7 @@ footer {
       <!-- ANUME -->
       <div class="port-card rv" style="transition-delay:.12s">
         <div class="port-thumb" style="background:linear-gradient(135deg,#1A0A04,#2D1408)">
-          <div class="pt-inner">
-            <div class="pt-b a"></div><div class="pt-b l m"></div><div class="pt-b l s"></div>
-          </div>
+          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/anume.webp')"></div></div>
           <div class="port-ov">
             <a href="https://mockupfortheeggrollplug.netlify.app" target="_blank" class="port-ov-link">View Mock-Up →</a>
           </div>
@@ -1416,11 +1419,7 @@ footer {
       <!-- Design Fusion -->
       <div class="port-card rv" style="transition-delay:.16s">
         <div class="port-thumb" style="background:linear-gradient(135deg,#0F1923,#1a2a3a)">
-          <div class="pt-inner">
-            <div class="pt-b a" style="background:rgba(247,140,30,0.5)"></div>
-            <div class="pt-b l m" style="background:rgba(91,184,245,0.4)"></div>
-            <div class="pt-b l s" style="background:rgba(247,140,30,0.3)"></div>
-          </div>
+          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/designfusion.webp')"></div></div>
           <div class="port-ov">
             <a href="https://designfusion.it.com" target="_blank" class="port-ov-link">View Live Site →</a>
           </div>
@@ -1453,9 +1452,7 @@ footer {
       <!-- In Great Taste -->
       <div class="port-card rv" style="transition-delay:.20s">
         <div class="port-thumb" style="background:linear-gradient(135deg,#061410,#0C2018)">
-          <div class="pt-inner">
-            <div class="pt-b a"></div><div class="pt-b l m"></div><div class="pt-b l s"></div>
-          </div>
+          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/ingreattaste.webp')"></div></div>
           <div class="port-ov">
             <a href="https://ingreattastecatering.netlify.app" target="_blank" class="port-ov-link">View Mock-Up →</a>
           </div>
@@ -1487,9 +1484,7 @@ footer {
     <!-- SLP Masonry -->
       <div class="port-card rv" style="transition-delay:.20s">
         <div class="port-thumb" style="background:linear-gradient(135deg,#111008,#1E1A0C)">
-          <div class="pt-inner">
-            <div class="pt-b a"></div><div class="pt-b l m"></div><div class="pt-b l s"></div>
-          </div>
+          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/slp.webp')"></div></div>
           <div class="port-ov">
             <a href="https://biggerbetterpresenceforslp.netlify.app" target="_blank" class="port-ov-link">View Mock-Up →</a>
           </div>
