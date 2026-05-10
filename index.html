@@ -1135,6 +1135,28 @@ img { display: block; max-width: 100% }
   padding:20px 32px; color:var(--tx2); font-size:13px;
   border-top:1px solid var(--bdr);
 }
+
+.support-note-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:24px;
+}
+.support-note-card {
+  background:var(--surf); border:1px solid var(--bdr); border-radius:14px; padding:24px 26px;
+}
+.support-note-card h4 {
+  font-family:var(--fh); font-weight:600; font-size:18px; letter-spacing:-.3px; margin-bottom:12px;
+}
+.support-note-card p, .support-note-card li { color:var(--tx2); font-size:13.5px; line-height:1.75 }
+.support-note-card ul { list-style:none; display:flex; flex-direction:column; gap:8px }
+.support-note-card li::before { content:'•'; color:var(--teal); font-weight:700; margin-right:8px }
+.client-cap {
+  margin-top:24px; padding:22px 26px; border-radius:14px;
+  background:linear-gradient(120deg,rgba(0,191,199,.08),rgba(33,89,224,.08));
+  border:1px solid rgba(0,191,199,.2); color:var(--tx2); font-size:14px; line-height:1.75;
+}
+.client-cap strong { color:var(--tx) }
+@media(max-width:760px){
+  .support-note-grid { grid-template-columns:1fr }
+}
 @media(max-width:960px){
   .plans-grid { grid-template-columns:1fr }
   .plan-card.plan-featured { transform:none }
@@ -1241,7 +1263,7 @@ footer {
       <a href="#why">Process</a>
       <a href="#pricing">Pricing</a>
       <a href="#testimonials">Reviews</a>
-      <a href="#support">Support</a>
+      <a href="#support">Monthly Support</a>
     </nav>
     <div class="nav-r">
       <button class="tbtn" id="tbtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
@@ -1257,7 +1279,7 @@ footer {
   <a href="#why" onclick="closeMob()">Process</a>
   <a href="#pricing" onclick="closeMob()">Pricing</a>
   <a href="#testimonials" onclick="closeMob()">Reviews</a>
-  <a href="#support" onclick="closeMob()">Support</a>
+  <a href="#support" onclick="closeMob()">Monthly Support</a>
   <a href="#contact" onclick="closeMob()">Get Started →</a>
 </div>
 
@@ -2032,74 +2054,97 @@ footer {
 <section id="support" class="sec">
   <div class="wrap">
     <div class="rv support-intro">
-      <div class="eyebrow">Monthly Plans</div>
-      <h2 class="h2">Keep it running.<br/><span class="g-text">Keep it growing.</span></h2>
-      <p class="lead">Your site shouldn't need your attention to stay sharp. Pick a plan and we handle the rest — updates, monitoring, domain, and more.</p>
+      <div class="eyebrow">Monthly Digital Support</div>
+      <h2 class="h2">Launch once.<br/><span class="g-text">Stay supported monthly.</span></h2>
+      <p class="lead">A website should not go stale after launch. These plans are built for small business owners who need practical updates, form checks, promo changes, and light digital support without hiring a full agency.</p>
     </div>
 
     <div class="plans-grid">
 
-      <!-- Essential Care -->
+      <!-- Website Care -->
       <div class="plan-card rv" style="transition-delay:.04s">
-        <div class="plan-tier">Essential Care</div>
+        <div class="plan-tier">Website Care</div>
         <div class="plan-price"><sup>$</sup>50</div>
-        <div class="plan-cadence">per month · cancel anytime</div>
+        <div class="plan-cadence">per month · light maintenance</div>
         <div class="plan-div"></div>
         <ul class="plan-feats">
-          <li class="on">Monthly site health check &amp; uptime monitoring</li>
-          <li class="on">Up to 2 content updates per month (text, photos, pricing)</li>
-          <li class="on">Monthly backup of all site files</li>
-          <li class="on">Security monitoring &amp; spam filter management</li>
-          <li class="on">Email support · 48hr response time</li>
+          <li class="on">Up to 2 small website updates per month</li>
+          <li class="on">Text, photo, button, pricing, or link changes</li>
+          <li class="on">Contact form check</li>
+          <li class="on">Basic mobile and desktop review</li>
+          <li class="on">Backup copy of site files when applicable</li>
+          <li class="on">Email support with 48-hour response goal</li>
         </ul>
-        <a href="#contact" class="btn btn-g" style="width:100%;justify-content:center;margin-top:auto">Get Started</a>
+        <a href="#contact" class="btn btn-g" style="width:100%;justify-content:center;margin-top:auto">Choose Website Care</a>
       </div>
 
-      <!-- Growth Plan -->
+      <!-- Growth Support -->
       <div class="plan-card plan-featured rv" style="transition-delay:.08s">
-        <div class="plan-pop">Most Popular</div>
-        <div class="plan-tier">Growth Plan</div>
-        <div class="plan-price"><sup>$</sup>75</div>
-        <div class="plan-cadence">per month · cancel anytime</div>
+        <div class="plan-pop">Best Fit</div>
+        <div class="plan-tier">Growth Support</div>
+        <div class="plan-price"><sup>$</sup>95</div>
+        <div class="plan-cadence">per month · most small businesses</div>
         <div class="plan-div"></div>
         <ul class="plan-feats">
-          <li class="on">Everything in Essential Care</li>
-          <li class="section-label-li">+ Domain Management</li>
-          <li class="on">Domain renewal handled for you</li>
-          <li class="on">DNS updates &amp; configuration</li>
-          <li class="on">Up to 4 content updates per month</li>
-          <li class="on">Priority email support · 24hr response time</li>
-          <li class="on">Monthly performance check-in</li>
+          <li class="on">Everything in Website Care</li>
+          <li class="on">Up to 4 small website updates per month</li>
+          <li class="on">Add new photos, projects, testimonials, or service changes</li>
+          <li class="on">Update a promo banner or seasonal message</li>
+          <li class="on">Basic SEO title and description adjustments</li>
+          <li class="on">Monthly quick site review</li>
+          <li class="on">One simple social caption or announcement per month</li>
         </ul>
-        <a href="#contact" class="btn btn-p" style="width:100%;justify-content:center;margin-top:auto">Get Started</a>
+        <a href="#contact" class="btn btn-p" style="width:100%;justify-content:center;margin-top:auto">Choose Growth Support</a>
       </div>
 
-      <!-- Full-Service Partner -->
+      <!-- Digital Partner -->
       <div class="plan-card rv" style="transition-delay:.12s">
-        <div class="plan-tier">Full-Service Partner</div>
-        <div class="plan-price"><sup>$</sup>200</div>
-        <div class="plan-cadence">per month · cancel anytime</div>
+        <div class="plan-tier">Digital Partner</div>
+        <div class="plan-price"><sup>$</sup>175</div>
+        <div class="plan-cadence">per month · limited availability</div>
         <div class="plan-div"></div>
         <ul class="plan-feats">
-          <li class="on">Everything in Growth Plan</li>
-          <li class="section-label-li">+ Growth &amp; Strategy</li>
-          <li class="on">Unlimited content updates</li>
-          <li class="on">Monthly strategy call to review &amp; plan improvements</li>
-          <li class="on">Google Analytics setup &amp; monthly traffic reports</li>
-          <li class="on">SEO optimization (meta tags, keywords, site speed)</li>
-          <li class="on">1 new feature per quarter (forms, galleries, landing pages)</li>
-          <li class="on">Same-day response time</li>
+          <li class="on">Everything in Growth Support</li>
+          <li class="on">Up to 8 small website updates per month</li>
+          <li class="on">One new landing page or new section per month</li>
+          <li class="on">Lead form or order form adjustments</li>
+          <li class="on">Monthly promotion setup</li>
+          <li class="on">Basic analytics review</li>
+          <li class="on">Up to 2 social captions or email-style announcements per month</li>
         </ul>
-        <a href="#contact" class="btn btn-g" style="width:100%;justify-content:center;margin-top:auto">Get Started</a>
+        <a href="#contact" class="btn btn-g" style="width:100%;justify-content:center;margin-top:auto">Ask About Partner Support</a>
       </div>
 
+    </div>
+
+    <div class="support-note-grid rv" style="transition-delay:.14s">
+      <div class="support-note-card">
+        <h4>What counts as a small update?</h4>
+        <ul>
+          <li>Changing text, pricing, hours, services, or contact details</li>
+          <li>Replacing photos or adding recent project images</li>
+          <li>Updating button links, payment links, or social links</li>
+          <li>Adding a short announcement, testimonial, or promo message</li>
+          <li>Checking forms and making sure customer requests are coming through</li>
+        </ul>
+      </div>
+      <div class="support-note-card">
+        <h4>What is not included monthly?</h4>
+        <ul>
+          <li>Full redesigns, new websites, or unlimited revisions</li>
+          <li>New logos, full brand identity packages, or advanced graphics</li>
+          <li>Daily posting, ad management, complex e-commerce, or emergency same-day work</li>
+          <li>Large copywriting projects or new multi-page funnels</li>
+          <li>Major custom code features beyond the agreed plan</li>
+        </ul>
+      </div>
     </div>
 
     <!-- One-Time Add-Ons -->
     <div class="addons-wrap rv" style="transition-delay:.16s">
       <div class="addons-head">
         <div class="eyebrow">One-Time Add-Ons</div>
-        <h3>Need something specific? We've got you.</h3>
+        <h3>Need something specific? Add it without upgrading your whole plan.</h3>
       </div>
       <table class="addons-table">
         <thead>
@@ -2111,33 +2156,52 @@ footer {
         </thead>
         <tbody>
           <tr>
-            <td>Stripe Payment Integration</td>
-            <td>$75</td>
-            <td>Accept credit cards and deposits directly on your site</td>
+            <td>Extra Small Update</td>
+            <td>$20 each</td>
+            <td>Additional light update beyond your monthly plan</td>
           </tr>
           <tr>
-            <td>Google Business Profile Setup</td>
-            <td>$100</td>
-            <td>Get found on Google Maps and local search results</td>
+            <td>New Website Section</td>
+            <td>$50 - $100</td>
+            <td>Add a new section for services, FAQs, testimonials, or promotions</td>
           </tr>
           <tr>
-            <td>Email Marketing Setup</td>
-            <td>$150</td>
-            <td>Newsletter system with templates and automated sequences</td>
+            <td>New Landing Page</td>
+            <td>$150 - $250</td>
+            <td>Focused page for a service, campaign, offer, or seasonal promotion</td>
           </tr>
           <tr>
-            <td>Additional Pages</td>
-            <td>$50 – $150</td>
-            <td>FAQ, gallery, blog, service detail pages, and more</td>
+            <td>Payment Link Setup</td>
+            <td>$50 - $100</td>
+            <td>Add Stripe or payment links for deposits, invoices, products, or donations</td>
           </tr>
           <tr>
-            <td>Custom Contact Form</td>
-            <td>$75</td>
-            <td>Replace basic mailto with a professional form submission system</td>
+            <td>Custom Form Setup</td>
+            <td>$50 - $100</td>
+            <td>Quote forms, order requests, booking inquiries, or lead capture forms</td>
+          </tr>
+          <tr>
+            <td>Basic Flyer or Social Graphic</td>
+            <td>$35 - $75</td>
+            <td>Simple promotional graphic for Facebook, email, or website announcements</td>
+          </tr>
+          <tr>
+            <td>Google Business Profile Help</td>
+            <td>$75 - $150</td>
+            <td>Basic setup guidance, profile cleanup, service details, and launch support</td>
+          </tr>
+          <tr>
+            <td>Rush Update</td>
+            <td>$40 extra</td>
+            <td>Expedited turnaround when availability allows</td>
           </tr>
         </tbody>
       </table>
-      <p class="addons-note">All add-on services are one-time flat fees. No hourly billing, no scope creep. <a href="#contact" style="color:var(--teal)">Get a quote →</a></p>
+      <p class="addons-note">Add-on pricing may vary by scope. Monthly plans are built for practical support, not unlimited agency work. <a href="#contact" style="color:var(--teal)">Ask what fits your business →</a></p>
+    </div>
+
+    <div class="client-cap rv" style="transition-delay:.18s">
+      <strong>Limited monthly client spots:</strong> To keep service personal and responsive, monthly support is intentionally limited. This helps each client get reliable attention without getting lost in a large agency queue.
     </div>
   </div>
 </section>
@@ -2184,9 +2248,12 @@ footer {
             <label>I'm Interested In</label>
             <select name="package">
               <option value="">Select a package...</option>
-              <option>Starter — $440</option>
-              <option>Growth — $750</option>
-              <option>Pro — $1,200</option>
+              <option>Starter Website — $440</option>
+              <option>Growth Website — $750</option>
+              <option>Pro Website — $1,200</option>
+              <option>Website Care — $50/month</option>
+              <option>Growth Support — $95/month</option>
+              <option>Digital Partner — $175/month</option>
               <option>Not sure yet, let's talk</option>
             </select>
           </div>
@@ -2224,7 +2291,7 @@ footer {
         <a href="#why">Process</a>
         <a href="#pricing">Pricing</a>
         <a href="#testimonials">Reviews</a>
-        <a href="#support">Support</a>
+        <a href="#support">Monthly Support</a>
         <a href="#contact">Contact</a>
       </div>
       <div class="foot-col">
