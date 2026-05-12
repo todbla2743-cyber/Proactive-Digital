@@ -3421,7 +3421,7 @@ function lfClearPipeline() {
 function lfExportCSV() {
   if (lfSavedPipeline.length===0) { alert('No leads saved. Save some leads first.'); return; }
   const headers=['Name','Address','Phone','Website','Web Status','Score','Has GMB','Notes','Pitch Angle','Saved At'];
-  const rows = lfSavedPipeline.map(l=>[`"${l.name||''}"`,'`"${l.address||''}"`',`"${l.phone||''}"`,`"${l.website||''}"`,`"${l.webStatus||''}"`,l.score||0,l.hasGMB?'Yes':'No',`"${(l.notes||'').replace(/"/g,"'")}"`,`"${(l.pitchAngle||'').replace(/"/g,"'")}"`,`"${l.savedAt||''}"`].join(','));
+  const rows = lfSavedPipeline.map(l=>[`"${l.name||''}"`,`"${l.address||''}"`,`"${l.phone||''}"`,`"${l.website||''}"`,`"${l.webStatus||''}"`,l.score||0,l.hasGMB?'Yes':'No',`"${(l.notes||'').replace(/"/g,"'")}"`,`"${(l.pitchAngle||'').replace(/"/g,"'")}"`,`"${l.savedAt||''}"`].join(','));
   const csv=[headers.join(','),...rows].join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=`finder-leads-${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
 }
