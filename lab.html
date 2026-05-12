@@ -1754,12 +1754,6 @@
       </div>
     </div>
 
-  </div>
-</div>
-
-  </div>
-</div>
-
 <!-- BLUEPRINT PANEL -->
 <div class="panel" id="panel-blueprint">
   <div class="bp-sidebar">
@@ -1975,6 +1969,9 @@
   <div class="lf-empty" id="lf-empty"><div class="lf-empty-icon">◎</div><div class="lf-empty-text">Select a niche and location to find leads</div></div>
 </div>
 
+  </div> <!-- .content -->
+</div> <!-- #app -->
+
 <!-- ADD DEAL MODAL -->
 <div class="modal-overlay" id="deal-modal">
   <div class="modal">
@@ -2057,6 +2054,7 @@ function switchPanel(id, btn) {
   document.getElementById('panel-' + id).classList.add('active');
   btn.classList.add('active');
   if (id === 'clients') { renderClients(); updateClientStats(); }
+  if (id === 'leadlog') { renderLeads(); updateDailyCounter(); }
 }
 
 // ============ CLOCK ============
@@ -3426,12 +3424,7 @@ function lfExportCSV() {
   const a=document.createElement('a'); a.href=url; a.download=`finder-leads-${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
 }
 
-// Patch switchPanel to init Lead Log tab
-const _origSwitch = switchPanel;
-function switchPanel(id, btn) {
-  _origSwitch(id, btn);
-  if (id === 'leadlog') { renderLeads(); updateDailyCounter(); }
-}
+// Lead Log initialized via switchPanel above
 
 </script>
 </body>
