@@ -1466,455 +1466,52 @@
   @media(max-width:700px) { .stats-row { grid-template-columns:repeat(2,1fr); } }
 
 
-  /* =====================================================
-     THE LAB - STABLE MOBILE RECOVERY PATCH
-     CSS-only upgrade so existing features and JavaScript keep working.
-     Fixes squeezed AI/Blueprint responses and improves mobile usability.
-     ===================================================== */
+/* =====================================================
+   THE LAB — CLEAN COPY PATCH
+   Adds plain-text copy buttons for AI outputs so pasted
+   content looks clean in Facebook, Word, email, etc.
+   ===================================================== */
+.clean-copy-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
 
-  @media (max-width: 900px) {
-    html,
-    body {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: hidden;
-    }
+.clean-copy-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-mid);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-    #app.visible {
-      height: 100dvh;
-      max-width: 100vw;
-      overflow: hidden;
-    }
+.clean-copy-btn:hover {
+  border-color: var(--teal-mid);
+  color: var(--teal);
+  background: var(--teal-dim);
+}
 
-    .topnav {
-      height: auto;
-      min-height: 58px;
-      padding: 10px 12px;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+.clean-copy-btn.copied {
+  border-color: rgba(76,175,130,0.45);
+  color: var(--success);
+}
 
-    .nav-brand {
-      width: 100%;
-      justify-content: flex-start;
-    }
-
-    .nav-tabs {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
-      justify-content: flex-start;
-      gap: 4px;
-      padding: 4px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .nav-tabs::-webkit-scrollbar {
-      display: none;
-    }
-
-    .nav-tab {
-      flex: 0 0 auto;
-      padding: 8px 12px;
-      font-size: 0.74rem;
-    }
-
-    .nav-right {
-      display: none;
-    }
-
-    .content,
-    .panel,
-    .panel.active {
-      width: 100%;
-      max-width: 100vw;
-      min-width: 0;
-    }
-
-    .panel.active {
-      overflow-x: hidden;
-    }
-
-    /* AI Chat mobile layout */
-    #panel-ai,
-    #panel-blueprint {
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .ai-layout {
-      width: 100%;
-      max-width: 100vw;
-      min-width: 0;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .ai-sidebar {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      flex-shrink: 0;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      max-height: 46px;
-      overflow: hidden;
-      padding: 0.5rem 1rem;
-      transition: max-height 0.25s ease;
-    }
-
-    .ai-sidebar.expanded {
-      max-height: 62vh;
-      overflow-y: auto;
-    }
-
-    .ai-main {
-      width: 100%;
-      max-width: 100vw;
-      min-width: 0;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .chat-messages {
-      width: 100%;
-      max-width: 100vw;
-      padding: 14px 12px;
-      gap: 12px;
-      overflow-x: hidden;
-      scroll-padding-bottom: 120px;
-    }
-
-    .msg {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      gap: 8px;
-    }
-
-    .msg.user {
-      width: auto;
-      max-width: 92%;
-      align-self: flex-end;
-    }
-
-    .msg.assistant {
-      align-self: stretch;
-    }
-
-    .msg-avatar {
-      width: 28px;
-      height: 28px;
-      font-size: 0.65rem;
-    }
-
-    .msg-bubble {
-      min-width: 0;
-      max-width: calc(100vw - 62px);
-      overflow-wrap: break-word;
-      word-break: normal;
-      hyphens: none;
-      font-size: 0.9rem;
-      line-height: 1.55;
-      padding: 12px 13px;
-    }
-
-    .msg.assistant .msg-bubble {
-      width: 100%;
-    }
-
-    .msg-bubble p,
-    .msg-bubble li,
-    .msg-bubble div {
-      overflow-wrap: break-word;
-      word-break: normal;
-    }
-
-    .msg-bubble pre,
-    .msg-bubble code {
-      white-space: pre-wrap;
-      word-break: break-word;
-      max-width: 100%;
-    }
-
-    .chat-input-area {
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-    }
-
-    .input-row {
-      gap: 7px;
-      align-items: flex-end;
-    }
-
-    .input-wrapper {
-      min-width: 0;
-    }
-
-    #chat-input {
-      font-size: 16px;
-      padding: 12px;
-      max-height: 120px;
-    }
-
-    .send-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-    }
-
-    .input-hint {
-      display: none;
-    }
-
-    /* Blueprint mobile layout - prevents response column from getting crushed */
-    #panel-blueprint.active {
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .bp-sidebar {
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-      max-height: 190px;
-      flex-shrink: 0;
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      padding: 12px;
-      gap: 14px;
-      overflow-y: auto;
-    }
-
-    .bp-main {
-      width: 100%;
-      max-width: 100vw;
-      min-width: 0;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .bp-messages {
-      width: 100%;
-      max-width: 100vw;
-      padding: 14px 12px;
-      gap: 12px;
-      overflow-x: hidden;
-    }
-
-    .bp-welcome {
-      max-width: 100%;
-      margin: 12px 0;
-      padding: 20px 16px;
-    }
-
-    .bp-msg {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      gap: 8px;
-    }
-
-    .bp-msg.bp-user {
-      width: auto;
-      max-width: 92%;
-    }
-
-    .bp-bubble {
-      max-width: calc(100vw - 58px);
-      min-width: 0;
-      overflow-wrap: break-word;
-      word-break: normal;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      padding: 12px 13px;
-    }
-
-    .bp-input-bar {
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      gap: 7px;
-    }
-
-    #bp-input {
-      font-size: 16px;
-      max-height: 120px;
-    }
-
-    .bp-clear {
-      display: none;
-    }
-
-    /* Other dashboard sections */
-    #panel-news,
-    #panel-stocks,
-    #panel-pipeline,
-    #panel-clients,
-    #panel-links,
-    #panel-leads {
-      padding: 14px 12px !important;
-      overflow-x: hidden;
-    }
-
-    .panel-header {
-      align-items: flex-start;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .news-grid,
-    .stocks-grid,
-    .links-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .pipeline-cols {
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .pipeline-total-bar {
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 12px;
-    }
-
-    .divider {
-      display: none;
-    }
-
-    .stats-row {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .stat-card,
-    .client-card {
-      padding: 14px;
-    }
-
-    .leadlog-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .leadlog-controls {
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .leadlog-right {
-      min-height: 0;
-    }
-
-    .leads-table-wrap {
-      overflow-x: auto;
-    }
-
-    .leads-table {
-      min-width: 760px;
-    }
-
-    .lf-search-bar {
-      grid-template-columns: 1fr;
-      gap: 10px;
-      padding: 12px;
-    }
-
-    .lf-card-top {
-      align-items: flex-start;
-    }
-
-    .lf-card-actions {
-      flex-direction: row;
-      flex-wrap: wrap;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .lf-card-top {
-      flex-wrap: wrap;
-    }
-
-    .lf-card-info {
-      flex: 1 1 calc(100% - 70px);
-    }
-
-    .lf-outreach-btn,
-    .lf-save-btn,
-    .lf-toggle-btn {
-      flex: 1 1 auto;
-      text-align: center;
-    }
+@media (max-width: 768px) {
+  .clean-copy-actions {
+    margin-top: 12px;
   }
 
-  @media (max-width: 520px) {
-    .login-box {
-      width: calc(100vw - 32px);
-      padding: 2rem 1.25rem;
-    }
-
-    .topnav {
-      padding: 9px 10px;
-    }
-
-    .nav-tab {
-      padding: 7px 10px;
-      font-size: 0.7rem;
-    }
-
-    .chat-messages,
-    .bp-messages {
-      padding: 12px 10px;
-    }
-
-    .msg-bubble,
-    .bp-bubble {
-      max-width: calc(100vw - 56px);
-      font-size: 0.88rem;
-    }
-
-    .msg.user,
-    .bp-msg.bp-user {
-      max-width: 94%;
-    }
-
-    .pipeline-cols,
-    .stats-row,
-    .pay-schedule {
-      grid-template-columns: 1fr;
-    }
-
-    .stock-add-row {
-      width: 100%;
-    }
-
-    .stock-add-input {
-      width: 100%;
-      flex: 1;
-    }
-
-    .client-modal {
-      padding: 22px 16px;
-    }
-
-    .client-modal-actions,
-    .modal-actions {
-      flex-direction: column;
-    }
-
-    .outreach-box {
-      max-width: calc(100vw - 20px);
-    }
+  .clean-copy-btn {
+    font-size: 0.7rem;
+    padding: 6px 11px;
   }
-
+}
 
 </style>
 </head>
@@ -3921,6 +3518,106 @@ function lfExportCSV() {
 }
 
 // Lead Log initialized via switchPanel above
+
+
+// ============ CLEAN COPY PATCH ============
+// Copies AI responses as plain text instead of styled HTML.
+// This prevents weird font/formatting when pasting into Facebook, Word, email, etc.
+(function initCleanCopyPatch() {
+  function cleanTextFromBubble(bubble) {
+    const clone = bubble.cloneNode(true);
+
+    clone.querySelectorAll('.clean-copy-actions, .clean-copy-btn').forEach(el => el.remove());
+
+    // Preserve readable line breaks for content created with <br>.
+    clone.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+
+    let text = clone.innerText || clone.textContent || '';
+
+    text = text
+      .replace(/\u00A0/g, ' ')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    return text;
+  }
+
+  async function copyPlainText(text, button) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        temp.setAttribute('readonly', '');
+        temp.style.position = 'fixed';
+        temp.style.left = '-9999px';
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+
+      button.textContent = 'Copied';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = 'Copy Clean Text';
+        button.classList.remove('copied');
+      }, 1400);
+    } catch (err) {
+      button.textContent = 'Copy Failed';
+      setTimeout(() => {
+        button.textContent = 'Copy Clean Text';
+      }, 1600);
+    }
+  }
+
+  function addCleanCopyButtonToBubble(bubble) {
+    if (!bubble || bubble.querySelector('.clean-copy-actions')) return;
+
+    const actions = document.createElement('div');
+    actions.className = 'clean-copy-actions';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'clean-copy-btn';
+    copyBtn.textContent = 'Copy Clean Text';
+
+    copyBtn.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const text = cleanTextFromBubble(bubble);
+      copyPlainText(text, copyBtn);
+    });
+
+    actions.appendChild(copyBtn);
+    bubble.appendChild(actions);
+  }
+
+  function enhanceCleanCopyButtons() {
+    // Main AI Chat assistant messages
+    document.querySelectorAll('#chat-messages .msg.assistant .msg-bubble').forEach(addCleanCopyButtonToBubble);
+
+    // Blueprint Marketing Hub assistant messages
+    document.querySelectorAll('#bp-messages .bp-msg:not(.bp-user) .bp-bubble').forEach(addCleanCopyButtonToBubble);
+
+    // Outreach modal generated copy
+    const outreachBox = document.getElementById('ob-content');
+    if (outreachBox && !outreachBox.querySelector('.clean-copy-actions') && outreachBox.textContent.trim()) {
+      addCleanCopyButtonToBubble(outreachBox);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', enhanceCleanCopyButtons);
+  } else {
+    enhanceCleanCopyButtons();
+  }
+
+  const observer = new MutationObserver(enhanceCleanCopyButtons);
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
 
 </script>
 </body>
