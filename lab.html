@@ -1364,6 +1364,49 @@
   .lf-outreach-btn { background:linear-gradient(135deg,#1a7a5a,#1A8FFF); color:#fff; border:none; border-radius:7px; padding:5px 12px; font-size:0.68rem; font-family:var(--mono); font-weight:700; cursor:pointer; letter-spacing:0.05em; white-space:nowrap; transition:opacity 0.2s; box-shadow:0 2px 8px rgba(26,143,255,0.2); }
   .lf-outreach-btn:hover { opacity:0.88; }
 
+  /* Intent Signals button */
+  .lf-intent-btn { background:rgba(76,175,130,0.12); color:var(--success); border:1px solid rgba(76,175,130,0.35); border-radius:8px; padding:9px 18px; font-family:var(--font); font-size:0.82rem; font-weight:700; cursor:pointer; white-space:nowrap; transition:all 0.2s; position:relative; }
+  .lf-intent-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .lf-intent-btn:not(:disabled):hover { background:rgba(76,175,130,0.22); }
+  .lf-intent-btn[title]:hover::after { content:attr(title); position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%); background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:5px 10px; font-size:0.68rem; font-weight:400; color:var(--text-mid); white-space:nowrap; pointer-events:none; z-index:10; }
+
+  /* Intent snippet block */
+  .lf-snippet { background:rgba(76,175,130,0.05); border:1px solid rgba(76,175,130,0.2); border-radius:8px; padding:10px 14px; margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+  .lf-snippet q { font-size:0.82rem; font-style:italic; color:var(--text-mid); line-height:1.6; quotes:"\201C" "\201D"; }
+  .lf-snippet q::before { content:open-quote; color:var(--success); font-size:1rem; }
+  .lf-snippet q::after { content:close-quote; color:var(--success); font-size:1rem; }
+  .lf-intent-badge { display:inline-block; background:rgba(76,175,130,0.15); color:var(--success); border:1px solid rgba(76,175,130,0.35); border-radius:4px; padding:2px 7px; font-size:0.6rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; font-family:var(--mono); align-self:flex-start; }
+  .lf-snippet-link { font-size:0.72rem; color:var(--teal); text-decoration:none; font-family:var(--mono); transition:opacity 0.2s; align-self:flex-start; }
+  .lf-snippet-link:hover { opacity:0.7; }
+
+  /* Contact row (email + phone in card) */
+  .lf-contact-row { display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .lf-contact-label { font-size:0.6rem; font-weight:700; color:var(--text-dim); letter-spacing:0.12em; font-family:var(--mono); text-transform:uppercase; flex-shrink:0; }
+  .lf-contact-val { font-size:0.75rem; color:var(--teal); font-family:var(--mono); text-decoration:none; transition:opacity 0.2s; }
+  .lf-contact-val:hover { opacity:0.75; }
+
+  /* Follow-up counter widget */
+  .ll-followup-counter { background:var(--surface); border:1px solid rgba(76,175,130,0.25); border-radius:8px; padding:10px 12px; text-align:center; cursor:pointer; transition:border-color 0.2s; margin-top:8px; }
+  .ll-followup-counter:hover { border-color:rgba(76,175,130,0.5); }
+  .ll-followup-counter #ll-followup-count { font-size:24px; font-weight:700; color:var(--success); display:block; line-height:1; margin-bottom:2px; }
+  .ll-followup-counter span:last-child { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; }
+
+  /* Follow-up settings row */
+  .ll-setting { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-top:8px; }
+  .ll-setting label { display:block; font-size:9px; font-weight:700; color:var(--text-dim); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px; }
+  .ll-setting-row { display:flex; align-items:center; gap:8px; }
+  .ll-setting-row input[type=number] { width:58px; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:5px 8px; color:var(--text); font-family:var(--mono); font-size:13px; outline:none; text-align:center; transition:border-color .2s; }
+  .ll-setting-row input[type=number]:focus { border-color:var(--teal-mid); }
+  .ll-setting-row span { font-size:11px; color:var(--text-mid); }
+
+  /* Follow-up cell states */
+  .fu-overdue { color:var(--danger); font-weight:700; font-size:11px; font-family:var(--mono); }
+  .fu-today { color:var(--teal); font-weight:700; font-size:11px; font-family:var(--mono); }
+  .fu-upcoming { color:var(--text-mid); font-size:11px; font-family:var(--mono); }
+  .fu-done { color:var(--text-dim); font-size:11px; font-family:var(--mono); }
+  .fu-markbtn { background:transparent; border:1px solid rgba(76,175,130,0.35); border-radius:5px; padding:3px 8px; color:var(--success); font-size:10px; font-family:var(--font); cursor:pointer; transition:all .15s; white-space:nowrap; margin-right:4px; }
+  .fu-markbtn:hover { background:rgba(76,175,130,0.1); }
+
   @media (max-width: 768px) {
     .pipeline-cols { grid-template-columns: 1fr 1fr; }
     .nav-tabs { gap: 2px; }
@@ -1871,6 +1914,17 @@
           <div class="dc-label">of 30 leads logged today</div>
           <div class="dc-bar-wrap"><div class="dc-bar" id="ld-bar" style="width:0%"></div></div>
         </div>
+        <div class="ll-followup-counter" onclick="setFilter('followup')">
+          <span id="ll-followup-count">0</span>
+          <span>follow-ups due today</span>
+        </div>
+        <div class="ll-setting">
+          <label>Follow-up reminder</label>
+          <div class="ll-setting-row">
+            <input type="number" id="followup-days" min="1" max="30" value="3" onchange="saveFollowupDays()" />
+            <span>days after Outreach Sent</span>
+          </div>
+        </div>
       </div>
       <div>
         <div class="ld-label">Search Setup</div>
@@ -1912,7 +1966,7 @@
       <div class="leads-toolbar">
         <div class="leads-toolbar-title">Lead <span>Tracker</span> &nbsp;<span id="ld-total-badge" style="font-size:11px;font-weight:400;color:var(--text-dim)"></span></div>
         <select id="ld-filter" onchange="renderLeads()" style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text-mid);font-size:12px;font-family:var(--font);outline:none;">
-          <option value="all">All Leads</option><option value="new">New</option><option value="outreach">Outreach Sent</option><option value="replied">Replied</option><option value="pass">Passed</option>
+          <option value="all">All Leads</option><option value="new">New</option><option value="outreach">Outreach Sent</option><option value="replied">Replied</option><option value="pass">Passed</option><option value="followup">Follow-ups Due</option>
         </select>
         <button class="lt-btn primary" onclick="toggleAddForm()">+ Add Lead</button>
       </div>
@@ -1932,7 +1986,7 @@
       </div>
       <div class="leads-table-wrap">
         <table class="leads-table">
-          <thead><tr><th>Business</th><th>Contact</th><th>Email / Phone</th><th>Niche</th><th>Issue</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Business</th><th>Contact</th><th>Email / Phone</th><th>Niche</th><th>Issue</th><th>Status</th><th>Follow-up</th><th>Actions</th></tr></thead>
           <tbody id="leads-tbody"></tbody>
         </table>
         <div class="leads-empty" id="leads-empty" style="display:none">
@@ -1995,7 +2049,10 @@
         <option value="5">5</option><option value="10" selected>10</option><option value="15">15</option>
       </select>
     </div>
-    <button class="lf-search-btn" id="lf-search-btn" onclick="runLeadSearch()" disabled>Find Leads</button>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <button class="lf-search-btn" id="lf-search-btn" onclick="runLeadSearch()" disabled>Find Leads</button>
+      <button class="lf-intent-btn" id="lf-intent-btn" onclick="lfFindIntent()" disabled title="Find people who recently mentioned needing a website">Find Intent Signals</button>
+    </div>
   </div>
   <div class="lf-pipeline-bar" id="lf-pipeline-bar" style="display:none;">
     <span class="lf-pipeline-count" id="lf-pipeline-count">0 leads saved</span>
@@ -3089,6 +3146,10 @@ function initApp() {
   renderChatHistoryList();
   lfUpdatePipelineBar();
   if (!apiKey) checkApiKey();
+  // Load follow-up days setting
+  const savedSettings = JSON.parse(localStorage.getItem('lab_settings') ?? '{}');
+  const fdEl = document.getElementById('followup-days');
+  if (fdEl) fdEl.value = savedSettings.followUpDays ?? 3;
 }
 
 // ═══ BLUEPRINT HUB ═══════════════════════════════════════
@@ -3190,6 +3251,28 @@ function updateDailyCounter() {
   const count = manualLeads.filter(l => l.date === todayStr()).length;
   document.getElementById('ld-count').textContent = count;
   document.getElementById('ld-bar').style.width = Math.min((count/30)*100,100) + '%';
+  // Follow-up counter
+  const today = todayStr();
+  const dueCount = manualLeads.filter(l => l.status === 'outreach' && !l.followUpDone && l.followUpDate && l.followUpDate.slice(0,10) <= today).length;
+  const fcEl = document.getElementById('ll-followup-count');
+  if (fcEl) fcEl.textContent = dueCount;
+}
+
+function setFilter(value) {
+  const sel = document.getElementById('ld-filter');
+  if (sel) { sel.value = value; renderLeads(); }
+}
+
+function saveFollowupDays() {
+  const val = parseInt(document.getElementById('followup-days').value) || 3;
+  const settings = JSON.parse(localStorage.getItem('lab_settings') ?? '{}');
+  settings.followUpDays = Math.min(30, Math.max(1, val));
+  localStorage.setItem('lab_settings', JSON.stringify(settings));
+}
+
+function markFollowUpDone(id) {
+  const l = manualLeads.find(l => l.id === id);
+  if (l) { l.followUpDone = true; saveManualLeads(); renderLeads(); updateDailyCounter(); }
 }
 
 function setNiche(niche) {
@@ -3222,7 +3305,18 @@ function saveManualLead() {
 }
 
 function updateLeadStatus(id, status) {
-  const l = manualLeads.find(l => l.id === id); if (l) { l.status = status; saveManualLeads(); renderLeads(); }
+  const l = manualLeads.find(l => l.id === id);
+  if (l) {
+    l.status = status;
+    if (status === 'outreach' && !l.outreachDate) {
+      l.outreachDate = new Date().toISOString();
+      const days = (JSON.parse(localStorage.getItem('lab_settings') ?? '{}').followUpDays) ?? 3;
+      const d = new Date(); d.setDate(d.getDate() + days);
+      l.followUpDate = d.toISOString();
+      l.followUpDone = false;
+    }
+    saveManualLeads(); renderLeads(); updateDailyCounter();
+  }
 }
 
 function deleteLead(id) {
@@ -3232,12 +3326,34 @@ function deleteLead(id) {
 
 function renderLeads() {
   const filter = document.getElementById('ld-filter').value;
-  const filtered = filter === 'all' ? manualLeads : manualLeads.filter(l => l.status === filter);
+  const today = todayStr();
+  const filtered = filter === 'all' ? manualLeads :
+    filter === 'followup' ? manualLeads.filter(l => l.status === 'outreach' && !l.followUpDone && l.followUpDate && l.followUpDate.slice(0,10) <= today) :
+    manualLeads.filter(l => l.status === filter);
   const tbody = document.getElementById('leads-tbody'); const empty = document.getElementById('leads-empty');
   document.getElementById('ld-total-badge').textContent = `(${manualLeads.length} total)`;
   if (filtered.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
   empty.style.display = 'none';
-  tbody.innerHTML = filtered.map(l => `<tr>
+  tbody.innerHTML = filtered.map(l => {
+    // Build follow-up cell
+    let fuCell = '<span style="color:var(--text-dim)">—</span>';
+    let fuAction = '';
+    if (l.status === 'outreach' && l.followUpDate) {
+      const fuDay = l.followUpDate.slice(0,10);
+      if (l.followUpDone) {
+        fuCell = '<span class="fu-done">Done</span>';
+      } else if (fuDay < today) {
+        fuCell = '<span class="fu-overdue">OVERDUE</span>';
+        fuAction = `<button class="fu-markbtn" onclick="markFollowUpDone(${l.id})">Mark Followed Up</button>`;
+      } else if (fuDay === today) {
+        fuCell = '<span class="fu-today">DUE TODAY</span>';
+        fuAction = `<button class="fu-markbtn" onclick="markFollowUpDone(${l.id})">Mark Followed Up</button>`;
+      } else {
+        const daysLeft = Math.round((new Date(fuDay) - new Date(today)) / 86400000);
+        fuCell = `<span class="fu-upcoming">Due in ${daysLeft}d</span>`;
+      }
+    }
+    return `<tr>
     <td class="biz-name">${l.name}${l.site ? `<br><span style="font-size:10.5px;font-weight:400;color:var(--text-dim)">${l.site}</span>` : '<br><span style="font-size:10.5px;color:var(--teal);opacity:.7">No site</span>'}</td>
     <td>${l.contact || '<span style="color:var(--text-dim)">Unknown</span>'}</td>
     <td class="biz-email">${l.email ? `<a href="mailto:${l.email}">${l.email}</a>` : ''}${l.email && l.phone ? '<br>' : ''}${l.phone ? `<span style="font-size:11px">${l.phone}</span>` : ''}${!l.email && !l.phone ? '<span style="color:var(--text-dim)">—</span>' : ''}</td>
@@ -3249,8 +3365,10 @@ function renderLeads() {
       <option value="replied" ${l.status==='replied'?'selected':''}>Replied</option>
       <option value="pass" ${l.status==='pass'?'selected':''}>Passed</option>
     </select></td>
-    <td><button class="lead-action-btn" onclick="openOutreach(${l.id})">Write Outreach</button><button class="lead-action-btn del" onclick="deleteLead(${l.id})">x</button></td>
-  </tr>`).join('');
+    <td>${fuCell}</td>
+    <td>${fuAction}<button class="lead-action-btn" onclick="openOutreach(${l.id})">Write Outreach</button><button class="lead-action-btn del" onclick="deleteLead(${l.id})">x</button></td>
+  </tr>`;
+  }).join('');
 }
 
 async function openOutreach(id) {
@@ -3353,7 +3471,9 @@ function lfCheckReady() {
   const n = document.getElementById('lf-niche').value; const l = document.getElementById('lf-location').value;
   const nv = n === 'custom' ? document.getElementById('lf-niche-custom').value.trim() : n;
   const lv = l === 'custom' ? document.getElementById('lf-location-custom').value.trim() : l;
-  document.getElementById('lf-search-btn').disabled = !(nv && lv);
+  const ready = !!(nv && lv);
+  document.getElementById('lf-search-btn').disabled = !ready;
+  document.getElementById('lf-intent-btn').disabled = !ready;
 }
 function lfGetInputs() {
   const n = document.getElementById('lf-niche').value; const l = document.getElementById('lf-location').value;
@@ -3387,9 +3507,10 @@ async function runLeadSearch() {
   const prompt = `You are a lead researcher for Proactive Digital, a web design agency in Chesterfield/Richmond Virginia targeting local small businesses. Find real local businesses of the type "${niche}" in "${location}" that are the best web design leads — meaning NO website, very weak website, or only free directory listings. Use web search to find real businesses. Check Google, Yelp, Google Maps, Facebook, and local directories.
 
 Return ONLY a JSON array with NO markdown, NO backticks, NO explanation:
-[{"name":"Business Name","address":"123 Main St, City, VA","phone":"(804) 555-1234","website":"url or null","webStatus":"none|listing|weak|builder|decent","hasGMB":true,"score":92,"notes":"2-3 sentences of intel and why they are a good lead","pitchAngle":"Specific natural cold outreach opener referencing something real about them","services":["service1","service2"]}]
+[{"name":"Business Name","address":"123 Main St, City, VA","phone":"(804) 555-1234","email":"public@email.com or null","website":"url or null","webStatus":"none|listing|weak|builder|decent","hasGMB":true,"score":92,"notes":"2-3 sentences of intel and why they are a good lead","pitchAngle":"Specific natural cold outreach opener referencing something real about them","services":["service1","service2"]}]
 
-webStatus: none=no website anywhere (score 85-100), listing=only Yelp/YP/directory no real site (score 70-84), weak=outdated/broken/bare site (score 50-69), builder=Wix/GoDaddy basic (score 50-69), decent=functional site (score 10-45). Sort by score descending. Only include real businesses you actually found. Target ${count} results.`;
+webStatus: none=no website anywhere (score 85-100), listing=only Yelp/YP/directory no real site (score 70-84), weak=outdated/broken/bare site (score 50-69), builder=Wix/GoDaddy basic (score 50-69), decent=functional site (score 10-45). Sort by score descending. Only include real businesses you actually found. Target ${count} results.
+For email: search the business website's contact/about page, BBB listing, public Facebook page, and Yelp. Return null if no public email is found. Never guess or fabricate.`;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -3405,6 +3526,77 @@ webStatus: none=no website anywhere (score 85-100), listing=only Yelp/YP/directo
     lfAllLeads = JSON.parse(jsonMatch[0]).sort((a,b) => b.score - a.score);
     lfCurrentFilter = 'all';
     document.querySelectorAll('.lf-filter-pill').forEach((p,i) => p.classList.toggle('active',i===0));
+    lfRenderLeads(); lfUpdatePipelineBar();
+  } catch(e) {
+    document.getElementById('lf-error').textContent = e.message; document.getElementById('lf-error').style.display = 'block';
+    if (lfAllLeads.length === 0) document.getElementById('lf-empty').style.display = 'block';
+  } finally {
+    clearInterval(lfLoadingTimer); document.getElementById('lf-loading').style.display = 'none'; lfCheckReady();
+  }
+}
+
+async function lfFindIntent() {
+  const { location, count } = lfGetInputs();
+  if (!location) return;
+  if (!checkApiKey()) return;
+  document.getElementById('lf-intent-btn').disabled = true;
+  document.getElementById('lf-search-btn').disabled = true;
+  document.getElementById('lf-empty').style.display = 'none';
+  document.getElementById('lf-error').style.display = 'none';
+  document.getElementById('lf-leads-list').innerHTML = '';
+  document.getElementById('lf-results-header').style.display = 'none';
+  document.getElementById('lf-loading').style.display = 'flex';
+  document.getElementById('lf-loading-sub').textContent = `Searching for intent signals in ${location}`;
+  const intentMessages = ['Scanning Reddit posts...','Checking local forums...','Looking for website complaints...','Finding website requests...','Scoring intent signals...','Building outreach angles...','Almost ready...'];
+  lfLoadingIdx = 0; document.getElementById('lf-loading-msg').textContent = intentMessages[0];
+  lfLoadingTimer = setInterval(() => { lfLoadingIdx = (lfLoadingIdx+1) % intentMessages.length; document.getElementById('lf-loading-msg').textContent = intentMessages[lfLoadingIdx]; }, 2400);
+
+  const prompt = `You are a lead scout for Proactive Digital, a web design agency in Chesterfield/Richmond Virginia.
+
+Search the public web for people or businesses in or near ${location} who have recently (within the last 90 days) mentioned needing a website, looking for a web designer, having a broken website, or asking for website recommendations.
+
+Search Reddit (r/rva, r/Virginia, r/smallbusiness, r/Entrepreneur), public Twitter/X posts, public Facebook business pages, BBB complaints, and local business forums.
+
+Try these searches:
+- "need a website" ${location}
+- "looking for a web designer" ${location}
+- "my website is broken" ${location}
+- "anyone recommend a web designer" ${location}
+- ${location} small business website help site:reddit.com
+
+Return ONLY a JSON array, NO markdown, NO backticks, NO explanation:
+
+[{
+  "name": "Business or person name",
+  "snippet": "Direct quote or close paraphrase of what they said",
+  "source_url": "URL where you found it",
+  "post_date": "YYYY-MM-DD or null",
+  "email": "public email if discoverable, else null",
+  "phone": "phone if discoverable, else null",
+  "website": "url or null or none",
+  "angle": "One sentence outreach opener referencing what they said",
+  "score": 90,
+  "webStatus": "none|listing|weak|builder|decent",
+  "intentType": "asking|complaining|seeking_recs"
+}]
+
+Score 90-100 for active asks within 30 days, 75-89 for older asks or complaints, 60-74 for general signals. Target ${count} results.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+    });
+    const data = await response.json();
+    const textBlock = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    if (!textBlock) throw new Error('No response. Try again.');
+    const jsonMatch = textBlock.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) throw new Error('Could not parse intent data. Try again.');
+    lfAllLeads = JSON.parse(jsonMatch[0]).map(l => ({ ...l, pitchAngle: l.pitchAngle || l.angle })).sort((a,b) => b.score - a.score);
+    lfCurrentFilter = 'all';
+    document.querySelectorAll('.lf-filter-pill').forEach((p,i) => p.classList.toggle('active',i===0));
+    document.getElementById('lf-results-meta').textContent = `${lfAllLeads.length} INTENT SIGNALS FOUND`;
     lfRenderLeads(); lfUpdatePipelineBar();
   } catch(e) {
     document.getElementById('lf-error').textContent = e.message; document.getElementById('lf-error').style.display = 'block';
@@ -3455,6 +3647,9 @@ function lfRenderLeads() {
             ${lead.phone ? `<a href="tel:${lead.phone}">${lead.phone}</a>` : ''}
             ${lead.website && lead.webStatus !== 'none' ? `<a href="${lead.website.startsWith('http')?lead.website:'https://'+lead.website}" target="_blank">${lead.website.replace(/^https?:\/\//,'').substring(0,38)}</a>` : ''}
           </div>
+          ${lead.phone ? `<div class="lf-contact-row"><span class="lf-contact-label">PHONE</span><a href="tel:${lead.phone}" class="lf-contact-val">${lead.phone}</a></div>` : ''}
+          ${lead.email ? `<div class="lf-contact-row"><span class="lf-contact-label">EMAIL</span><a href="mailto:${lead.email}" class="lf-contact-val">${lead.email}</a></div>` : ''}
+          ${lead.snippet ? `<div class="lf-snippet"><span class="lf-intent-badge">INTENT</span><q>${lead.snippet}</q>${lead.source_url ? `<a href="${lead.source_url}" target="_blank" rel="noopener" class="lf-snippet-link">View source &#9658;</a>` : ''}</div>` : ''}
         </div>
         <div class="lf-card-actions">
           <button class="lf-outreach-btn" onclick="openLfOutreach(${realIdx})">✉ WRITE OUTREACH</button>
@@ -3464,8 +3659,9 @@ function lfRenderLeads() {
       </div>
       <div class="lf-card-expanded" id="lf-expanded-${realIdx}" style="display:none;">
         ${lead.notes ? `<div><div class="lf-section-label">Intelligence</div><div class="lf-intel-text">${lead.notes}</div></div>` : ''}
-        ${lead.pitchAngle ? `<div><div class="lf-pitch-header"><div class="lf-section-label">Pitch Angle</div><button class="lf-copy-btn" id="lf-copy-${realIdx}" onclick="lfCopyPitch(${realIdx})">Copy</button></div><div class="lf-pitch-box" id="lf-pitch-text-${realIdx}">${lead.pitchAngle}</div></div>` : ''}
+        ${(lead.pitchAngle || lead.angle) ? `<div><div class="lf-pitch-header"><div class="lf-section-label">Pitch Angle</div><button class="lf-copy-btn" id="lf-copy-${realIdx}" onclick="lfCopyPitch(${realIdx})">Copy</button></div><div class="lf-pitch-box" id="lf-pitch-text-${realIdx}">${lead.pitchAngle || lead.angle}</div></div>` : ''}
         ${lead.services && lead.services.length > 0 ? `<div><div class="lf-section-label">Known Services</div><div class="lf-services-row">${lead.services.map(s=>`<span class="lf-service-tag">${s}</span>`).join('')}</div></div>` : ''}
+        ${lead.post_date ? `<div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--mono);">Post date: ${lead.post_date}</div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -3511,8 +3707,8 @@ function lfClearPipeline() {
 }
 function lfExportCSV() {
   if (lfSavedPipeline.length===0) { alert('No leads saved. Save some leads first.'); return; }
-  const headers=['Name','Address','Phone','Website','Web Status','Score','Has GMB','Notes','Pitch Angle','Saved At'];
-  const rows = lfSavedPipeline.map(l=>[`"${l.name||''}"`,`"${l.address||''}"`,`"${l.phone||''}"`,`"${l.website||''}"`,`"${l.webStatus||''}"`,l.score||0,l.hasGMB?'Yes':'No',`"${(l.notes||'').replace(/"/g,"'")}"`,`"${(l.pitchAngle||'').replace(/"/g,"'")}"`,`"${l.savedAt||''}"`].join(','));
+  const headers=['Name','Address','Phone','Email','Website','Web Status','Score','Has GMB','Notes','Pitch Angle','Saved At'];
+  const rows = lfSavedPipeline.map(l=>[`"${l.name||''}"`,`"${l.address||''}"`,`"${l.phone||''}"`,`"${l.email??''}"`,`"${l.website||''}"`,`"${l.webStatus||''}"`,l.score||0,l.hasGMB?'Yes':'No',`"${(l.notes||'').replace(/"/g,"'")}"`,`"${((l.pitchAngle||l.angle||'')).replace(/"/g,"'")}"`,`"${l.savedAt||''}"`].join(','));
   const csv=[headers.join(','),...rows].join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=`finder-leads-${Date.now()}.csv`; a.click(); URL.revokeObjectURL(url);
 }
