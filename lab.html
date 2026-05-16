@@ -3516,11 +3516,25 @@ For email: search the business website's contact/about page, BBB listing, public
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+      body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:8000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
     });
     const data = await response.json();
-    const textBlock = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
-    if (!textBlock) throw new Error('No response. Try again.');
+    console.log('Lead Finder raw response:', data);
+    if (data.type === 'error' || data.error) {
+      const msg = data.error?.message || 'Unknown API error';
+      throw new Error('API error: ' + msg);
+    }
+    if (data.stop_reason === 'max_tokens') {
+      console.warn('Hit max_tokens limit. Increase max_tokens or reduce result count.');
+    }
+    const textBlock = (data.content||[])
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('');
+    if (!textBlock) {
+      const blockTypes = (data.content||[]).map(b => b.type).join(', ');
+      throw new Error('Empty response. Block types received: ' + (blockTypes || 'none') + '. Stop reason: ' + (data.stop_reason || 'unknown'));
+    }
     const jsonMatch = textBlock.match(/\[[\s\S]*\]/);
     if (!jsonMatch) throw new Error('Could not parse lead data. Try again.');
     lfAllLeads = JSON.parse(jsonMatch[0]).sort((a,b) => b.score - a.score);
@@ -3586,11 +3600,25 @@ Score 90-100 for active asks within 30 days, 75-89 for older asks or complaints,
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+      body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:8000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
     });
     const data = await response.json();
-    const textBlock = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
-    if (!textBlock) throw new Error('No response. Try again.');
+    console.log('Lead Finder raw response:', data);
+    if (data.type === 'error' || data.error) {
+      const msg = data.error?.message || 'Unknown API error';
+      throw new Error('API error: ' + msg);
+    }
+    if (data.stop_reason === 'max_tokens') {
+      console.warn('Hit max_tokens limit. Increase max_tokens or reduce result count.');
+    }
+    const textBlock = (data.content||[])
+      .filter(b => b.type === 'text')
+      .map(b => b.text)
+      .join('');
+    if (!textBlock) {
+      const blockTypes = (data.content||[]).map(b => b.type).join(', ');
+      throw new Error('Empty response. Block types received: ' + (blockTypes || 'none') + '. Stop reason: ' + (data.stop_reason || 'unknown'));
+    }
     const jsonMatch = textBlock.match(/\[[\s\S]*\]/);
     if (!jsonMatch) throw new Error('Could not parse intent data. Try again.');
     lfAllLeads = JSON.parse(jsonMatch[0]).map(l => ({ ...l, pitchAngle: l.pitchAngle || l.angle })).sort((a,b) => b.score - a.score);
