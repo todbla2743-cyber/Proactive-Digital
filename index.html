@@ -289,7 +289,7 @@ img { display: block; max-width: 100% }
 ───────────────────────────────────────── */
 #hero {
   min-height:100vh; display:flex; align-items:center;
-  padding-top:80px; overflow-x:clip; overflow-y:visible; position:relative;
+  padding-top:80px; overflow:hidden; position:relative;
 }
 /* Mesh */
 .mesh {
@@ -1217,6 +1217,8 @@ footer {
 }
 @media(max-width:600px) {
   .sec { padding:80px 0 }
+  .chip { font-size:11px; padding:4px 10px; letter-spacing:.1px }
+  .hero-tag { padding-right:16px }
   .srv-grid { grid-template-columns:1fr }
   .fr { grid-template-columns:1fr }
   .byo { padding:28px 22px }
