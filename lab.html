@@ -1719,14 +1719,31 @@
     <!-- STOCKS PANEL -->
     <div class="panel" id="panel-stocks" style="flex-direction:column; padding:1.5rem; gap:1rem; overflow-y:auto;">
       <div class="panel-header">
-        <div class="panel-title">Stock <span>Watchlist</span></div>
+        <div class="panel-title" style="display:flex;align-items:center;gap:10px;">
+          Stock <span>Watchlist</span>
+          <button id="refresh-stocks-btn" onclick="tickStocks()" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-mid);cursor:pointer;padding:4px 8px;font-size:0.75rem;font-family:var(--font);display:flex;align-items:center;gap:4px;transition:all 0.2s;" title="Refresh Stocks">
+            ⟳ Refresh
+          </button>
+        </div>
         <div class="stock-add-row">
           <input class="stock-add-input" id="ticker-input" placeholder="TICKER" maxlength="6" onkeydown="if(event.key==='Enter') addStock()" />
-          <button class="add-btn" onclick="addStock()">+ Add</button>
+          <button class="add-btn" id="add-stock-btn" onclick="addStock()">+ Add</button>
         </div>
       </div>
+      
+      <div id="stock-key-form" style="display:none; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px; gap:8px; align-items:center;">
+        <span style="font-size:0.75rem; color:var(--text-mid); font-family:var(--mono);">Finnhub Key:</span>
+        <input type="password" id="stock-api-key-input" placeholder="Enter Finnhub token..." style="flex:1; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:6px 10px; color:var(--text); font-family:var(--mono); font-size:0.75rem; outline:none;" />
+        <button onclick="saveStockApiKey()" style="background:var(--teal); color:#0a0a0c; border:none; border-radius:6px; padding:6px 12px; font-weight:600; cursor:pointer; font-family:var(--font); font-size:0.75rem;">Save</button>
+        <button onclick="toggleStockKeyForm(false)" style="background:none; border:1px solid var(--border); border-radius:6px; color:var(--text-dim); padding:6px 10px; cursor:pointer; font-family:var(--font); font-size:0.75rem;">Cancel</button>
+      </div>
+
       <div class="stocks-grid" id="stocks-grid"></div>
-      <div style="font-size:0.7rem; color:var(--text-dim); font-family:var(--mono); margin-top:auto;">Prices simulated for display. Connect a market data API for live quotes.</div>
+      
+      <div id="stock-status-bar" style="font-size:0.7rem; color:var(--text-dim); font-family:var(--mono); margin-top:auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid var(--border); padding-top:8px;">
+        <span id="stock-api-status">Prices simulated for display. Connect a market data API for live quotes.</span>
+        <button id="stock-key-btn" onclick="toggleStockKeyForm(true)" style="background:none; border:none; color:var(--teal); font-family:var(--mono); font-size:0.7rem; cursor:pointer; text-decoration:underline; padding:0;">Set API Key</button>
+      </div>
     </div>
 
     <!-- PIPELINE PANEL -->
@@ -2764,6 +2781,8 @@ let stocks = JSON.parse(localStorage.getItem('lab_stocks') || 'null') || [
   { ticker: 'AMZN', name: 'Amazon', price: 192.67, change: 0.54 },
   { ticker: 'META', name: 'Meta Platforms', price: 527.30, change: -1.45 },
 ];
+let stockApiKey = localStorage.getItem('lab_stock_api_key') || '';
+let isTicking = false;
 
 function saveStocks() { localStorage.setItem('lab_stocks', JSON.stringify(stocks)); }
 
@@ -2788,16 +2807,77 @@ function renderStocks() {
   }).join('');
 }
 
-function addStock() {
+async function addStock() {
   const input = document.getElementById('ticker-input');
   const ticker = input.value.trim().toUpperCase();
-  if (!ticker || stocks.find(s => s.ticker === ticker)) { input.value = ''; return; }
-  const price = (Math.random() * 400 + 50).toFixed(2);
-  const change = ((Math.random() - 0.5) * 6).toFixed(2);
-  stocks.push({ ticker, name: ticker, price: parseFloat(price), change: parseFloat(change) });
-  saveStocks();
-  renderStocks();
-  input.value = '';
+  if (!ticker) return;
+  if (stocks.find(s => s.ticker === ticker)) {
+    alert(`${ticker} is already in your watchlist.`);
+    input.value = '';
+    return;
+  }
+
+  const addBtn = document.getElementById('add-stock-btn');
+  if (addBtn) {
+    addBtn.disabled = true;
+    addBtn.textContent = 'Adding...';
+  }
+
+  if (!stockApiKey) {
+    // Simulated add
+    const price = (Math.random() * 400 + 50).toFixed(2);
+    const change = ((Math.random() - 0.5) * 6).toFixed(2);
+    stocks.push({ ticker, name: ticker, price: parseFloat(price), change: parseFloat(change) });
+    saveStocks();
+    renderStocks();
+    input.value = '';
+    if (addBtn) {
+      addBtn.disabled = false;
+      addBtn.textContent = '+ Add';
+    }
+    return;
+  }
+
+  // Live add
+  try {
+    const quoteUrl = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${stockApiKey}`;
+    const profileUrl = `https://finnhub.io/api/v1/stock/profile2?symbol=${ticker}&token=${stockApiKey}`;
+    
+    const [qRes, pRes] = await Promise.all([
+      fetch(quoteUrl).then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      }),
+      fetch(profileUrl).then(r => r.json()).catch(() => ({}))
+    ]);
+
+    if (!qRes || qRes.c === 0) {
+      alert(`Could not find market data for symbol: ${ticker}. Please verify it is a valid US stock ticker.`);
+      if (addBtn) {
+        addBtn.disabled = false;
+        addBtn.textContent = '+ Add';
+      }
+      return;
+    }
+
+    const name = pRes.name || ticker;
+    stocks.push({
+      ticker,
+      name,
+      price: qRes.c,
+      change: qRes.dp || 0
+    });
+    saveStocks();
+    renderStocks();
+    input.value = '';
+  } catch (err) {
+    alert(`Failed to fetch stock symbol: ${err.message}`);
+  } finally {
+    if (addBtn) {
+      addBtn.disabled = false;
+      addBtn.textContent = '+ Add';
+    }
+  }
 }
 
 function removeStock(i) {
@@ -2806,15 +2886,96 @@ function removeStock(i) {
   renderStocks();
 }
 
-// Simulate price movement
-function tickStocks() {
-  stocks = stocks.map(s => ({
-    ...s,
-    price: Math.max(1, s.price + (Math.random() - 0.5) * s.price * 0.001),
-    change: s.change + (Math.random() - 0.5) * 0.05
-  }));
+async function tickStocks() {
+  if (isTicking) return;
+  isTicking = true;
+  const refreshBtn = document.getElementById('refresh-stocks-btn');
+  if (refreshBtn) {
+    refreshBtn.disabled = true;
+    refreshBtn.textContent = '⌛ Updating...';
+  }
+
+  if (!stockApiKey) {
+    stocks = stocks.map(s => ({
+      ...s,
+      price: Math.max(1, s.price + (Math.random() - 0.5) * s.price * 0.001),
+      change: s.change + (Math.random() - 0.5) * 0.05
+    }));
+    saveStocks();
+    renderStocks();
+    isTicking = false;
+    if (refreshBtn) {
+      refreshBtn.disabled = false;
+      refreshBtn.textContent = '⟳ Refresh';
+    }
+    return;
+  }
+
+  const promises = stocks.map(async (s) => {
+    try {
+      const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${s.ticker}&token=${stockApiKey}`).then(r => r.json());
+      if (res && res.c !== 0) {
+        s.price = res.c;
+        s.change = res.dp || 0;
+      }
+    } catch (e) {
+      console.error(`Error ticking ${s.ticker}:`, e);
+    }
+  });
+
+  await Promise.all(promises);
   saveStocks();
   renderStocks();
+  updateStockStatusBar();
+  isTicking = false;
+  if (refreshBtn) {
+    refreshBtn.disabled = false;
+    refreshBtn.textContent = '⟳ Refresh';
+  }
+}
+
+function saveStockApiKey() {
+  const input = document.getElementById('stock-api-key-input');
+  const key = input.value.trim();
+  if (!key) {
+    stockApiKey = '';
+    localStorage.removeItem('lab_stock_api_key');
+    toggleStockKeyForm(false);
+    updateStockStatusBar();
+    return;
+  }
+  stockApiKey = key;
+  localStorage.setItem('lab_stock_api_key', key);
+  toggleStockKeyForm(false);
+  updateStockStatusBar();
+  tickStocks();
+}
+
+function toggleStockKeyForm(show) {
+  const form = document.getElementById('stock-key-form');
+  const input = document.getElementById('stock-api-key-input');
+  if (show) {
+    form.style.display = 'flex';
+    input.value = stockApiKey;
+    input.focus();
+  } else {
+    form.style.display = 'none';
+    input.value = '';
+  }
+}
+
+function updateStockStatusBar() {
+  const statusEl = document.getElementById('stock-api-status');
+  const keyBtn = document.getElementById('stock-key-btn');
+  if (!statusEl || !keyBtn) return;
+  if (stockApiKey) {
+    const timeStr = new Date().toLocaleTimeString();
+    statusEl.innerHTML = `<span style="color:var(--success)">● Live</span> quotes via Finnhub.io (Last updated: ${timeStr})`;
+    keyBtn.textContent = 'Change Key';
+  } else {
+    statusEl.textContent = 'Prices simulated for display. Connect a market data API for live quotes.';
+    keyBtn.textContent = 'Set API Key';
+  }
 }
 
 // ============ PIPELINE ============
@@ -3141,7 +3302,8 @@ function initApp() {
   setInterval(updateClock, 1000);
   loadNews();
   renderStocks();
-  setInterval(tickStocks, 30000);
+  updateStockStatusBar();
+  setInterval(tickStocks, 60000);
   renderPipeline();
   renderChatHistoryList();
   lfUpdatePipelineBar();
