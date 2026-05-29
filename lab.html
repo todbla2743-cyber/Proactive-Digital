@@ -1871,6 +1871,7 @@
     </div>
     <div class="nav-right">
       <span id="clock"></span>
+      <button class="logout-btn" onclick="changeApiKey()" style="border-color:var(--teal-mid);color:var(--teal);" title="Change API Key">⚙ key</button>
       <button class="logout-btn" onclick="doLogout()">logout</button>
     </div>
   </nav>
@@ -2827,7 +2828,7 @@ async function summarizeCurrentChat() {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 300,
         messages: [{
           role: 'user',
@@ -3026,7 +3027,7 @@ Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd w
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 2048,
         system: systemPrompt,
         messages: chatHistory
@@ -3658,7 +3659,7 @@ Write the ${type === 'email' ? 'email with a subject line' : type === 'facebook'
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await res.json();
     document.getElementById('ob-content').textContent = data.content?.[0]?.text || 'No response.';
@@ -3869,7 +3870,7 @@ async function bpSend() {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1500,
         system: BP_SYSTEM,
         messages: bpMessages
@@ -4634,7 +4635,7 @@ Only include real articles you actually found with working URLs. Target 12 items
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
       headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
@@ -5065,7 +5066,7 @@ async function lfApi(prompt){
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-    body: JSON.stringify({ model:'claude-sonnet-4-5', max_tokens:8000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+    body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:8000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
   });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message || 'API error');
@@ -5243,6 +5244,29 @@ switchPanel = function(id, btn){
   if (id === 'finder'){ lfReady(); }
 };
 
+</script>
+
+<script>
+/* Change API key at any time */
+function changeApiKey(){
+  const current = apiKey ? '(key ending in …' + apiKey.slice(-6) + ')' : '(no key set)';
+  const val = prompt('Enter your Anthropic API key ' + current + '\n\nGet one at console.anthropic.com/settings/keys\nLeave blank to clear the current key.');
+  if (val === null) return; // cancelled
+  if (val.trim() === '') {
+    apiKey = '';
+    localStorage.removeItem('lab_api_key');
+    alert('API key cleared. Enter a new one in AI Chat.');
+    return;
+  }
+  const k = val.trim();
+  if (!k.startsWith('sk-ant-')) {
+    alert("That doesn't look right — Anthropic keys start with sk-ant-\nTry again.");
+    return;
+  }
+  apiKey = k;
+  localStorage.setItem('lab_api_key', k);
+  alert('API key saved. All features are now active.');
+}
 </script>
 </body>
 </html>
