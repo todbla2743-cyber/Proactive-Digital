@@ -3843,7 +3843,10 @@ function bpRemoveTyping() {
 }
 
 async function bpSend() {
-  if (!apiKey) { checkApiKey(); return; }
+  if (!apiKey) {
+    bpAppend('assistant', 'API key not set. Go to the AI Chat tab, enter your Anthropic API key, then come back to Blueprint.');
+    return;
+  }
   const inp = document.getElementById('bp-input');
   const text = inp.value.trim();
   if (!text || bpLoading) return;
@@ -4617,7 +4620,7 @@ function loadNews(force){
 async function loadNewsLive(){
   const grid = document.getElementById('news-grid');
   if (!apiKey){
-    if (grid && !LAB_NEWS.length) grid.innerHTML = `<div style="color:var(--text-dim);font-size:0.85rem;font-family:var(--mono);">Add your API key in AI Chat to pull a live news feed.</div>`;
+    if (grid) grid.innerHTML = `<div style="color:var(--text-dim);font-size:0.85rem;font-family:var(--mono);">API key not set. Go to <strong style="color:var(--teal);">AI Chat</strong>, enter your Anthropic key, then hit Refresh here.</div>`;
     return;
   }
   if (grid && !LAB_NEWS.length) grid.innerHTML = `<div style="color:var(--teal);font-size:0.85rem;font-family:var(--mono);">Pulling the latest stories...</div>`;
@@ -5011,7 +5014,11 @@ function lfWebPill(st){
 async function runLeadSearch(){
   const { niche, location, count } = lfInputs();
   if (!niche || !location) return;
-  if (typeof checkApiKey === 'function' && !checkApiKey()) return;
+  if (!apiKey){
+    const e=document.getElementById('lf-error');
+    e.textContent='API key required. Go to the AI Chat tab, enter your Anthropic key, then come back here.';
+    e.style.display='block'; return;
+  }
   lfMode = 'leads';
   lfBusy(true, `Scanning ${niche} in ${location}...`);
   const prompt = `You are a lead researcher for Proactive Digital, a web design agency in Chesterfield/Richmond Virginia targeting local small businesses. Find real local businesses of type "${niche}" in "${location}" that are the best web design leads: no website, very weak website, or only free directory listings. Use web search to find real businesses.
@@ -5032,7 +5039,11 @@ webStatus scoring: none=85-100, listing=70-84, weak/builder=50-69, decent=10-45.
 async function lfFindIntent(){
   const { location, count } = lfInputs();
   if (!location) return;
-  if (typeof checkApiKey === 'function' && !checkApiKey()) return;
+  if (!apiKey){
+    const e=document.getElementById('lf-error');
+    e.textContent='API key required. Go to the AI Chat tab, enter your Anthropic key, then come back here.';
+    e.style.display='block'; return;
+  }
   lfMode = 'intent';
   lfBusy(true, `Searching intent signals in ${location}...`);
   const prompt = `You are a lead scout for Proactive Digital, a web design agency in Chesterfield/Richmond Virginia. Search the public web for people or businesses in or near ${location} who recently (last 90 days) mentioned needing a website, looking for a web designer, having a broken website, or asking for recommendations. Search Reddit (r/rva, r/Virginia, r/smallbusiness), public posts, BBB, and local forums.
