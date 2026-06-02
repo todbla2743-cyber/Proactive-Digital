@@ -2006,7 +2006,7 @@
     <div class="panel" id="panel-news" style="flex-direction:column; padding:1.5rem; gap:1rem; overflow-y:auto;">
       <div class="panel-header">
         <div class="panel-title">Live <span>Feed</span></div>
-        <button class="refresh-btn" onclick="loadNews()">Refresh</button>
+        <button class="refresh-btn" onclick="loadNews(true)">Refresh</button>
       </div>
       <div class="news-filters">
         <div class="filter-pill active" onclick="filterNews('all', this)">All</div>
@@ -4726,7 +4726,10 @@ function initApp(){
   updateDailyCounter();
   renderClients();
   updateClientStats();
-  loadNews();
+  // News intentionally NOT auto-loaded here. It loads on demand when the
+  // News tab is opened (see switchPanel), gated by a 6h cache. Auto-firing
+  // a web search on every page load was draining the 30k input-tokens/min
+  // org limit and causing unrelated requests (e.g. Blueprint) to 429.
   switchPanel('today');
   if (typeof apiKey !== 'undefined' && !apiKey && typeof checkApiKey === 'function') checkApiKey();
 }
