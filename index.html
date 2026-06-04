@@ -1165,6 +1165,48 @@ img { display: block; max-width: 100% }
 }
 
 /* ─────────────────────────────────────────
+   FAQ
+───────────────────────────────────────── */
+#faq { background:var(--bg2) }
+.faq-grid {
+  margin-top:56px; display:flex; flex-direction:column; gap:12px; max-width:780px;
+}
+.faq-item {
+  background:var(--surf); border:1px solid var(--bdr);
+  border-radius:12px; overflow:hidden;
+  transition:border-color .25s var(--ease);
+}
+.faq-item:hover { border-color:var(--bdr2) }
+.faq-item[open] { border-color:rgba(0,191,199,.25) }
+.faq-item summary {
+  list-style:none; padding:20px 24px;
+  font-family:var(--fh); font-weight:600;
+  font-size:16px; letter-spacing:-.2px; color:var(--tx);
+  display:flex; justify-content:space-between; align-items:center;
+  gap:16px; cursor:none;
+  transition:color .2s;
+}
+.faq-item summary::-webkit-details-marker { display:none }
+.faq-item summary:hover { color:var(--teal) }
+.faq-item[open] summary { color:var(--teal) }
+.faq-item summary::after {
+  content:'+'; font-size:20px; font-weight:300;
+  color:var(--tx2); flex-shrink:0; line-height:1;
+  transition:transform .25s var(--ease), color .2s;
+}
+.faq-item[open] summary::after { transform:rotate(45deg); color:var(--teal) }
+.faq-body {
+  padding:0 24px 20px; color:var(--tx2);
+  font-size:15px; line-height:1.8; border-top:1px solid var(--bdr);
+  padding-top:16px;
+}
+.faq-cta {
+  margin-top:40px; color:var(--tx2); font-size:15px;
+}
+.faq-cta a { color:var(--teal); font-weight:600; transition:opacity .2s }
+.faq-cta a:hover { opacity:.75 }
+
+/* ─────────────────────────────────────────
    FOOTER
 ───────────────────────────────────────── */
 footer {
@@ -1266,6 +1308,7 @@ footer {
       <a href="#pricing">Pricing</a>
       <a href="#testimonials">Reviews</a>
       <a href="#support">Monthly Support</a>
+      <a href="#faq">FAQ</a>
       <a href="/small-business-website-design-richmond-va.html">Local SEO</a>
     </nav>
     <div class="nav-r">
@@ -1283,6 +1326,7 @@ footer {
   <a href="#pricing" onclick="closeMob()">Pricing</a>
   <a href="#testimonials" onclick="closeMob()">Reviews</a>
   <a href="#support" onclick="closeMob()">Monthly Support</a>
+  <a href="#faq" onclick="closeMob()">FAQ</a>
   <a href="/small-business-website-design-richmond-va.html" onclick="closeMob()">Local SEO Page</a>
   <a href="/design-fusion-case-study.html" onclick="closeMob()">Case Study</a>
   <a href="#contact" onclick="closeMob()">Get Started →</a>
@@ -1298,24 +1342,25 @@ footer {
         <div class="hero-tag">
           <span class="chip">
             <span style="width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;display:inline-block"></span>
-            Veteran-Owned · Nationwide
+            Veteran-Owned · Richmond &amp; Chesterfield, VA
           </span>
         </div>
         <h1 class="hero-h1">
-          Websites that<br/>
+          Get found.<br/>
           <span class="kin">
             <span class="kin-list">
-              <span class="kin-w">convert.</span>
-              <span class="kin-w">impress.</span>
-              <span class="kin-w">perform.</span>
-              <span class="kin-w">win.</span>
+              <span class="kin-w">Get calls.</span>
+              <span class="kin-w">Get booked.</span>
+              <span class="kin-w">Get customers.</span>
+              <span class="kin-w">Get growing.</span>
             </span>
           </span>
         </h1>
-        <p class="hero-sub">Clean, modern websites for small businesses, flat pricing, fast delivery, built to turn visitors into paying customers.</p>
+        <p class="hero-sub">Professional websites for contractors, service businesses, and nonprofits that turn local searches into paying customers. Flat pricing, fast delivery, you own everything.</p>
+        <p style="font-size:13px;color:var(--tx2);margin-top:-28px;margin-bottom:40px;font-weight:500;letter-spacing:.2px;">Richmond-based. Serving Virginia businesses. Available nationwide.</p>
         <div class="hero-btns">
-          <a href="#portfolio" class="btn btn-p">See Our Work →</a>
-          <a href="#contact" class="btn btn-g">Get a Free Quote</a>
+          <a href="#contact" class="btn btn-p">Get a Free Mockup →</a>
+          <a href="#portfolio" class="btn btn-g">View Our Work</a>
         </div>
         <div class="hero-metrics">
           <div>
@@ -1716,8 +1761,8 @@ footer {
         </div>
 
         <div class="about-body">
-          <p>Before Proactive Digital, there was a vending route, a stack of used machines, and a belief that regular people could build something real if they just had the right tools and the courage to start.</p>
-          <p><strong>Todd Blackwell Jr.</strong> is an entrepreneur, and B2B sales professional based in Chesterfield, VA. Armed with a B.S. in Business Administration and real-world experience running his own businesses, he built a vending operation from the ground up alongside his wife Robbyn, with hustle, strategy, and a willingness to figure things out in real time.</p>
+          <p>Todd Blackwell Jr. has spent his career on the operating side of real businesses, B2B sales, multi-location operations, and building a company from nothing alongside his wife Robbyn. He knows what it actually takes to run a small business, because he has done it.</p>
+          <p>Before Proactive Digital, there was a vending route, a stack of used machines, and a belief that regular people could build something real if they just had the right tools and the courage to start. Armed with a B.S. in Business Administration and real-world experience, he built a vending operation from the ground up with hustle, strategy, and a willingness to figure things out in real time.</p>
           <p>Proactive Digital was born from that same mindset. Every small business owner who lands here deserves a website that actually works, not a watered-down template, not an agency quote that requires a loan, and not a developer who disappears after launch. Just clean, modern work delivered straight, by someone who genuinely understands what it takes to run a business.</p>
         </div>
 
@@ -2275,6 +2320,43 @@ footer {
         <p>A custom apparel order request system that turned scattered details into a cleaner digital flow.</p>
       </a>
     </div>
+  </div>
+</section>
+
+<!-- ═══════ FAQ ═══════ -->
+<section id="faq" class="sec">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Questions, Answered</div>
+      <h2 class="h2">What most people ask<br/>before they start.</h2>
+    </div>
+    <div class="faq-grid rv">
+      <details class="faq-item">
+        <summary>How long does it take?</summary>
+        <div class="faq-body">Most sites are delivered in 7 days. Larger multi-page builds run 10 to 21 days depending on scope.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I own my website?</summary>
+        <div class="faq-body">Yes. 100 percent. The site, the domain, the content, all yours. No hostage situations, no platform lock-in.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What if I need changes after launch?</summary>
+        <div class="faq-body">You can grab a monthly support plan starting at a low flat rate, or pay per update. Your call, no pressure.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What do you need from me to start?</summary>
+        <div class="faq-body">Your logo if you have one, a few photos, and a quick idea of what you want the site to do. We handle the rest.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What does it cost?</summary>
+        <div class="faq-body">Flat pricing starts at $440. You see the full price before you commit. No hourly surprises, no agency runaround.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can you help with Google and getting found?</summary>
+        <div class="faq-body">Yes. SEO basics and Google Business Profile setup are included on Growth and Pro builds.</div>
+      </details>
+    </div>
+    <p class="faq-cta rv">Still have a question? <a href="#contact">Just ask.</a> We answer fast.</p>
   </div>
 </section>
 
