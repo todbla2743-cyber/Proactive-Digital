@@ -1188,8 +1188,36 @@
 
   @media (max-width: 768px) {
     .pipeline-cols { grid-template-columns: 1fr 1fr; }
-    .nav-tabs { gap: 2px; }
-    .nav-tab { padding: 6px 8px; font-size: 0.72rem; }
+
+    /* ── Nav: lock page, scroll only the tab strip ── */
+    body { overflow-x: hidden; }
+
+    .topnav {
+      flex-wrap: wrap;
+      height: auto;
+      padding: 8px 12px 0;
+      gap: 0;
+    }
+    .nav-brand { flex: 1; min-width: 0; }
+    .nav-right  { flex-shrink: 0; }
+
+    .nav-tabs {
+      width: calc(100% + 24px);   /* bleed to edges */
+      margin: 6px -12px 0;
+      padding: 4px 12px;
+      border-radius: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      gap: 2px;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .nav-tab {
+      padding: 7px 10px;
+      font-size: 0.72rem;
+      flex-shrink: 0;
+    }
 
     /* Mobile: sidebar becomes collapsible top drawer */
     .ai-layout { flex-direction: column; }
