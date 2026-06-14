@@ -1802,6 +1802,7 @@
 @media (max-width:768px){ .lf-search-bar { grid-template-columns:1fr 1fr; } }
 
 </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -1840,6 +1841,7 @@
 
 <!-- MAIN APP -->
 <div id="app">
+  <div id="sb-sync-status" style="display:none;text-align:center;margin-top:12px;font-size:.85rem;color:#5bf;font-family:monospace;"></div>
   <nav class="topnav">
     <div class="nav-brand">
       <svg width="22" height="22" viewBox="0 0 68 90" xmlns="http://www.w3.org/2000/svg">
@@ -2465,14 +2467,92 @@
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════
+// SUPABASE CLOUD SYNC — Proactive Digital Lab
+// ══════════════════════════════════════════════════════
+const SB_URL = 'https://ehwjfjqhcopweaggirtj.supabase.co';
+const SB_KEY = 'sb_publishable_yVYL36pNaEoXvuRTNszbNQ_-ubP4N2x';
+let _db = null;
+const SB = {
+  init() {
+    try {
+      if (typeof supabase !== 'undefined') {
+        _db = supabase.createClient(SB_URL, SB_KEY);
+        console.log('Supabase connected ✓');
+      }
+    } catch(e) { console.warn('Supabase init failed', e); }
+  },
+  async save(key, value) {
+    if (!_db) return;
+    try {
+      await _db.from('lab_store').upsert({ key, value, updated_at: new Date().toISOString() });
+    } catch(e) { console.warn('SB.save error:', key, e); }
+  },
+  async load() {
+    if (!_db) return null;
+    try {
+      const { data, error } = await _db.from('lab_store').select('*');
+      if (error) throw error;
+      const store = {};
+      (data || []).forEach(row => store[row.key] = row.value);
+      return store;
+    } catch(e) { console.warn('SB.load error', e); return null; }
+  },
+  async migrate() {
+    if (!_db) return;
+    if (localStorage.getItem('lab_sb_migrated')) return;
+    const { data } = await _db.from('lab_store').select('key').limit(1);
+    if (data && data.length > 0) {
+      localStorage.setItem('lab_sb_migrated', '1');
+      return; // Already has data in Supabase
+    }
+    console.log('Migrating Lab data to Supabase...');
+    const keys = [
+      ['lab_records','records'],['lab_pipeline','pipeline'],
+      ['lab_clients','clients'],['lab_leads','leads'],
+      ['lab_proof_v2','proof'],['lab_swipe_file','swipe'],
+      ['lab_settings','settings'],['lab_saved_chats','saved_chats'],
+      ['lab_memory_summaries','memory_summaries']
+    ];
+    for (const [lk, sk] of keys) {
+      const raw = localStorage.getItem(lk);
+      if (raw) { try { await SB.save(sk, JSON.parse(raw)); } catch(e){} }
+    }
+    localStorage.setItem('lab_sb_migrated','1');
+    console.log('Migration complete ✓');
+  }
+};
+// ══════════════════════════════════════════════════════
+
 // ============ AUTH ============
 const PASS = 'TRBFAMILY2014';
 
-function doLogin() {
+async function doLogin() {
   const val = document.getElementById('pw-input').value.replace(/\s/g,'').toUpperCase();
   if (val === PASS) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
+    // Show sync indicator
+    const syncEl = document.getElementById('sb-sync-status');
+    if (syncEl) { syncEl.textContent = '⟳ Syncing from cloud...'; syncEl.style.display = 'block'; }
+    SB.init();
+    await SB.migrate();
+    const store = await SB.load();
+    if (store) {
+      // Write Supabase data into localStorage so existing init code picks it up
+      if (store.records) { localStorage.setItem('lab_records', JSON.stringify(store.records)); RECORDS = store.records; }
+      if (store.pipeline) { localStorage.setItem('lab_pipeline', JSON.stringify(store.pipeline)); pipeline = store.pipeline; }
+      if (store.clients) { localStorage.setItem('lab_clients', JSON.stringify(store.clients)); clients = store.clients; }
+      if (store.leads) { localStorage.setItem('lab_leads', JSON.stringify(store.leads)); leads = store.leads; }
+      if (store.proof) { localStorage.setItem('lab_proof_v2', JSON.stringify(store.proof)); PROOF = store.proof; }
+      if (store.swipe) { localStorage.setItem('lab_swipe_file', JSON.stringify(store.swipe)); SWIPE = store.swipe; }
+      if (store.settings) { localStorage.setItem('lab_settings', JSON.stringify(store.settings)); }
+      if (store.saved_chats) { localStorage.setItem('lab_saved_chats', JSON.stringify(store.saved_chats)); savedChats = store.saved_chats; }
+      if (store.memory_summaries) { localStorage.setItem('lab_memory_summaries', JSON.stringify(store.memory_summaries)); memorySummaries = store.memory_summaries; }
+      if (syncEl) { syncEl.textContent = '✓ Cloud sync complete'; setTimeout(() => syncEl.style.display = 'none', 2000); }
+    } else {
+      if (syncEl) { syncEl.style.display = 'none'; }
+    }
     initApp();
   } else {
     const err = document.getElementById('login-error');
@@ -2681,6 +2761,8 @@ function toggleMobileSidebar(e) {
 function saveChatState() {
   localStorage.setItem('lab_saved_chats', JSON.stringify(savedChats));
   localStorage.setItem('lab_memory_summaries', JSON.stringify(memorySummaries));
+  SB.save('saved_chats', savedChats);
+  SB.save('memory_summaries', memorySummaries);
 }
 
 function generateChatTitle(firstMsg) {
@@ -3174,7 +3256,7 @@ let pipeline = JSON.parse(localStorage.getItem('lab_pipeline') || 'null') || [
   { name: 'In Great Taste Catering', stage: 2, value: 400, next: 'Review HTML site with Brenda' },
 ];
 
-function savePipeline() { localStorage.setItem('lab_pipeline', JSON.stringify(pipeline)); }
+function savePipeline() { localStorage.setItem('lab_pipeline', JSON.stringify(pipeline)); SB.save('pipeline', pipeline); }
 
 function renderPipeline() {
   const cols = document.getElementById('pipeline-cols');
@@ -3250,7 +3332,7 @@ function openLink(url) { window.open(url, '_blank'); }
 // ============ CLIENTS ============
 let clients = JSON.parse(localStorage.getItem('lab_clients') || '[]');
 
-function saveClients() { localStorage.setItem('lab_clients', JSON.stringify(clients)); }
+function saveClients() { localStorage.setItem('lab_clients', JSON.stringify(clients)); SB.save('clients', clients); }
 
 function openClientModal() {
   document.getElementById('clientModalTitle').textContent = 'Add New Client';
@@ -3503,7 +3585,7 @@ let leads = JSON.parse(localStorage.getItem('lab_leads') || '[]');
 let currentObLead = null;
 let currentObType = 'email';
 
-function saveLeads() { localStorage.setItem('lab_leads', JSON.stringify(leads)); }
+function saveLeads() { localStorage.setItem('lab_leads', JSON.stringify(leads)); SB.save('leads', leads); }
 
 function todayStr() { return new Date().toISOString().slice(0,10); }
 
@@ -3928,7 +4010,7 @@ function beltRank(s){ const i = BELT.indexOf(s); return i === -1 ? -1 : i; }
 /* ---------- record store ---------- */
 let RECORDS = [];
 function loadRecords(){ try { return JSON.parse(localStorage.getItem('lab_records') || '[]'); } catch(e){ return []; } }
-function saveRecords(){ localStorage.setItem('lab_records', JSON.stringify(RECORDS)); }
+function saveRecords(){ localStorage.setItem('lab_records', JSON.stringify(RECORDS)); SB.save('records', RECORDS); }
 function getRecord(id){ return RECORDS.find(r => r.id === id); }
 function recordsByStatus(s){ return RECORDS.filter(r => r.status === s); }
 function nowISO(){ return new Date().toISOString(); }
@@ -4763,6 +4845,7 @@ function saveCadenceStore(arr){
     const s = JSON.parse(localStorage.getItem('lab_settings') || '{}');
     s.cadence = arr;
     localStorage.setItem('lab_settings', JSON.stringify(s));
+    SB.save('settings', s);
   } catch(e){}
 }
 let CADENCE = loadCadence();
@@ -4820,7 +4903,7 @@ function cadenceLabel(r){
 /* ---------------- SWIPE FILE ---------------- */
 let SWIPE = [];
 try { SWIPE = JSON.parse(localStorage.getItem('lab_swipe_file') || '[]'); } catch(e){ SWIPE = []; }
-function saveSwipeStore(){ localStorage.setItem('lab_swipe_file', JSON.stringify(SWIPE)); }
+function saveSwipeStore(){ localStorage.setItem('lab_swipe_file', JSON.stringify(SWIPE)); SB.save('swipe', SWIPE); }
 function saveSwipe(niche, channel, text){
   SWIPE.unshift({ niche:(niche||'general').toLowerCase(), channel:channel||'email', text:text, savedAt:nowISO() });
   if (SWIPE.length > 60) SWIPE = SWIPE.slice(0,60);
@@ -4848,7 +4931,7 @@ function useSwipeWinner(){
 /* ---------------- PROOF LIBRARY ---------------- */
 let PROOF = null;
 try { PROOF = JSON.parse(localStorage.getItem('lab_proof_v2') || 'null'); } catch(e){ PROOF = null; }
-function saveProofStore(){ localStorage.setItem('lab_proof_v2', JSON.stringify(PROOF)); }
+function saveProofStore(){ localStorage.setItem('lab_proof_v2', JSON.stringify(PROOF)); SB.save('proof', PROOF); }
 if (!PROOF){
   PROOF = [
     { id:'p1', label:'SLP Masonry',                  niche:'masonry contractor concrete roofing', url:'https://biggerbetterpresenceforslp.netlify.app/', note:'Parallax hero, lightbox gallery, Fraunces/Manrope type' },
