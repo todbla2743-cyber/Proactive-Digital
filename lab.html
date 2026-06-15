@@ -2061,6 +2061,39 @@
   .ti-btn { flex: 1 1 130px !important; }
 }
 
+
+
+/* Dedicated DF top-tab workspace */
+#panel-designfusion .df-feed-section {
+  max-width: 980px;
+  width: 100%;
+}
+#panel-designfusion .df-feed-body {
+  max-height: none;
+  overflow: visible;
+}
+#panel-designfusion .df-orders-list {
+  max-height: none;
+}
+#panel-designfusion .df-toggle-btn { display: none; }
+#panel-designfusion .df-feed-head { cursor: default !important; }
+@media (max-width: 768px) {
+  #panel-designfusion {
+    padding: 1rem 0.75rem !important;
+    gap: 1rem !important;
+  }
+  #panel-designfusion .panel-header {
+    display: block !important;
+  }
+  #panel-designfusion .panel-title {
+    margin-bottom: 4px;
+  }
+  #panel-designfusion .df-feed-section {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -2126,6 +2159,7 @@
       <button class="nav-tab" onclick="switchPanel('stocks', this)">Stocks</button>
       <button class="nav-tab" onclick="switchPanel('pipeline', this)">Pipeline</button>
       <button class="nav-tab" onclick="switchPanel('clients', this)">Clients</button>
+      <button class="nav-tab" onclick="switchPanel('designfusion', this)" style="color:#F78C1E;">DF</button>
       <button class="nav-tab" onclick="switchPanel('links', this)">Links</button>
       <button class="nav-tab" onclick="switchPanel('blueprint', this)">Blueprint</button>
       <button class="nav-tab" onclick="switchPanel('leads', this)">Leads</button>
@@ -2148,8 +2182,17 @@
         <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--mono);">Money-at-risk, ranked. Work top to bottom. &nbsp;<button onclick="openCadenceEditor()" style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text-dim);padding:2px 9px;font-size:0.68rem;font-family:var(--mono);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='var(--text-dim)'">⚙ Cadence</button></div>
       </div>
       <div class="scoreboard" id="today-scoreboard"></div>
+      <div class="today-cols" id="today-cols"></div>
+    </div>
+
+    <!-- DESIGN FUSION PANEL -->
+    <div class="panel" id="panel-designfusion" style="flex-direction:column; padding:1.5rem; gap:1.25rem; overflow-y:auto;">
+      <div class="panel-header">
+        <div class="panel-title">Design <span>Fusion</span></div>
+        <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--mono);">Rudy &middot; designfusion.it.com</div>
+      </div>
       <div class="df-feed-section" id="df-feed-section">
-        <div class="df-feed-head" onclick="toggleDFFeed()" style="cursor:pointer;">
+        <div class="df-feed-head">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
             <div class="df-dot"></div>
             <span class="df-feed-label">Design Fusion</span>
@@ -2166,7 +2209,7 @@
           <div class="df-orders-list" id="df-orders-list"><div class="df-empty">Loading orders...</div></div>
         </div>
       </div>
-      <div class="today-cols" id="today-cols"></div>
+
     </div>
 
     <!-- LEAD FINDER PANEL -->
@@ -5165,7 +5208,8 @@ function switchPanel(id, btn){
   if (panel) panel.classList.add('active');
   const tab = btn || [...document.querySelectorAll('.nav-tab')].find(t => (t.getAttribute('onclick')||'').includes("'"+id+"'"));
   if (tab) tab.classList.add('active');
-  if (id === 'today'){ renderToday(); renderDFFeed(); }
+  if (id === 'today'){ renderToday(); }
+  if (id === 'designfusion'){ renderDFFeed(); }
   if (id === 'pipeline'){ renderPipeline(); }
   if (id === 'clients'){ renderClients(); updateClientStats(); }
   if (id === 'leads'){ renderLeads(); updateDailyCounter(); }
