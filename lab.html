@@ -1874,6 +1874,169 @@
   #panel-today { padding: 1rem 0.75rem; gap: 1rem; }
 }
 
+
+
+/* ===== Mobile fix: Design Fusion feed + Today view ===== */
+@media (max-width: 768px) {
+  html,
+  body,
+  #app {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  .content,
+  .panel,
+  .panel.active {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #panel-today {
+    padding: 0.85rem !important;
+    gap: 0.9rem !important;
+  }
+
+  #panel-today .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #panel-today .panel-header > div:last-child {
+    width: 100%;
+    line-height: 1.45;
+  }
+
+  .scoreboard {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .sb-stat {
+    min-width: 0;
+    padding: 12px 10px;
+  }
+
+  .sb-val {
+    font-size: 1.35rem;
+    overflow-wrap: anywhere;
+  }
+
+  .sb-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .df-feed-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .df-feed-head {
+    padding: 12px;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .df-feed-head > div:first-child,
+  .df-feed-head > div:last-child {
+    min-width: 0;
+  }
+
+  .df-feed-head > div:last-child {
+    flex-shrink: 0;
+  }
+
+  .df-feed-label {
+    font-size: 0.78rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .df-refresh-btn,
+  .df-admin-btn {
+    font-size: 0.66rem;
+    padding: 4px 8px;
+  }
+
+  .df-feed-body {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .df-feed-body.collapsed {
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .df-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .df-stat {
+    min-width: 0;
+    padding: 10px;
+  }
+
+  .df-stat-val {
+    font-size: 1.2rem;
+    overflow-wrap: anywhere;
+  }
+
+  .df-stat-lbl {
+    font-size: 0.56rem;
+    letter-spacing: 0.06em;
+  }
+
+  .df-orders-list {
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 8px;
+  }
+
+  .df-order-row {
+    grid-template-columns: 1fr !important;
+    gap: 6px;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .df-order-row > *,
+  .df-order-row > div {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .df-order-name,
+  .df-order-item {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .df-order-badge,
+  .df-order-amt {
+    justify-self: start;
+    white-space: normal;
+  }
+
+  .today-cols {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ti-top,
+  .ti-actions {
+    min-width: 0;
+  }
+
+  .ti-actions .ti-btn {
+    flex: 1 1 auto;
+  }
+}
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
