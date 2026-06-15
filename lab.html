@@ -4071,9 +4071,9 @@ let _dfFeedCache = null;
 let _dfFeedLoading = false;
 
 async function loadDFOrders(){
-  if(!_dfdb) return [];
+  if(!_db) return [];
   try {
-    const { data, error } = await _dfdb.from('design_fusion_orders')
+    const { data, error } = await _db.from('design_fusion_orders')
       .select('*').order('created_at',{ascending:false}).limit(50);
     if(error) throw error;
     return (data||[]).map(r => r.data || r);
