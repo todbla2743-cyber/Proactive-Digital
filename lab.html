@@ -1875,166 +1875,190 @@
 }
 
 
-
-/* ===== Mobile fix: Design Fusion feed + Today view ===== */
+/* =========================================================
+   MOBILE HARD FIX — Today + Design Fusion feed
+   Purpose: remove sideways overflow and force true phone layout.
+   ========================================================= */
 @media (max-width: 768px) {
-  html,
-  body,
-  #app {
-    width: 100%;
-    max-width: 100%;
+  html, body {
+    width: 100% !important;
+    max-width: 100% !important;
     overflow-x: hidden !important;
   }
 
-  .content,
-  .panel,
-  .panel.active {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
+  #app, .content, .panel, .panel.active {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  #app { height: 100dvh !important; }
+  .content { overflow: hidden !important; }
+
+  .topnav {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 8px 10px 0 !important;
+    overflow: hidden !important;
+  }
+
+  .nav-brand span { font-size: 0.82rem !important; }
+  .nav-right { gap: 6px !important; font-size: 0.68rem !important; }
+  .logout-btn { padding: 5px 8px !important; }
+
+  .nav-tabs {
+    width: calc(100% + 20px) !important;
+    max-width: calc(100% + 20px) !important;
+    margin: 6px -10px 0 !important;
+    padding: 4px 10px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
   }
 
   #panel-today {
-    padding: 0.85rem !important;
-    gap: 0.9rem !important;
+    padding: 12px !important;
+    gap: 12px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 
   #panel-today .panel-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    min-width: 0 !important;
+  }
+
+  #panel-today .panel-title {
+    font-size: 1.02rem !important;
+    line-height: 1.2 !important;
   }
 
   #panel-today .panel-header > div:last-child {
-    width: 100%;
-    line-height: 1.45;
+    width: 100% !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    line-height: 1.45 !important;
   }
 
   .scoreboard {
+    display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .sb-stat {
-    min-width: 0;
-    padding: 12px 10px;
+    min-width: 0 !important;
+    padding: 12px 10px !important;
   }
 
-  .sb-val {
-    font-size: 1.35rem;
-    overflow-wrap: anywhere;
-  }
-
-  .sb-label {
-    font-size: 0.58rem;
-    letter-spacing: 0.08em;
-  }
+  .sb-val { font-size: 1.28rem !important; }
+  .sb-label { font-size: 0.56rem !important; letter-spacing: .08em !important; }
 
   .df-feed-section {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
   }
 
   .df-feed-head {
-    padding: 12px;
-    align-items: flex-start;
-    gap: 10px;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 9px !important;
+    padding: 12px !important;
+    align-items: start !important;
   }
 
   .df-feed-head > div:first-child,
   .df-feed-head > div:last-child {
-    min-width: 0;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
   .df-feed-head > div:last-child {
-    flex-shrink: 0;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
   }
 
   .df-feed-label {
-    font-size: 0.78rem;
-    white-space: normal;
-    overflow-wrap: anywhere;
+    font-size: 0.78rem !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
   }
 
-  .df-refresh-btn,
-  .df-admin-btn {
-    font-size: 0.66rem;
-    padding: 4px 8px;
-  }
-
-  .df-feed-body {
-    max-height: none;
-    overflow: visible;
-  }
-
-  .df-feed-body.collapsed {
-    max-height: 0;
-    overflow: hidden;
+  .df-refresh-btn, .df-admin-btn {
+    padding: 5px 10px !important;
+    font-size: 0.68rem !important;
   }
 
   .df-stats {
+    display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    width: 100% !important;
   }
 
   .df-stat {
-    min-width: 0;
-    padding: 10px;
+    min-width: 0 !important;
+    padding: 10px !important;
+    border-right: 1px solid var(--border) !important;
   }
 
-  .df-stat-val {
-    font-size: 1.2rem;
-    overflow-wrap: anywhere;
-  }
-
-  .df-stat-lbl {
-    font-size: 0.56rem;
-    letter-spacing: 0.06em;
-  }
+  .df-stat-val { font-size: 1.15rem !important; overflow-wrap: anywhere !important; }
+  .df-stat-lbl { font-size: 0.54rem !important; letter-spacing: .06em !important; }
 
   .df-orders-list {
     max-height: none !important;
     overflow: visible !important;
-    padding: 8px;
+    padding: 8px !important;
   }
 
   .df-order-row {
-    grid-template-columns: 1fr !important;
-    gap: 6px;
-    align-items: flex-start;
-    padding: 10px;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 5px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 10px !important;
   }
 
-  .df-order-row > *,
-  .df-order-row > div {
-    min-width: 0;
-    max-width: 100%;
+  .df-order-row > *, .df-order-row > div {
+    max-width: 100% !important;
+    min-width: 0 !important;
   }
 
-  .df-order-name,
-  .df-order-item {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-  }
-
-  .df-order-badge,
-  .df-order-amt {
-    justify-self: start;
-    white-space: normal;
+  .df-order-name, .df-order-item, .df-order-amt, .df-order-badge {
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
   }
 
   .today-cols {
+    display: grid !important;
     grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
-  .ti-top,
-  .ti-actions {
-    min-width: 0;
+  .today-col, .ti-card, .ti-top, .ti-actions {
+    min-width: 0 !important;
+    max-width: 100% !important;
   }
 
-  .ti-actions .ti-btn {
-    flex: 1 1 auto;
+  .ti-top {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
   }
+
+  .ti-actions { display:flex !important; flex-wrap:wrap !important; }
+  .ti-btn { flex: 1 1 130px !important; }
 }
 
 </style>
