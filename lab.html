@@ -1861,9 +1861,9 @@
 .df-badge-default { background:var(--surface); color:var(--text-dim); }
 .df-order-amt { font-size:0.78rem; font-family:var(--mono); color:var(--text-mid); white-space:nowrap; }
 .df-empty { padding:20px; text-align:center; font-size:0.78rem; color:var(--text-dim); font-family:var(--mono); }
-.df-feed-body { transition: max-height 0.3s ease, opacity 0.2s ease; max-height: 600px; opacity: 1; overflow: hidden; }
-.df-feed-body.collapsed { max-height: 0; opacity: 0; }
-.df-toggle-btn { background:none; border:none; color:#F78C1E; font-size:1rem; cursor:pointer; padding:0 4px; line-height:1; transition: transform 0.3s; }
+.df-feed-body { transition: max-height 0.35s ease, opacity 0.25s ease; max-height: 600px; opacity: 1; overflow: hidden; }
+.df-feed-body.collapsed { max-height: 0; opacity: 0; pointer-events: none; }
+.df-toggle-btn { background:none; border:none; color:#F78C1E; font-size:1.1rem; cursor:pointer; padding:2px 8px; line-height:1; transition: transform 0.3s; flex-shrink:0; }
 .df-toggle-btn.collapsed { transform: rotate(-90deg); }
 @media(max-width:768px){
   .df-stats{ grid-template-columns:repeat(2,1fr); }
@@ -1966,9 +1966,9 @@
             <span class="df-feed-label">Design Fusion</span>
             <span class="df-feed-client">Rudy &middot; designfusion.it.com</span>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
-            <button onclick="refreshDFFeed()" class="df-refresh-btn">↻</button>
-            <a href="https://designfusion.it.com/admin" target="_blank" class="df-admin-btn">Admin →</a>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button onclick="event.stopPropagation();refreshDFFeed()" class="df-refresh-btn">↻</button>
+            <a href="https://designfusion.it.com/admin" target="_blank" onclick="event.stopPropagation()" class="df-admin-btn">Admin →</a>
             <button id="df-toggle-btn" class="df-toggle-btn" onclick="event.stopPropagation();toggleDFFeed()">▾</button>
           </div>
         </div>
@@ -4162,8 +4162,10 @@ function toggleDFFeed(){
   const btn = document.getElementById('df-toggle-btn');
   if(!body) return;
   const isCollapsed = body.classList.toggle('collapsed');
-  if(btn) { btn.textContent = isCollapsed ? '▸' : '▾'; }
-  // Remember preference
+  if(btn){
+    btn.textContent = isCollapsed ? '▸' : '▾';
+    btn.classList.toggle('collapsed', isCollapsed);
+  }
   localStorage.setItem('df_feed_collapsed', isCollapsed ? '1' : '0');
 }
 function applyDFFeedPref(){
