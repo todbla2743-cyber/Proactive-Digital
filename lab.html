@@ -1832,7 +1832,9 @@
 
 /* ── Design Fusion Client Feed ── */
 .df-feed-section { background: var(--surface); border: 1px solid rgba(247,140,30,0.3); border-radius: 12px; overflow: hidden; }
-.df-feed-head { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(247,140,30,0.07); border-bottom:1px solid rgba(247,140,30,0.2); flex-wrap:wrap; gap:8px; }
+.df-feed-head { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:rgba(247,140,30,0.12); border-bottom:1px solid rgba(247,140,30,0.25); gap:8px; }
+.df-feed-head:active { background:rgba(247,140,30,0.2); }
+@media(max-width:768px){ .df-hide-mobile{ display:none; } }
 .df-feed-label { font-size:0.82rem; font-weight:700; color:#F78C1E; font-family:var(--mono); letter-spacing:0.08em; text-transform:uppercase; }
 .df-feed-client { font-size:0.72rem; color:var(--text-dim); font-family:var(--mono); }
 .df-dot { width:7px; height:7px; border-radius:50%; background:#F78C1E; animation:pulse 2s infinite; flex-shrink:0; }
@@ -1961,10 +1963,10 @@
       <div class="scoreboard" id="today-scoreboard"></div>
       <div class="df-feed-section" id="df-feed-section">
         <div class="df-feed-head" onclick="toggleDFFeed()" style="cursor:pointer;">
-          <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
             <div class="df-dot"></div>
             <span class="df-feed-label">Design Fusion</span>
-            <span class="df-feed-client">Rudy &middot; designfusion.it.com</span>
+            <span class="df-feed-client df-hide-mobile">Rudy &middot; designfusion.it.com</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <button onclick="event.stopPropagation();refreshDFFeed()" class="df-refresh-btn">↻</button>
@@ -4169,13 +4171,12 @@ function toggleDFFeed(){
   localStorage.setItem('df_feed_collapsed', isCollapsed ? '1' : '0');
 }
 function applyDFFeedPref(){
-  const pref = localStorage.getItem('df_feed_collapsed');
-  if(pref === '1'){
-    const body = document.getElementById('df-feed-body');
-    const btn = document.getElementById('df-toggle-btn');
-    if(body) body.classList.add('collapsed');
-    if(btn) btn.textContent = '▸';
-  }
+  // Always start expanded on load. User can collapse manually if desired.
+  const body = document.getElementById('df-feed-body');
+  const btn = document.getElementById('df-toggle-btn');
+  if(body) body.classList.remove('collapsed');
+  if(btn){ btn.textContent = '\u25BE'; btn.classList.remove('collapsed'); }
+  localStorage.removeItem('df_feed_collapsed');
 }
 
 </script>
@@ -4993,7 +4994,6 @@ function initApp(){
   if (typeof renderChatHistoryList === 'function') renderChatHistoryList();
   renderToday();
   renderDFFeed();
-  applyDFFeedPref();
   renderPipeline();
   renderLeads();
   updateDailyCounter();
