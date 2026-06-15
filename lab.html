@@ -1829,6 +1829,40 @@
 
 @media (max-width:768px){ .lf-search-bar { grid-template-columns:1fr 1fr; } }
 
+
+/* ── Design Fusion Client Feed ── */
+.df-feed-section { background: var(--surface); border: 1px solid rgba(247,140,30,0.3); border-radius: 12px; overflow: hidden; }
+.df-feed-head { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(247,140,30,0.07); border-bottom:1px solid rgba(247,140,30,0.2); flex-wrap:wrap; gap:8px; }
+.df-feed-label { font-size:0.82rem; font-weight:700; color:#F78C1E; font-family:var(--mono); letter-spacing:0.08em; text-transform:uppercase; }
+.df-feed-client { font-size:0.72rem; color:var(--text-dim); font-family:var(--mono); }
+.df-dot { width:7px; height:7px; border-radius:50%; background:#F78C1E; animation:pulse 2s infinite; flex-shrink:0; }
+.df-refresh-btn { background:none; border:1px solid var(--border); border-radius:5px; color:var(--text-dim); padding:3px 9px; font-size:0.7rem; font-family:var(--mono); cursor:pointer; }
+.df-refresh-btn:hover { color:#F78C1E; border-color:rgba(247,140,30,0.4); }
+.df-admin-btn { background:rgba(247,140,30,0.12); border:1px solid rgba(247,140,30,0.35); border-radius:5px; color:#F78C1E; padding:3px 10px; font-size:0.7rem; font-family:var(--mono); cursor:pointer; text-decoration:none; }
+.df-admin-btn:hover { background:rgba(247,140,30,0.22); }
+.df-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border-bottom:1px solid var(--border); }
+.df-stat { padding:12px 16px; border-right:1px solid var(--border); }
+.df-stat:last-child { border-right:none; }
+.df-stat-val { font-size:1.4rem; font-weight:700; color:var(--text); font-family:var(--mono); line-height:1; }
+.df-stat-val.orange { color:#F78C1E; }
+.df-stat-val.green { color:var(--success); }
+.df-stat-val.red { color:var(--danger); }
+.df-stat-lbl { font-size:0.62rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; font-family:var(--mono); }
+.df-orders-list { padding:10px; display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto; }
+.df-order-row { display:grid; grid-template-columns:1fr auto auto auto; gap:10px; align-items:center; padding:9px 12px; background:var(--surface2); border-radius:8px; border:1px solid var(--border); }
+.df-order-name { font-size:0.82rem; font-weight:600; color:var(--text); }
+.df-order-item { font-size:0.72rem; color:var(--text-dim); }
+.df-order-badge { font-size:0.65rem; padding:2px 8px; border-radius:10px; font-family:var(--mono); font-weight:600; white-space:nowrap; }
+.df-badge-new { background:rgba(26,143,255,0.15); color:#5ab4ff; }
+.df-badge-quoted { background:rgba(247,140,30,0.15); color:#F78C1E; }
+.df-badge-production { background:rgba(76,175,130,0.15); color:var(--success); }
+.df-badge-ready { background:rgba(155,89,182,0.15); color:#c39bd3; }
+.df-badge-completed { background:rgba(76,175,130,0.25); color:var(--success); }
+.df-badge-default { background:var(--surface); color:var(--text-dim); }
+.df-order-amt { font-size:0.78rem; font-family:var(--mono); color:var(--text-mid); white-space:nowrap; }
+.df-empty { padding:20px; text-align:center; font-size:0.78rem; color:var(--text-dim); font-family:var(--mono); }
+@media(max-width:768px){ .df-stats{ grid-template-columns:repeat(2,1fr); } .df-order-row{ grid-template-columns:1fr auto; } }
+
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1916,6 +1950,21 @@
         <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--mono);">Money-at-risk, ranked. Work top to bottom. &nbsp;<button onclick="openCadenceEditor()" style="background:var(--surface2);border:1px solid var(--border);border-radius:5px;color:var(--text-dim);padding:2px 9px;font-size:0.68rem;font-family:var(--mono);cursor:pointer;transition:all 0.2s;" onmouseover="this.style.color='var(--teal)'" onmouseout="this.style.color='var(--text-dim)'">⚙ Cadence</button></div>
       </div>
       <div class="scoreboard" id="today-scoreboard"></div>
+      <div class="df-feed-section" id="df-feed-section">
+        <div class="df-feed-head">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="df-dot"></div>
+            <span class="df-feed-label">Design Fusion</span>
+            <span class="df-feed-client">Rudy &middot; designfusion.it.com</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button onclick="refreshDFFeed()" class="df-refresh-btn">↻ Refresh</button>
+            <a href="https://designfusion.it.com/admin" target="_blank" class="df-admin-btn">Open Admin →</a>
+          </div>
+        </div>
+        <div class="df-stats" id="df-stats"><div class="df-stat"><div class="df-stat-val">—</div><div class="df-stat-lbl">Loading...</div></div></div>
+        <div class="df-orders-list" id="df-orders-list"><div class="df-empty">Loading orders...</div></div>
+      </div>
       <div class="today-cols" id="today-cols"></div>
     </div>
 
@@ -4017,6 +4066,84 @@ function bpClear() {
       </div>
     </div>`;
 }
+// ── Design Fusion Live Feed ──
+let _dfFeedCache = null;
+let _dfFeedLoading = false;
+
+async function loadDFOrders(){
+  if(!_dfdb) return [];
+  try {
+    const { data, error } = await _dfdb.from('design_fusion_orders')
+      .select('*').order('created_at',{ascending:false}).limit(50);
+    if(error) throw error;
+    return (data||[]).map(r => r.data || r);
+  } catch(e){ console.warn('DF feed load failed',e); return []; }
+}
+
+function dfBadgeClass(status){
+  const map = {
+    'New':'df-badge-new','Reviewed':'df-badge-new',
+    'Quoted':'df-badge-quoted','Deposit Paid':'df-badge-quoted',
+    'In Production':'df-badge-production','Ready':'df-badge-ready',
+    'Completed':'df-badge-completed'
+  };
+  return map[status] || 'df-badge-default';
+}
+
+function renderDFFeedData(orders){
+  const statsEl = document.getElementById('df-stats');
+  const listEl = document.getElementById('df-orders-list');
+  if(!statsEl||!listEl) return;
+
+  const newOrders    = orders.filter(o => ['New','Reviewed'].includes(o.status));
+  const needInvoice  = orders.filter(o => o.status !== 'Completed' && !o.depositInvoiceUrl);
+  const inProd       = orders.filter(o => ['In Production','Deposit Paid'].includes(o.status));
+  const revenue      = orders.reduce((sum,o) => {
+    const n = parseFloat((o.quoteTotal||o.startingEstimate||'').toString().replace(/[^0-9.]/g,''));
+    return sum + (isNaN(n)?0:n);
+  }, 0);
+
+  statsEl.innerHTML = `
+    <div class="df-stat"><div class="df-stat-val orange">${newOrders.length}</div><div class="df-stat-lbl">New Orders</div></div>
+    <div class="df-stat"><div class="df-stat-val ${needInvoice.length>0?'red':'green'}">${needInvoice.length}</div><div class="df-stat-lbl">Need Invoice</div></div>
+    <div class="df-stat"><div class="df-stat-val">${inProd.length}</div><div class="df-stat-lbl">In Production</div></div>
+    <div class="df-stat"><div class="df-stat-val green">$${revenue.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0})}</div><div class="df-stat-lbl">Est. Revenue</div></div>
+  `;
+
+  if(!orders.length){
+    listEl.innerHTML = '<div class="df-empty">No orders yet. Submit a test order from the site to confirm the connection.</div>';
+    return;
+  }
+
+  listEl.innerHTML = orders.slice(0,10).map(o => `
+    <div class="df-order-row">
+      <div>
+        <div class="df-order-name">${escapeHtml(o.customerName||'Unknown')}</div>
+        <div class="df-order-item">${escapeHtml(o.item||'')}${o.service?' · '+escapeHtml(o.service):''}</div>
+      </div>
+      <span class="df-order-badge ${dfBadgeClass(o.status)}">${o.status||'New'}</span>
+      <div class="df-order-amt">${o.quoteTotal||o.startingEstimate||'—'}</div>
+      <div class="df-order-amt" style="color:${o.depositInvoiceUrl?'var(--success)':'var(--danger)'};">${o.depositInvoiceUrl?'✓ Inv':'No inv'}</div>
+    </div>
+  `).join('');
+}
+
+async function renderDFFeed(){
+  if(_dfFeedLoading) return;
+  _dfFeedLoading = true;
+  const orders = await loadDFOrders();
+  _dfFeedCache = orders;
+  renderDFFeedData(orders);
+  _dfFeedLoading = false;
+}
+
+function refreshDFFeed(){
+  _dfFeedCache = null;
+  const listEl = document.getElementById('df-orders-list');
+  if(listEl) listEl.innerHTML = '<div class="df-empty">Refreshing...</div>';
+  renderDFFeed();
+}
+
 </script>
 
 <script>
@@ -4816,7 +4943,7 @@ function switchPanel(id, btn){
   if (panel) panel.classList.add('active');
   const tab = btn || [...document.querySelectorAll('.nav-tab')].find(t => (t.getAttribute('onclick')||'').includes("'"+id+"'"));
   if (tab) tab.classList.add('active');
-  if (id === 'today'){ renderToday(); }
+  if (id === 'today'){ renderToday(); renderDFFeed(); }
   if (id === 'pipeline'){ renderPipeline(); }
   if (id === 'clients'){ renderClients(); updateClientStats(); }
   if (id === 'leads'){ renderLeads(); updateDailyCounter(); }
@@ -4831,6 +4958,7 @@ function initApp(){
   if (typeof tickStocks === 'function') setInterval(tickStocks, 30000);
   if (typeof renderChatHistoryList === 'function') renderChatHistoryList();
   renderToday();
+  renderDFFeed();
   renderPipeline();
   renderLeads();
   updateDailyCounter();
