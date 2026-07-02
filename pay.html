@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Make a Payment | Proactive Digital</title>
+<meta name="description" content="Pay your invoice or deposit securely online with Proactive Digital. Powered by Stripe.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://getproactivedigital.com/pay.html">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --teal:   #00BFC7;
+  --blue:   #2159E0;
+  --grad:   linear-gradient(120deg, #00BFC7 0%, #2159E0 100%);
+  --ease:   cubic-bezier(.22,1,.36,1);
+  --fh:     'Outfit', sans-serif;
+  --fb:     'Plus Jakarta Sans', sans-serif;
+}
+[data-theme="dark"] {
+  --bg:      #080B13;
+  --bg2:     #0C1020;
+  --bg3:     #111827;
+  --surf:    #161D2E;
+  --bdr:     rgba(255,255,255,0.06);
+  --bdr2:    rgba(255,255,255,0.12);
+  --tx:      #E8EAF6;
+  --tx2:     #6B7A99;
+  --tx3:     #8A96B0;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: var(--fb);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height:100vh;
+  -webkit-font-smoothing: antialiased;
+}
+a { text-decoration:none; color:inherit }
+img { display:block; max-width:100% }
+
+.wrap { max-width:1180px; margin:0 auto; padding:0 32px }
+
+/* ───────── NAV ───────── */
+nav#nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(8,11,19,.75); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--bdr);
+}
+.nav-in {
+  max-width:1180px; margin:0 auto; padding:16px 32px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo { display:flex; align-items:center }
+
+/* ───────── LAYOUT ───────── */
+main {
+  min-height:calc(100vh - 76px);
+  display:flex; align-items:center; justify-content:center;
+  padding:60px 24px 80px;
+}
+.pay-card {
+  width:100%; max-width:520px;
+  background:var(--surf); border:1px solid var(--bdr);
+  border-radius:20px; padding:44px 40px;
+  box-shadow:0 32px 80px rgba(0,0,0,.35);
+}
+.chip {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(0,191,199,.08); border:1px solid rgba(0,191,199,.18);
+  border-radius:100px; padding:5px 14px;
+  font-size:12px; font-weight:600; letter-spacing:.5px;
+  color:var(--teal); text-transform:uppercase;
+  margin-bottom:20px;
+}
+h1 {
+  font-family:var(--fh); font-weight:600;
+  font-size:clamp(26px,4vw,32px); line-height:1.2;
+  margin-bottom:14px;
+}
+.sub { color:var(--tx2); font-size:15px; margin-bottom:32px }
+
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  width:100%; padding:16px 28px; border-radius:10px;
+  font-family:var(--fb); font-size:15px; font-weight:600;
+  letter-spacing:.2px; cursor:pointer;
+  transition:all .25s var(--ease); border:none;
+}
+.btn-p {
+  background:var(--grad); color:#fff;
+  box-shadow:0 2px 20px rgba(0,191,199,.25);
+}
+.btn-p:hover { transform:translateY(-2px); box-shadow:0 10px 32px rgba(0,191,199,.4) }
+
+.divider {
+  display:flex; align-items:center; gap:14px;
+  margin:36px 0 28px; color:var(--tx3); font-size:12px;
+  text-transform:uppercase; letter-spacing:1px;
+}
+.divider::before, .divider::after {
+  content:''; flex:1; height:1px; background:var(--bdr2);
+}
+
+.info-block {
+  background:var(--bg2); border:1px solid var(--bdr);
+  border-radius:14px; padding:22px 24px;
+}
+.info-block h2 {
+  font-family:var(--fh); font-size:16px; font-weight:600;
+  margin-bottom:8px;
+}
+.info-block p {
+  color:var(--tx2); font-size:14px; line-height:1.65;
+}
+.info-block p + p { margin-top:8px }
+.info-block a { color:var(--teal); font-weight:600 }
+.info-block a:hover { text-decoration:underline }
+
+.trust-row {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:28px; color:var(--tx3); font-size:12.5px;
+}
+.trust-row svg { flex-shrink:0 }
+
+footer {
+  border-top:1px solid var(--bdr);
+  padding:28px 0; text-align:center;
+  color:var(--tx3); font-size:13px;
+}
+footer a { color:var(--tx2) }
+footer a:hover { color:var(--teal) }
+
+@media (max-width:560px){
+  .pay-card { padding:32px 24px; border-radius:16px }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-in">
+    <a href="/" class="nav-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 54" height="32">
+        <defs>
+          <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00BFC7"/>
+            <stop offset="100%" stop-color="#2159E0"/>
+          </linearGradient>
+        </defs>
+        <g transform="translate(0,6)">
+          <rect x="0" y="0" width="3.5" height="30" rx="1.75" fill="url(#lg)"/>
+          <rect x="0" y="0" width="15" height="3.5" rx="1.75" fill="url(#lg)"/>
+          <rect x="0" y="15" width="15" height="3.5" rx="1.75" fill="url(#lg)"/>
+          <rect x="11.5" y="0" width="3.5" height="18.5" rx="1.75" fill="url(#lg)"/>
+          <polygon points="19,18 26,25 19,32" fill="none" stroke="url(#lg)" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+        </g>
+        <text x="38" y="28" font-family="'Outfit',sans-serif" font-weight="500" font-size="21" letter-spacing="3" fill="var(--tx)">PROACTIVE</text>
+        <text x="39.5" y="46" font-family="'Outfit',sans-serif" font-weight="300" font-size="13" letter-spacing="9" fill="url(#lg)">DIGITAL</text>
+      </svg>
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="pay-card">
+    <span class="chip">Secure Payment</span>
+    <h1>Make a Payment</h1>
+    <p class="sub">Pay a deposit, milestone, or invoice balance securely through Stripe. Enter the amount your invoice or agreement specifies.</p>
+
+    <a href="https://buy.stripe.com/8x2fZgdsy7XCe7GbFI3Je08" class="btn btn-p" target="_blank" rel="noopener">
+      Pay Now →
+    </a>
+
+    <div class="divider">Already have an emailed invoice?</div>
+
+    <div class="info-block">
+      <h2>Paying an emailed invoice</h2>
+      <p>If Proactive Digital sent you a formal invoice by email, it includes its own secure "Pay Invoice" button, just use the link in that email instead of this page.</p>
+      <p>Haven't received one but expected to? Email <a href="mailto:hello@getproactivedigital.com">hello@getproactivedigital.com</a> or call <a href="tel:+18043934641">(804) 393-4641</a>.</p>
+    </div>
+
+    <div class="trust-row">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Payments processed securely by Stripe. Proactive Digital never stores your card details.
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    © 2026 Proactive Digital · A TRB Family Business · Veteran-Owned ·
+    <a href="/">Back to site</a>
+  </div>
+</footer>
+
+</body>
+</html>
