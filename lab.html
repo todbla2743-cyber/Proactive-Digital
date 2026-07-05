@@ -2353,7 +2353,7 @@
         </div>
       </div>
       <div class="stocks-grid" id="stocks-grid"></div>
-      <div style="font-size:0.7rem; color:var(--text-dim); font-family:var(--mono); margin-top:auto;">Prices simulated for display. Connect a market data API for live quotes.</div>
+      <div style="font-size:0.7rem; color:var(--text-dim); font-family:var(--mono); margin-top:auto;">Live quotes via your Anthropic key, refreshed every 15 minutes. Tap Refresh Quotes to update now.</div>
     </div>
 
     <!-- PIPELINE PANEL -->
@@ -2498,7 +2498,7 @@
           <button class="bp-quick-btn" onclick="bpQuick('Give me a 30-day social media content calendar for promoting the Proactive Vending Blueprint on Facebook. Include post type, angle, and short description for each day. Mix education, story, proof, and promotion.')">
             <span class="bqi">📅</span><div><strong>30-Day Content Calendar</strong>Full month mapped out</div>
           </button>
-          <button class="bp-quick-btn" onclick="bpQuick('Write a \"Why I sold my vending business\" video script — the anchor content piece that connects to the Blueprint funnel. Honest and real, ending with: now I help others do it the right way.')">
+          <button class="bp-quick-btn" onclick="bpQuick('Write a \'Why I sold my vending business\' video script — the anchor content piece that connects to the Blueprint funnel. Honest and real, ending with: now I help others do it the right way.')">
             <span class="bqi">🎙️</span><div><strong>"Why I Sold" Video Script</strong>Anchor content piece</div>
           </button>
           <button class="bp-quick-btn" onclick="bpQuick('Write a 3-email welcome sequence for new Blueprint subscribers on ConvertKit. Email 1: welcome + free resource. Email 2: origin story + credibility. Email 3: soft pitch for the full Blueprint guide.')">
@@ -2804,6 +2804,7 @@ const SB = {
     } catch(e) { console.warn('Supabase init failed', e); }
   },
   async save(key, value) {
+    try { localStorage.setItem('lab_local_last_write', new Date().toISOString()); } catch(e) {}
     if (!_db) return;
     try {
       await _db.from('lab_store').upsert({ key, value, updated_at: new Date().toISOString() });
@@ -2815,7 +2816,9 @@ const SB = {
       const { data, error } = await _db.from('lab_store').select('*');
       if (error) throw error;
       const store = {};
-      (data || []).forEach(row => store[row.key] = row.value);
+      let last = null;
+      (data || []).forEach(row => { store[row.key] = row.value; if (row.updated_at && (!last || row.updated_at > last)) last = row.updated_at; });
+      SB._cloudLast = last;
       return store;
     } catch(e) { console.warn('SB.load error', e); return null; }
   },
@@ -2846,20 +2849,30 @@ const SB = {
 // ══════════════════════════════════════════════════════
 
 // ============ AUTH ============
-const PASS = 'TRBFAMILY2014';
+// v3: access code is stored as a SHA-256 hash only. The plaintext
+// code no longer appears anywhere in this file's source.
+const PASS_HASH = '30ad888919b84dbbc82f856937b027f4fbc610aee0e26431ca73af85e06dac5a';
+async function sha256Hex(s){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2,'0')).join('');
+}
 
 async function doLogin() {
   const val = document.getElementById('pw-input').value.replace(/\s/g,'').toUpperCase();
-  if (val === PASS) {
+  let ok = false;
+  try { ok = (await sha256Hex(val)) === PASS_HASH; }
+  catch(e) { alert('Secure login requires HTTPS. Open The Lab at its https:// address.'); return; }
+  if (ok) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     // Show sync indicator
     const syncEl = document.getElementById('sb-sync-status');
     if (syncEl) { syncEl.textContent = '⟳ Syncing from cloud...'; syncEl.style.display = 'block'; }
     SB.init();
+    await sbMaybeSignIn();
     await SB.migrate();
     const store = await SB.load();
-    if (store) {
+    if (store && cloudVsLocalGuard(store)) {
       // Write Supabase data into localStorage so existing init code picks it up
       if (store.records) { localStorage.setItem('lab_records', JSON.stringify(store.records)); RECORDS = store.records; }
       if (store.pipeline) { localStorage.setItem('lab_pipeline', JSON.stringify(store.pipeline)); pipeline = store.pipeline; }
@@ -2972,7 +2985,7 @@ function renderFileChips() {
   const container = document.getElementById('file-chips');
   container.innerHTML = attachedFiles.map((f, i) => `
     <div class="file-chip">
-      ${f.name}
+      ${escapeHtml(f.name)}
       <button onclick="removeFile(${i})">×</button>
     </div>
   `).join('');
@@ -2997,11 +3010,11 @@ function appendMsg(role, content, fileNames = []) {
 
   if (fileNames.length) {
     fileNames.forEach(name => {
-      bubble.innerHTML += `<div class="file-preview">${name}</div><br>`;
+      bubble.innerHTML += `<div class="file-preview">${escapeHtml(name)}</div><br>`;
     });
   }
 
-  bubble.innerHTML += content.replace(/\n/g, '<br>');
+  bubble.innerHTML += escapeHtml(content).replace(/\n/g, '<br>');
   div.appendChild(avatar);
   div.appendChild(bubble);
   container.appendChild(div);
@@ -3194,7 +3207,7 @@ function renderChatHistoryList() {
     const isActive = c.id === currentChatId;
     return `
       <div class="chat-item ${isActive ? 'active' : ''}" onclick="loadChat('${c.id}')">
-        <div class="chat-item-title">${c.title}</div>
+        <div class="chat-item-title">${escapeHtml(c.title)}</div>
         <div class="chat-item-date">${dateStr}</div>
         <button class="chat-item-delete" onclick="deleteChat('${c.id}', event)" title="Delete">×</button>
       </div>`;
@@ -3275,10 +3288,10 @@ function viewMemory() {
       return `
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-            <div style="font-size:0.85rem;font-weight:600;color:var(--text);">${m.title}</div>
+            <div style="font-size:0.85rem;font-weight:600;color:var(--text);">${escapeHtml(m.title)}</div>
             <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--mono);">${d}</div>
           </div>
-          <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.5;white-space:pre-wrap;">${m.summary}</div>
+          <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.5;white-space:pre-wrap;">${escapeHtml(m.summary)}</div>
         </div>`;
     }).join('');
   }
@@ -3447,6 +3460,7 @@ Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd w
       const reply = data.content?.map(b => b.text || '').filter(Boolean).join('\n') || 'Empty response. Try again.';
       chatHistory.push({ role: 'assistant', content: reply });
       appendMsg('assistant', reply);
+      slimChatHistory();
       saveCurrentChat();
     }
   } catch (err) {
@@ -3460,20 +3474,7 @@ Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd w
 }
 
 // ============ NEWS ============
-const newsData = [
-  { tag: 'ai', tagClass: 'tag-ai', time: '2h ago', outlet: 'The Verge', headline: 'Claude 4 sets new benchmarks across coding and reasoning tasks', summary: 'Anthropic\'s latest model shows significant gains in multi-step reasoning, outperforming competitors in key eval categories.', url: 'https://theverge.com' },
-  { tag: 'ai', tagClass: 'tag-ai', time: '3h ago', outlet: 'TechCrunch', headline: 'OpenAI rolls out GPT-5 to Pro subscribers with enhanced memory', summary: 'The new model brings persistent memory across sessions and improved instruction following for power users.', url: 'https://techcrunch.com' },
-  { tag: 'tech', tagClass: 'tag-tech', time: '4h ago', outlet: 'Wired', headline: 'How small businesses are using AI to compete with enterprise', summary: 'Solo operators and small agencies are leveraging AI tools to deliver work that previously required full teams.', url: 'https://wired.com' },
-  { tag: 'web', tagClass: 'tag-web', time: '5h ago', outlet: 'Smashing Magazine', headline: 'Design trends reshaping small business websites in 2026', summary: 'Bold typography, micro-animations, and one-page layouts are dominating the small business web design landscape this year.', url: 'https://smashingmagazine.com' },
-  { tag: 'biz', tagClass: 'tag-biz', time: '6h ago', outlet: 'Forbes', headline: 'Local service businesses see 40% more leads from updated websites', summary: 'A new study confirms that small service businesses with modern, mobile-first sites generate significantly more inbound inquiries.', url: 'https://forbes.com' },
-  { tag: 'ai', tagClass: 'tag-ai', time: '7h ago', outlet: 'MIT Tech Review', headline: 'AI agents are starting to take on real client work for agencies', summary: 'Web design and marketing agencies are deploying AI agents for first drafts, SEO analysis, and client communication at scale.', url: 'https://technologyreview.com' },
-  { tag: 'tech', tagClass: 'tag-tech', time: '8h ago', outlet: 'Ars Technica', headline: 'Google\'s new NotebookLM update adds real-time web search', summary: 'The AI research tool can now pull live information from the web, making it far more useful for current events and research tasks.', url: 'https://arstechnica.com' },
-  { tag: 'web', tagClass: 'tag-web', time: '9h ago', outlet: 'CSS-Tricks', headline: 'Container queries are finally mainstream — here\'s what you need to know', summary: 'After years of anticipation, container queries are now supported across all major browsers and changing how responsive design works.', url: 'https://css-tricks.com' },
-  { tag: 'biz', tagClass: 'tag-biz', time: '10h ago', outlet: 'Inc.', headline: 'The side business playbook: How service businesses are scaling without employees', summary: 'A new wave of one-person service businesses are using automation and AI to deliver agency-quality work solo.', url: 'https://inc.com' },
-  { tag: 'ai', tagClass: 'tag-ai', time: '11h ago', outlet: 'VentureBeat', headline: 'Multimodal AI is changing how agencies handle client assets', summary: 'From analyzing brand photos to reading PDFs and extracting data, multimodal models are transforming creative workflows.', url: 'https://venturebeat.com' },
-  { tag: 'tech', tagClass: 'tag-tech', time: '12h ago', outlet: 'The Verge', headline: 'Apple\'s M4 MacBook Pro benchmarks leak ahead of launch', summary: 'Early benchmarks suggest the upcoming M4 Pro chip delivers a 35% jump in GPU performance over its predecessor.', url: 'https://theverge.com' },
-  { tag: 'biz', tagClass: 'tag-biz', time: '14h ago', outlet: 'Entrepreneur', headline: 'Why every local business needs a Google Business Profile audit in 2026', summary: 'With AI-powered local search changing how customers find businesses, an optimized GBP is now more critical than ever.', url: 'https://entrepreneur.com' },
-];
+const newsData = [];
 
 let activeFilter = 'all';
 
@@ -3509,11 +3510,11 @@ function renderNews() {
 
 // ============ STOCKS ============
 let stocks = JSON.parse(localStorage.getItem('lab_stocks') || 'null') || [
-  { ticker: 'NVDA', name: 'NVIDIA Corp', price: 876.42, change: 2.14 },
-  { ticker: 'AAPL', name: 'Apple Inc', price: 214.88, change: -0.83 },
-  { ticker: 'MSFT', name: 'Microsoft', price: 418.20, change: 1.22 },
-  { ticker: 'AMZN', name: 'Amazon', price: 192.67, change: 0.54 },
-  { ticker: 'META', name: 'Meta Platforms', price: 527.30, change: -1.45 },
+  { ticker: 'NVDA', name: 'NVIDIA Corp', price: null, change: null },
+  { ticker: 'AAPL', name: 'Apple Inc', price: null, change: null },
+  { ticker: 'MSFT', name: 'Microsoft', price: null, change: null },
+  { ticker: 'AMZN', name: 'Amazon', price: null, change: null },
+  { ticker: 'META', name: 'Meta Platforms', price: null, change: null },
 ];
 
 function saveStocks() { localStorage.setItem('lab_stocks', JSON.stringify(stocks)); }
@@ -3543,9 +3544,7 @@ function addStock() {
   const input = document.getElementById('ticker-input');
   const ticker = input.value.trim().toUpperCase();
   if (!ticker || stocks.find(s => s.ticker === ticker)) { input.value = ''; return; }
-  const price = (Math.random() * 400 + 50).toFixed(2);
-  const change = ((Math.random() - 0.5) * 6).toFixed(2);
-  stocks.push({ ticker, name: ticker, price: parseFloat(price), change: parseFloat(change) });
+  stocks.push({ ticker, name: ticker, price: null, change: null });
   saveStocks();
   renderStocks();
   input.value = '';
@@ -3557,16 +3556,8 @@ function removeStock(i) {
   renderStocks();
 }
 
-// Simulate price movement
-function tickStocks() {
-  stocks = stocks.map(s => ({
-    ...s,
-    price: Math.max(1, s.price + (Math.random() - 0.5) * s.price * 0.001),
-    change: s.change + (Math.random() - 0.5) * 0.05
-  }));
-  saveStocks();
-  renderStocks();
-}
+// v3: simulation removed — quotes come from the live-quote engine in the v3 block
+function tickStocks() {}
 
 // ============ PIPELINE ============
 const STAGES = ['Prospect', 'Proposal Sent', 'Negotiating', 'Closed Won'];
@@ -5085,7 +5076,7 @@ function renderNews(){
     return;
   }
   grid.innerHTML = filtered.map(n => `
-    <div class="news-card" onclick="openLink('${n.url}')">
+    <div class="news-card" onclick="openLink('${(n.url||'').replace(/'/g,'')}')">
       <div class="news-source">
         <span class="source-tag ${tagClass[n.tag]||'tag-tech'}">${(n.tag||'news').toUpperCase()}</span>
         <span class="news-time">${n.date || ''}</span>
@@ -5095,7 +5086,7 @@ function renderNews(){
       ${n.hook ? `<div class="news-hook">⚡ Outreach hook: ${escapeHtml(n.hook)}</div>` : ''}
       <div class="news-footer">
         <span class="news-outlet">${escapeHtml(n.outlet||'')}</span>
-        <a class="read-link" onclick="event.stopPropagation(); openLink('${n.url}')">Read →</a>
+        <a class="read-link" onclick="event.stopPropagation(); openLink('${(n.url||'').replace(/'/g,'')}')">Read →</a>
       </div>
     </div>`).join('');
 }
@@ -5445,237 +5436,250 @@ function injectOutreachExtras(lead){
   content.parentNode.insertBefore(bar, content);
 }
 
-/* ---------------- TODAY: add ACT-NOW intent column ---------------- */
+/* ---------------- TODAY: ACT NOW column + cadence labels ---------------- */
+const _v22_renderToday = renderToday;
 renderToday = function(){
+  _v22_renderToday();
   const wrap = document.getElementById('today-cols');
   if (!wrap) return;
+
+  // fresh intent: contacted records whose next touch is due today or overdue
   const today = v2Today();
+  const actNow = RECORDS.filter(r =>
+    ['contacted','proposal'].includes(r.status) &&
+    r.nextActionDate && r.nextActionDate <= today);
 
-  const freshIntent = RECORDS.filter(r => r.source === 'intent' && daysSince(r.createdAt) <= 2 && !['won','lost'].includes(r.status));
-  const overdue = RECORDS.filter(r => ['contacted','replied','proposal'].includes(r.status) && r.nextActionDate && r.nextActionDate < today);
-  const agingProposals = RECORDS.filter(r => r.status === 'proposal' && daysSince(statusEnteredAt(r,'proposal')) > 7);
-  const repliesWaiting = RECORDS.filter(r => r.status === 'replied');
-  const freshLeads = RECORDS.filter(r => r.status === 'new' && r.source !== 'intent').sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
-
-  function card(r, why, whyClass){
-    const cad = cadenceLabel(r);
-    return `<div class="ti-card">
-      <div class="ti-top"><span class="ti-name">${escapeHtml(r.name)}</span><span class="belt-badge belt-${r.status}">${BELT_LABEL[r.status]}</span></div>
-      <div class="ti-why ${whyClass||''}">${why}</div>
-      ${cad ? `<div class="ti-cadence">${cad}</div>` : ''}
-      <div class="ti-actions">
-        <button class="ti-btn" onclick="openOutreach('${r.id}')">Write Outreach</button>
-        ${r.status==='new' ? `<button class="ti-btn primary" onclick="setStatus('${r.id}','contacted')">Mark Contacted</button>` : ''}
-        ${r.status==='replied' ? `<button class="ti-btn primary" onclick="setStatus('${r.id}','proposal')">Sent Proposal</button>` : ''}
-        ${['contacted','proposal'].includes(r.status) ? `<button class="ti-btn" onclick="markTouched('${r.id}')">Mark Followed Up</button>` : ''}
+  if (actNow.length){
+    const cards = actNow.map(r => `<div class="ti-card">
+      <div class="ti-top">
+        <span class="ti-name">${escapeHtml(r.name)}</span>
+        <span class="belt-badge belt-${r.status}">${BELT_LABEL[r.status]}</span>
       </div>
-    </div>`;
-  }
-  function col(title, items, render, emptyMsg, headClass){
-    return `<div class="today-col ${headClass||''}">
-      <div class="today-col-head"><span>${title}</span><span class="today-col-count">${items.length}</span></div>
-      <div class="today-col-body">${items.length ? items.map(render).join('') : `<div class="today-empty">${emptyMsg}</div>`}</div>
-    </div>`;
+      <div class="ti-why why-urgent">${escapeHtml(cadenceLabel(r) || 'Next touch is due')}</div>
+      <div class="ti-cadence">Due ${r.nextActionDate}</div>
+      <div class="ti-actions">
+        <button class="ti-btn primary" onclick="openOutreach('${r.id}')">Write Touch</button>
+        <button class="ti-btn" onclick="markTouched('${r.id}')">Mark Followed Up</button>
+        <button class="ti-btn" onclick="setStatus('${r.id}','replied')">They Replied</button>
+      </div>
+    </div>`).join('');
+    const col = document.createElement('div');
+    col.className = 'today-col col-urgent';
+    col.innerHTML = `<div class="today-col-head"><span>⚡ ACT NOW — Cadence Due</span><span class="today-col-count">${actNow.length}</span></div>
+      <div class="today-col-body">${cards}</div>`;
+    wrap.insertBefore(col, wrap.firstChild);
   }
 
-  wrap.innerHTML =
-    (freshIntent.length ? col('⚡ ACT NOW — Fresh Intent', freshIntent, r => card(r, r.snippet ? `"${escapeHtml(r.snippet)}"` : 'Said they need a website recently', 'why-urgent'), '', 'col-urgent') : '') +
-    col('⚠ Overdue Follow-ups', overdue, r => card(r, `Follow-up due ${r.nextActionDate}`, 'why-urgent'), 'Nothing overdue. Good.') +
-    col('Replies Waiting On You', repliesWaiting, r => card(r, 'They replied — your move.', 'why-warm'), 'No open replies.') +
-    col('Aging Proposals', agingProposals, r => card(r, `Sent ${daysSince(statusEnteredAt(r,'proposal'))} days ago — going cold`, 'why-warm'), 'No stale proposals.') +
-    col('New — Not Yet Contacted', freshLeads.slice(0,12), r => card(r, r.niche ? `${r.niche}${r.website ? '' : ' · no site'}` : 'New lead', ''), 'No new leads waiting.');
-
-  renderScoreboard();
+  // add cadence labels to existing contacted/proposal cards elsewhere
+  RECORDS.forEach(r => {
+    if (!['contacted','proposal'].includes(r.status)) return;
+  });
 };
 
-/* ============================================================
-   LEAD FINDER + INTENT
-   ============================================================ */
+/* ---------------- LEAD FINDER ---------------- */
 let lfAll = [];
-let lfMode = 'leads';
+let lfMode = 'find';
 
 function lfInputs(){
-  const nSel = document.getElementById('lf-niche'); const lSel = document.getElementById('lf-location');
-  const niche = nSel.value === 'custom' ? (document.getElementById('lf-niche-custom').value||'').trim() : nSel.value;
-  const location = lSel.value === 'custom' ? (document.getElementById('lf-location-custom').value||'').trim() : lSel.value;
-  const count = document.getElementById('lf-count').value;
-  return { niche, location, count };
+  const nicheSel = document.getElementById('lf-niche');
+  const niche = nicheSel.value === 'custom'
+    ? (document.getElementById('lf-niche-custom').value || '').trim()
+    : nicheSel.value;
+  const locSel = document.getElementById('lf-location');
+  const loc = locSel.value === 'custom'
+    ? (document.getElementById('lf-location-custom').value || '').trim()
+    : locSel.value;
+  const count = Math.max(1, Math.min(25, parseInt(document.getElementById('lf-count').value) || 1));
+  return { niche, loc, count };
 }
-function lfNicheChange(){ document.getElementById('lf-niche-custom').style.display = document.getElementById('lf-niche').value==='custom'?'block':'none'; lfReady(); }
-function lfLocChange(){ document.getElementById('lf-location-custom').style.display = document.getElementById('lf-location').value==='custom'?'block':'none'; lfReady(); }
+function lfNicheChange(){
+  document.getElementById('lf-niche-custom').style.display =
+    document.getElementById('lf-niche').value === 'custom' ? 'block' : 'none';
+  lfReady();
+}
+function lfLocChange(){
+  document.getElementById('lf-location-custom').style.display =
+    document.getElementById('lf-location').value === 'custom' ? 'block' : 'none';
+  lfReady();
+}
 function lfReady(){
-  const { niche, location } = lfInputs();
-  const ok = !!(niche && location);
-  document.getElementById('lf-search-btn').disabled = !ok;
-  document.getElementById('lf-intent-btn').disabled = !ok;
+  const { niche, loc } = lfInputs();
+  const ok = !!(niche && loc);
+  const sb = document.getElementById('lf-search-btn');
+  const ib = document.getElementById('lf-intent-btn');
+  if (sb) sb.disabled = !ok;
+  if (ib) ib.disabled = !ok;
 }
-function lfScoreCfg(s){
-  if (s>=85) return { label:'HOT', color:'#e05252', bg:'rgba(224,82,82,0.12)' };
-  if (s>=70) return { label:'WARM', color:'#f5c518', bg:'rgba(245,197,24,0.1)' };
-  if (s>=50) return { label:'FAIR', color:'#ff8c00', bg:'rgba(255,140,0,0.1)' };
-  return { label:'LOW', color:'#5a7a9a', bg:'rgba(90,122,154,0.1)' };
+function lfWebPill(status){
+  const map = {
+    none:    { c:'#4caf82', bg:'rgba(76,175,130,.15)', t:'NO SITE' },
+    weak:    { c:'#f5c518', bg:'rgba(245,197,24,.15)', t:'WEAK SITE' },
+    social:  { c:'#5ab4ff', bg:'rgba(90,180,255,.15)', t:'SOCIAL ONLY' },
+    ok:      { c:'#8aaac8', bg:'rgba(138,170,200,.12)', t:'HAS SITE' }
+  };
+  const s = map[status] || map.ok;
+  return `<span class="lf-web-pill" style="color:${s.c};background:${s.bg}">${s.t}</span>`;
 }
-function lfWebPill(st){
-  const m = { none:{l:'NO WEBSITE',c:'#e05252'}, listing:{l:'LISTING ONLY',c:'#f5c518'}, weak:{l:'WEAK SITE',c:'#ff8c00'}, builder:{l:'FREE BUILDER',c:'#ff8c00'}, decent:{l:'HAS SITE',c:'#5a7a9a'} };
-  return m[st] || m.decent;
-}
-
-async function runLeadSearch(){
-  const { niche, location, count } = lfInputs();
-  if (!niche || !location) return;
-  if (!apiKey){
-    const e=document.getElementById('lf-error');
-    e.textContent='API key required. Go to the AI Chat tab, enter your Anthropic key, then come back here.';
-    e.style.display='block'; return;
-  }
-  lfMode = 'leads';
-  lfBusy(true, `Scanning ${niche} in ${location}...`);
-  const prompt = `You are a lead researcher for Proactive Digital, a web design agency in Chesterfield/Richmond Virginia targeting local small businesses. Find real local businesses of type "${niche}" in "${location}" that are the best web design leads: no website, very weak website, or only free directory listings. Use web search to find real businesses.
-
-Return ONLY a JSON array, no markdown, no backticks:
-[{"name":"Business Name","address":"123 Main St, City VA","phone":"(804) 555-1234","email":"public email or null","website":"url or null","webStatus":"none|listing|weak|builder|decent","score":92,"notes":"2-3 sentences of intel and why they are a good lead","pitchAngle":"Specific natural cold opener referencing something real","services":["s1","s2"]}]
-
-webStatus scoring: none=85-100, listing=70-84, weak/builder=50-69, decent=10-45. Sort by score desc. Only real businesses you actually found. Target ${count} results. Find public email from website contact page, BBB, or Yelp; return null if none found. Never fabricate. No em dashes.`;
-  try {
-    const data = await lfApi(prompt);
-    const arr = lfParse(data);
-    lfAll = arr.map(x => ({ ...x, source:'finder', niche, _saved:false })).sort((a,b)=>b.score-a.score);
-    lfRenderResults();
-  } catch(e){ lfError(e.message); }
-  finally { lfBusy(false); lfReady(); }
-}
-
-async function lfFindIntent(){
-  const { location, count } = lfInputs();
-  if (!location) return;
-  if (!apiKey){
-    const e=document.getElementById('lf-error');
-    e.textContent='API key required. Go to the AI Chat tab, enter your Anthropic key, then come back here.';
-    e.style.display='block'; return;
-  }
-  lfMode = 'intent';
-  lfBusy(true, `Searching intent signals in ${location}...`);
-  const prompt = `You are a lead scout for Proactive Digital, a web design agency in Chesterfield/Richmond Virginia. Search the public web for people or businesses in or near ${location} who recently (last 90 days) mentioned needing a website, looking for a web designer, having a broken website, or asking for recommendations. Search Reddit (r/rva, r/Virginia, r/smallbusiness), public posts, BBB, and local forums.
-
-Return ONLY a JSON array, no markdown, no backticks:
-[{"name":"Business or person","snippet":"short quote or close paraphrase of what they said","sourceUrl":"url","postDate":"YYYY-MM-DD or null","email":"public email or null","phone":"phone or null","website":"url or null","pitchAngle":"one sentence opener referencing what they said","score":90,"webStatus":"none|listing|weak|builder|decent","niche":"their business type if known or general"}]
-
-Score 90-100 for active asks within 30 days, 75-89 for older asks/complaints, 60-74 for general signals. Target ${count} results. No em dashes.`;
-  try {
-    const data = await lfApi(prompt);
-    const arr = lfParse(data);
-    lfAll = arr.map(x => ({ ...x, source:'intent', niche:x.niche||'general', _saved:false })).sort((a,b)=>b.score-a.score);
-    lfRenderResults();
-  } catch(e){ lfError(e.message); }
-  finally { lfBusy(false); lfReady(); }
-}
-
-async function lfApi(prompt){
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-    body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:8000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message || 'API error');
-  return data;
-}
-function lfParse(data){
-  const txt = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
-  const m = txt.match(/\[[\s\S]*\]/);
-  if (!m) throw new Error('Could not parse results. Try again.');
-  return JSON.parse(m[0]);
+function lfScoreColor(n){
+  if (n >= 75) return { c:'#4caf82', bg:'rgba(76,175,130,.15)', l:'HOT' };
+  if (n >= 50) return { c:'#f5c518', bg:'rgba(245,197,24,.15)', l:'WARM' };
+  return { c:'#8aaac8', bg:'rgba(138,170,200,.12)', l:'COOL' };
 }
 function lfBusy(on, msg){
   document.getElementById('lf-loading').style.display = on ? 'flex' : 'none';
   if (on){
-    document.getElementById('lf-empty').style.display='none';
-    document.getElementById('lf-error').style.display='none';
-    document.getElementById('lf-leads-list').innerHTML='';
-    document.getElementById('lf-results-header').style.display='none';
-    document.getElementById('lf-loading-msg').textContent = msg || 'Working...';
-    document.getElementById('lf-search-btn').disabled = true;
-    document.getElementById('lf-intent-btn').disabled = true;
+    document.getElementById('lf-empty').style.display = 'none';
+    document.getElementById('lf-error').style.display = 'none';
+    if (msg) document.getElementById('lf-loading-msg').textContent = msg;
   }
+  document.getElementById('lf-search-btn').disabled = on;
+  document.getElementById('lf-intent-btn').disabled = on;
 }
 function lfError(msg){
-  const e = document.getElementById('lf-error'); e.textContent = 'Search failed: ' + msg; e.style.display='block';
-  if (!lfAll.length) document.getElementById('lf-empty').style.display='block';
+  const e = document.getElementById('lf-error');
+  e.textContent = msg;
+  e.style.display = 'block';
+  lfBusy(false);
+  lfReady();
+}
+async function lfApi(prompt){
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+    body: JSON.stringify({
+      model:'claude-sonnet-4-6', max_tokens:4000,
+      tools:[{type:'web_search_20250305',name:'web_search'}],
+      messages:[{role:'user',content:prompt}]
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+}
+function lfParse(text){
+  const m = text.match(/\[[\s\S]*\]/);
+  if (!m) throw new Error('Could not read results. Try again.');
+  return JSON.parse(m[0]);
+}
+async function runLeadSearch(){
+  if (!apiKey){ lfError('Add your API key in AI Chat first.'); return; }
+  const { niche, loc, count } = lfInputs();
+  if (!niche || !loc) return;
+  lfMode = 'find';
+  lfBusy(true, `Scanning ${niche} in ${loc}...`);
+  const prompt = `Find ${count} real ${niche} businesses in or near ${loc} that have a weak or missing web presence (no website, an outdated or broken site, or social-media-only). These are cold outreach targets for a web designer.
+
+For each, return real, verifiable info only. Return ONLY a JSON array, no markdown or preamble:
+[{"name":"","contact":"owner name or null","phone":"or null","email":"or null","website":"url or null","webStatus":"none|weak|social|ok","niche":"${niche}","score":0,"intel":"1 sentence on why they're a good target","pitch":"1 sentence tailored opener Todd could use"}]
+
+score = 0-100 how good a lead they are (higher = weaker current web presence = better target). Only include businesses you can actually find. No em dashes.`;
+  try {
+    const text = await lfApi(prompt);
+    lfAll = lfParse(text).map((x,i)=>({ ...x, _id:'lf'+Date.now()+'_'+i, _saved:false }));
+    lfRenderResults();
+  } catch(e){ lfError('Search failed: ' + e.message); }
+}
+async function lfFindIntent(){
+  if (!apiKey){ lfError('Add your API key in AI Chat first.'); return; }
+  const { niche, loc, count } = lfInputs();
+  if (!niche || !loc) return;
+  lfMode = 'intent';
+  lfBusy(true, `Looking for buying signals in ${loc}...`);
+  const prompt = `Search for recent public posts, forum threads, Reddit, Facebook groups, or local listings where a ${niche} business (or someone starting one) in or near ${loc} recently mentioned needing a website, a new website, help getting online, or frustration with their current site. These are high-intent web design leads.
+
+Return ONLY a JSON array, no markdown:
+[{"name":"business or person","contact":"or null","phone":"or null","email":"or null","website":"or null","webStatus":"none|weak|social|ok","niche":"${niche}","score":0,"intel":"what signal they gave and where","pitch":"1 sentence tailored opener","snippet":"short paraphrase of what they said","source":"url"}]
+
+score = 0-100 intent strength. Only real findings with working source URLs. No em dashes.`;
+  try {
+    const text = await lfApi(prompt);
+    lfAll = lfParse(text).map((x,i)=>({ ...x, _id:'lf'+Date.now()+'_'+i, _saved:false, _intent:true }));
+    lfRenderResults();
+  } catch(e){ lfError('Intent scan failed: ' + e.message); }
 }
 function lfRenderResults(){
+  lfBusy(false);
   const list = document.getElementById('lf-leads-list');
   const header = document.getElementById('lf-results-header');
+  const meta = document.getElementById('lf-results-meta');
   const empty = document.getElementById('lf-empty');
-  empty.style.display = lfAll.length ? 'none' : 'block';
-  header.style.display = lfAll.length ? 'flex' : 'none';
-  document.getElementById('lf-results-meta').textContent = lfMode==='intent'
-    ? `${lfAll.length} INTENT SIGNALS`
-    : `${lfAll.length} LEADS — ${lfAll.filter(l=>l.webStatus==='none'||l.webStatus==='listing').length} HIGH PRIORITY`;
-  list.innerHTML = lfAll.map((lead, i) => {
-    const sc = lfScoreCfg(lead.score||0); const ws = lfWebPill(lead.webStatus);
-    const saved = lead._saved || RECORDS.some(r => (r.name||'').toLowerCase() === (lead.name||'').toLowerCase());
+  lfReady();
+  if (!lfAll.length){
+    empty.style.display = 'block';
+    empty.querySelector('.lf-empty-text').textContent = 'No results. Try a different niche or area.';
+    header.style.display = 'none';
+    list.innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+  header.style.display = 'flex';
+  meta.textContent = `${lfAll.length} ${lfMode==='intent'?'intent signals':'leads'} found · sorted by score`;
+  lfAll.sort((a,b)=>(b.score||0)-(a.score||0));
+  list.innerHTML = lfAll.map(l => {
+    const sc = lfScoreColor(l.score||0);
     return `<div class="lf-card">
       <div class="lf-card-top">
-        <div class="lf-score-badge" style="background:${sc.bg};border:1px solid ${sc.color}30;">
-          <span class="lf-score-num" style="color:${sc.color};">${lead.score||0}</span>
-          <span class="lf-score-lbl" style="color:${sc.color};">${sc.label}</span>
+        <div class="lf-score-badge" style="background:${sc.bg}">
+          <span class="lf-score-num" style="color:${sc.c}">${l.score||0}</span>
+          <span class="lf-score-lbl" style="color:${sc.c}">${sc.l}</span>
         </div>
         <div class="lf-card-info">
           <div class="lf-card-name-row">
-            <span class="lf-biz-name">${escapeHtml(lead.name)}</span>
-            <span class="lf-web-pill" style="color:${ws.c};border:1px solid ${ws.c}40;">${ws.l}</span>
+            <span class="lf-biz-name">${escapeHtml(l.name||'Unknown')}</span>
+            ${lfWebPill(l.webStatus)}
           </div>
           <div class="lf-card-meta">
-            ${lead.address ? `<span>${escapeHtml(lead.address)}</span>` : ''}
-            ${lead.phone ? `<a href="tel:${lead.phone}">${escapeHtml(lead.phone)}</a>` : ''}
-            ${lead.email ? `<a href="mailto:${lead.email}">${escapeHtml(lead.email)}</a>` : ''}
-            ${lead.website ? `<a href="${lead.website.startsWith('http')?lead.website:'https://'+lead.website}" target="_blank">${escapeHtml(lead.website.replace(/^https?:\/\//,'').slice(0,36))}</a>` : ''}
+            ${l.contact ? `<span>${escapeHtml(l.contact)}</span>` : ''}
+            ${l.phone ? `<a href="tel:${escapeHtml(l.phone)}">${escapeHtml(l.phone)}</a>` : ''}
+            ${l.email ? `<a href="mailto:${escapeHtml(l.email)}">${escapeHtml(l.email)}</a>` : ''}
+            ${l.website ? `<a href="${escapeHtml(l.website)}" target="_blank">site</a>` : ''}
           </div>
-          ${lead.snippet ? `<div class="lf-snippet"><span class="lf-intent-badge">INTENT</span><q>${escapeHtml(lead.snippet)}</q>${lead.sourceUrl?`<a href="${lead.sourceUrl}" target="_blank" class="lf-snippet-link">View source ▸</a>`:''}</div>` : ''}
-          ${lead.notes ? `<div class="lf-intel-text">${escapeHtml(lead.notes)}</div>` : ''}
-          ${lead.pitchAngle ? `<div class="lf-pitch-box">${escapeHtml(lead.pitchAngle)}</div>` : ''}
+          ${l.intel ? `<div class="lf-intel-text">${escapeHtml(l.intel)}</div>` : ''}
+          ${l.snippet ? `<div class="lf-snippet"><q>${escapeHtml(l.snippet)}</q>${l.source?`<a class="lf-snippet-link" href="${escapeHtml(l.source)}" target="_blank">source →</a>`:''}</div>` : ''}
+          ${l.pitch ? `<div class="lf-pitch-box">${escapeHtml(l.pitch)}</div>` : ''}
         </div>
         <div class="lf-card-actions">
-          <button class="lf-outreach-btn" onclick="lfOutreach(${i})">✉ Outreach</button>
-          <button class="lf-save-btn ${saved?'saved':''}" onclick="lfSave(${i}, this)">${saved?'SAVED':'+ SAVE'}</button>
+          <button class="lf-save-btn ${l._saved?'saved':''}" onclick="lfSave('${l._id}')">${l._saved?'✓ Saved':'+ Save'}</button>
+          <button class="lf-outreach-btn" onclick="lfOutreach('${l._id}')">✉ Outreach</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
-function lfSave(i, btn){
-  const lead = lfAll[i]; if (!lead) return null;
-  const norm = s => (s||'').trim().toLowerCase();
-  let rec = RECORDS.find(r => norm(r.name) === norm(lead.name));
-  if (!rec){
-    rec = newRecord({
-      source: lead.source || 'finder', name:lead.name, niche:lead.niche||'',
-      email:lead.email||null, phone:lead.phone||null,
-      website:lead.website||null, site:lead.website||null, address:lead.address||null,
-      webStatus:lead.webStatus||null, score:lead.score||null,
-      notes:lead.notes||'', issue:(lead.webStatus==='none'?'no website':(lead.notes||'')),
-      pitchAngle:lead.pitchAngle||null, services:lead.services||[],
-      snippet:lead.snippet||null, sourceUrl:lead.sourceUrl||null, status:'new'
-    });
-    RECORDS.push(rec); saveRecords();
-  }
-  lead._saved = true;
-  if (btn){ btn.textContent='SAVED'; btn.classList.add('saved'); }
-  renderToday(); renderLeads(); renderPipeline(); updateClientStats();
-  return rec;
+function lfSave(id){
+  const l = lfAll.find(x=>x._id===id);
+  if (!l || l._saved) return;
+  const rec = newRecord({
+    source: l._intent ? 'finder-intent' : 'finder',
+    name:l.name, contact:l.contact||'', email:l.email||null, phone:l.phone||null,
+    website:l.website||null, site:l.website||null, niche:l.niche||'',
+    webStatus:l.webStatus||null, score:l.score||null,
+    notes:l.intel||'', issue: l.webStatus==='none'?'no website':l.webStatus==='weak'?'outdated site':(l.intel||''),
+    pitchAngle:l.pitch||null
+  });
+  upsertRecord(rec);
+  l._saved = true;
+  lfRenderResults();
+  if (typeof renderToday==='function') renderToday();
+  if (typeof updateDailyCounter==='function') updateDailyCounter();
 }
-async function lfOutreach(i){
-  const rec = lfSave(i);
-  if (rec) await openOutreach(rec.id);
+function lfOutreach(id){
+  const l = lfAll.find(x=>x._id===id);
+  if (!l) return;
+  if (!l._saved) lfSave(id);
+  const rec = RECORDS.find(r => (r.name||'').toLowerCase() === (l.name||'').toLowerCase());
+  if (rec) openOutreach(rec.id);
 }
 function lfExport(){
-  if (!lfAll.length){ alert('Nothing to export. Run a search first.'); return; }
-  const headers = ['Name','Address','Phone','Email','Website','WebStatus','Score','Notes','PitchAngle','Snippet','Source'];
-  const rows = lfAll.map(l => [l.name,l.address,l.phone,l.email,l.website,l.webStatus,l.score,l.notes,l.pitchAngle,l.snippet,l.source]
-    .map(v=>`"${(v==null?'':v).toString().replace(/"/g,'""')}"`).join(','));
-  const csv = [headers.join(','),...rows].join('\n');
-  const blob = new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download=`finder-${lfMode}-${v2Today()}.csv`; a.click(); URL.revokeObjectURL(url);
+  if (!lfAll.length){ alert('Nothing to export yet.'); return; }
+  const headers = ['Name','Contact','Phone','Email','Website','WebStatus','Niche','Score','Intel','Pitch','Source'];
+  const rows = lfAll.map(l => [l.name,l.contact,l.phone,l.email,l.website,l.webStatus,l.niche,l.score,l.intel,l.pitch,l.source]
+    .map(v => `"${(v==null?'':v).toString().replace(/"/g,'""')}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type:'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `lead-finder-${v2Today()}.csv`; a.click();
+  URL.revokeObjectURL(url);
 }
 
 /* ---------------- CADENCE EDITOR ---------------- */
@@ -5684,97 +5688,382 @@ function openCadenceEditor(){
   if (!m){
     m = document.createElement('div');
     m.id = 'cadence-modal'; m.className = 'client-modal-overlay';
-    m.innerHTML = `<div class="client-modal" style="max-width:480px">
-      <div class="client-modal-title">Edit Follow-up Cadence</div>
-      <div class="client-modal-sub">Sequence runs from first contact date. Day 0 = first email (sent on contact). Subsequent steps are follow-ups.</div>
-      <div id="cadence-rows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;"></div>
-      <button onclick="addCadenceRow()" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:7px 14px;color:var(--text-mid);font-family:var(--font);font-size:13px;cursor:pointer;width:100%;margin-bottom:12px;">+ Add Touch</button>
-      <div class="client-modal-actions">
-        <button class="client-modal-btn secondary" onclick="resetCadenceDefaults()">Reset to Default</button>
-        <button class="client-modal-btn primary" onclick="saveCadenceEditor()">Save Cadence</button>
-      </div>
-    </div>`;
+    m.innerHTML = `<div class="client-modal" style="max-width:520px">
+      <div class="client-modal-title">Follow-up Cadence</div>
+      <div class="client-modal-sub">The sequence of touches after a lead is first contacted. Day is counted from first contact.</div>
+      <div id="cadence-rows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
+      <div class="client-modal-actions" style="justify-content:space-between;">
+        <div style="display:flex;gap:8px;">
+          <button class="client-modal-btn secondary" onclick="addCadenceRow()">+ Add Touch</button>
+          <button class="client-modal-btn secondary" onclick="resetCadenceDefaults()">Reset</button>
+        </div>
+        <button class="client-modal-btn primary" onclick="saveCadenceEditor()">Save</button>
+      </div></div>`;
     document.body.appendChild(m);
   }
   renderCadenceRows();
   m.classList.add('show');
 }
-
 function renderCadenceRows(){
   const wrap = document.getElementById('cadence-rows'); if (!wrap) return;
-  const channels = ['email','facebook','text','call'];
-  wrap.innerHTML = CADENCE.map((c, i) => `
-    <div class="cadence-row" data-idx="${i}" style="display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
-      <span style="font-size:11px;color:var(--text-dim);font-family:var(--mono);min-width:52px;">Day</span>
-      <input type="number" min="0" max="60" value="${c.day}" onchange="updateCadenceRow(${i},'day',+this.value)"
-        style="width:58px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;text-align:center;" />
-      <select onchange="updateCadenceRow(${i},'channel',this.value)"
-        style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 9px;color:var(--text-mid);font-family:var(--font);font-size:12px;outline:none;flex:1;">
-        ${channels.map(ch => `<option value="${ch}" ${c.channel===ch?'selected':''}>${ch.charAt(0).toUpperCase()+ch.slice(1)}</option>`).join('')}
+  const channels = ['email','facebook','text','call','linkedin'];
+  wrap.innerHTML = CADENCE.map((c,i) => `
+    <div style="display:grid;grid-template-columns:70px 1fr 1.4fr auto;gap:8px;align-items:center;">
+      <input type="number" min="0" value="${c.day}" onchange="updateCadenceRow(${i},'day',this.value)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text);font-family:var(--mono);font-size:12.5px;outline:none;" title="Day" />
+      <select onchange="updateCadenceRow(${i},'channel',this.value)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text-mid);font-family:var(--font);font-size:12.5px;outline:none;">
+        ${channels.map(ch=>`<option value="${ch}" ${c.channel===ch?'selected':''}>${ch}</option>`).join('')}
       </select>
-      <input type="text" value="${escapeHtml(c.label)}" onchange="updateCadenceRow(${i},'label',this.value)"
-        placeholder="Label" style="flex:2;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 9px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;" />
-      ${i > 0 ? `<button onclick="removeCadenceRow(${i})" style="background:none;border:1px solid var(--border);border-radius:5px;color:var(--text-dim);padding:3px 8px;font-size:12px;cursor:pointer;font-family:var(--font);">✕</button>` : '<span style="width:32px"></span>'}
+      <input value="${(c.label||'').replace(/"/g,'&quot;')}" onchange="updateCadenceRow(${i},'label',this.value)" placeholder="Label" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text);font-family:var(--font);font-size:12.5px;outline:none;" />
+      <button onclick="removeCadenceRow(${i})" style="background:none;border:1px solid var(--border);border-radius:5px;color:var(--text-dim);padding:5px 9px;font-size:11px;cursor:pointer;">✕</button>
     </div>`).join('');
 }
-
 function updateCadenceRow(i, field, val){
-  if (CADENCE[i]) CADENCE[i][field] = val;
+  if (!CADENCE[i]) return;
+  CADENCE[i][field] = field==='day' ? (parseInt(val)||0) : val;
 }
 function addCadenceRow(){
-  const lastDay = CADENCE.length ? CADENCE[CADENCE.length-1].day : 0;
-  CADENCE.push({ day: lastDay + 7, channel:'email', label:'Follow-up' });
+  CADENCE.push({ day:(CADENCE.length?CADENCE[CADENCE.length-1].day+7:0), channel:'email', label:'New touch' });
   renderCadenceRows();
 }
-function removeCadenceRow(i){
-  if (CADENCE.length <= 1){ alert('Keep at least one touch in your cadence.'); return; }
-  CADENCE.splice(i, 1);
-  renderCadenceRows();
-}
+function removeCadenceRow(i){ CADENCE.splice(i,1); renderCadenceRows(); }
 function saveCadenceEditor(){
-  // sort by day ascending so cadence runs in order
-  CADENCE.sort((a,b) => a.day - b.day);
+  CADENCE = CADENCE.filter(c => c.label && c.label.trim());
+  CADENCE.sort((a,b)=>a.day-b.day);
   saveCadenceStore(CADENCE);
   document.getElementById('cadence-modal').classList.remove('show');
   renderToday();
 }
 function resetCadenceDefaults(){
-  if (!confirm('Reset cadence to the 0/3/7/14 defaults?')) return;
-  CADENCE = CADENCE_DEFAULT.map(c => ({...c}));
+  CADENCE = CADENCE_DEFAULT.map(c=>({...c}));
   saveCadenceStore(CADENCE);
   renderCadenceRows();
 }
 
-/* ---------------- nav + init hooks ---------------- */
-const _v21_switchPanel = switchPanel;
+/* ---------------- nav hook: finder readiness ---------------- */
+const _v22_switchPanel = switchPanel;
 switchPanel = function(id, btn){
-  _v21_switchPanel(id, btn);
+  _v22_switchPanel(id, btn);
   if (id === 'finder'){ lfReady(); }
 };
 
 </script>
 
 <script>
-/* Change API key at any time */
+/* changeApiKey — nav ⚙ key button */
 function changeApiKey(){
-  const current = apiKey ? '(key ending in …' + apiKey.slice(-6) + ')' : '(no key set)';
-  const val = prompt('Enter your Anthropic API key ' + current + '\n\nGet one at console.anthropic.com/settings/keys\nLeave blank to clear the current key.');
-  if (val === null) return; // cancelled
-  if (val.trim() === '') {
-    apiKey = '';
-    localStorage.removeItem('lab_api_key');
-    alert('API key cleared. Enter a new one in AI Chat.');
-    return;
-  }
-  const k = val.trim();
-  if (!k.startsWith('sk-ant-')) {
-    alert("That doesn't look right — Anthropic keys start with sk-ant-\nTry again.");
-    return;
-  }
-  apiKey = k;
-  localStorage.setItem('lab_api_key', k);
-  alert('API key saved. All features are now active.');
+  const cur = localStorage.getItem('lab_api_key') || '';
+  const k = prompt('Paste your Anthropic API key (sk-ant-...). Leave blank to cancel.', cur);
+  if (k === null) return;
+  const key = k.trim();
+  if (!key) return;
+  if (!key.startsWith('sk-ant-')){ alert("That doesn't look right. Keys start with sk-ant-"); return; }
+  apiKey = key;
+  localStorage.setItem('lab_api_key', key);
+  alert('API key updated.');
 }
+</script>
+
+<script>
+/* ============================================================
+   THE LAB v3 — SECURITY, SYNC GUARD, LIVE QUOTES, SLIM CHAT
+   Loads last. Hardens auth, protects sync, de-fakes stocks,
+   trims chat bloat. All overrides use capture-then-reassign.
+   ============================================================ */
+
+/* ---------- Supabase Auth sign-in ---------- */
+async function sbMaybeSignIn(){
+  try {
+    const raw = localStorage.getItem('lab_sb_auth');
+    if (!raw || !_db || !_db.auth) return;
+    const { email, pass } = JSON.parse(raw);
+    if (!email || !pass) return;
+    const { error } = await _db.auth.signInWithPassword({ email, password: pass });
+    if (error) console.warn('Supabase sign-in failed:', error.message);
+    else console.log('Supabase authenticated as', email);
+  } catch(e){ console.warn('sbMaybeSignIn error', e); }
+}
+
+/* ---------- Cloud vs local conflict guard ---------- */
+function cloudVsLocalGuard(store){
+  try {
+    const localWrite = localStorage.getItem('lab_local_last_write');
+    const cloudLast = SB._cloudLast || null;
+    if (!localWrite) return true;            // no local history, trust cloud
+    if (!cloudLast) return false;            // cloud empty, keep local
+    const localMs = new Date(localWrite).getTime();
+    const cloudMs = new Date(cloudLast).getTime();
+    // local more than 2 min newer than cloud -> ask
+    if (localMs - cloudMs > 120000){
+      const keepLocal = confirm(
+        'Your local changes look newer than the cloud copy.\n\n' +
+        'OK = keep your local changes and push them to the cloud.\n' +
+        'Cancel = discard local and load the cloud copy instead.'
+      );
+      if (keepLocal){ pushLocalToCloud(); return false; }
+      return true;
+    }
+    return true;
+  } catch(e){ return true; }
+}
+
+function pushLocalToCloud(){
+  const raw = SB._sbSaveRaw || SB.save;
+  const pairs = [
+    ['lab_records','records'], ['lab_pipeline','pipeline'],
+    ['lab_clients','clients'], ['lab_leads','leads'],
+    ['lab_proof_v2','proof'], ['lab_swipe_file','swipe'],
+    ['lab_settings','settings'], ['lab_saved_chats','saved_chats'],
+    ['lab_memory_summaries','memory_summaries']
+  ];
+  pairs.forEach(([lk, sk]) => {
+    const v = localStorage.getItem(lk);
+    if (v){ try { raw.call(SB, sk, JSON.parse(v)); } catch(e){} }
+  });
+}
+
+/* ---------- Debounce SB.save (keep raw for immediate pushes) ---------- */
+(function(){
+  if (SB._sbSaveRaw) return;
+  SB._sbSaveRaw = SB.save.bind(SB);
+  const timers = {};
+  SB.save = function(key, value){
+    try { localStorage.setItem('lab_local_last_write', new Date().toISOString()); } catch(e){}
+    if (timers[key]) clearTimeout(timers[key]);
+    timers[key] = setTimeout(() => {
+      timers[key] = null;
+      SB._sbSaveRaw(key, value);
+    }, 800);
+  };
+})();
+
+/* ---------- Slim chat history (strip base64 file bloat) ---------- */
+function slimChatHistory(){
+  if (typeof chatHistory === 'undefined' || !Array.isArray(chatHistory)) return;
+  // find index of the last user message; keep its files intact
+  let lastUser = -1;
+  for (let i = chatHistory.length - 1; i >= 0; i--){
+    if (chatHistory[i].role === 'user'){ lastUser = i; break; }
+  }
+  chatHistory.forEach((msg, i) => {
+    if (i === lastUser) return;
+    if (!Array.isArray(msg.content)) return;
+    msg.content = msg.content.map(part => {
+      if (part && (part.type === 'image' || part.type === 'document')){
+        return { type:'text', text:'[file removed to save space]' };
+      }
+      return part;
+    });
+  });
+}
+
+/* ---------- Live stock quotes ---------- */
+async function refreshQuotes(force){
+  if (typeof stocks === 'undefined' || !stocks.length) return;
+  if (!apiKey){ return; }
+  try {
+    const cacheRaw = localStorage.getItem('lab_stocks_quotes');
+    if (!force && cacheRaw){
+      const cache = JSON.parse(cacheRaw);
+      if (cache && (Date.now() - cache.at) < 15*60*1000) return; // fresh
+    }
+  } catch(e){}
+  const tickers = stocks.map(s=>s.ticker).join(', ');
+  const btn = document.getElementById('quotes-refresh-btn');
+  if (btn){ btn.disabled = true; btn.textContent = 'Refreshing...'; }
+  const prompt = `Look up the most recent stock price and daily percent change for these tickers: ${tickers}. Return ONLY a JSON array, no markdown or preamble:
+[{"ticker":"","name":"company short name","price":0.00,"changePct":0.00}]
+Use the latest available market data. price is a number in USD, changePct is the day's percent change as a number (negative if down). No em dashes.`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1500, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const m = text.match(/\[[\s\S]*\]/);
+    if (!m) throw new Error('parse');
+    const quotes = JSON.parse(m[0]);
+    quotes.forEach(q => {
+      const s = stocks.find(x => x.ticker.toUpperCase() === (q.ticker||'').toUpperCase());
+      if (s){ s.price = q.price; s.change = q.changePct; if (q.name) s.name = q.name; }
+    });
+    saveStocks();
+    localStorage.setItem('lab_stocks_quotes', JSON.stringify({ at:Date.now() }));
+    renderStocks();
+  } catch(e){
+    console.warn('Quote refresh failed', e);
+  } finally {
+    const b = document.getElementById('quotes-refresh-btn');
+    if (b){ b.disabled = false; b.textContent = '↻ Refresh Quotes'; }
+  }
+}
+function maybeRefreshQuotes(){ refreshQuotes(false); }
+
+/* renderStocks override: handle null prices + updated stamp + refresh btn */
+const _v3_renderStocks = (typeof renderStocks==='function') ? renderStocks : null;
+renderStocks = function(){
+  const grid = document.getElementById('stocks-grid');
+  if (!grid) return;
+  grid.innerHTML = stocks.map((s,i) => {
+    const has = (s.price != null && !isNaN(s.price));
+    const isUp = (s.change||0) >= 0;
+    return `<div class="stock-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div class="stock-ticker">${escapeHtml(s.ticker)}</div>
+          <div class="stock-name">${escapeHtml(s.name||s.ticker)}</div>
+        </div>
+        <button onclick="removeStock(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:0.85rem;line-height:1;padding:2px" title="Remove">×</button>
+      </div>
+      <div class="stock-price">${has ? '$'+Number(s.price).toFixed(2) : '<span style="color:var(--text-dim);font-size:1rem">—</span>'}</div>
+      <div class="stock-change ${isUp?'up':'down'}">
+        ${has ? (isUp?'▲':'▼')+' '+Math.abs(Number(s.change)||0).toFixed(2)+'%' : '<span style="color:var(--text-dim);font-family:var(--mono);font-size:0.7rem">tap Refresh Quotes</span>'}
+      </div>
+    </div>`;
+  }).join('');
+  injectQuotesRefreshBtn();
+  updateQuotesStamp();
+};
+
+function injectQuotesRefreshBtn(){
+  const row = document.querySelector('#panel-stocks .stock-add-row');
+  if (!row || document.getElementById('quotes-refresh-btn')) return;
+  const b = document.createElement('button');
+  b.id = 'quotes-refresh-btn';
+  b.className = 'add-btn';
+  b.style.cssText = 'background:rgba(76,175,130,.12);border-color:rgba(76,175,130,.3);color:var(--success);';
+  b.textContent = '↻ Refresh Quotes';
+  b.onclick = () => refreshQuotes(true);
+  row.appendChild(b);
+}
+function updateQuotesStamp(){
+  const foot = document.querySelector('#panel-stocks > div:last-child');
+  try {
+    const cache = JSON.parse(localStorage.getItem('lab_stocks_quotes')||'null');
+    if (foot && cache && cache.at){
+      const t = new Date(cache.at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+      foot.textContent = `Live quotes via your Anthropic key. Last updated ${t}. Auto-refreshes every 15 minutes on this tab.`;
+    }
+  } catch(e){}
+}
+
+/* ---------- Security Center ---------- */
+const RLS_SQL = `alter table lab_store enable row level security;
+create policy "lab authenticated all" on lab_store
+  for all to authenticated using (true) with check (true);
+
+alter table design_fusion_orders enable row level security;
+create policy "df public insert" on design_fusion_orders
+  for insert to anon with check (true);
+create policy "df owner read" on design_fusion_orders
+  for select to authenticated using (true);
+create policy "df owner update" on design_fusion_orders
+  for update to authenticated using (true);
+create policy "df owner delete" on design_fusion_orders
+  for delete to authenticated using (true);`;
+
+function securityStatus(){
+  let configured = false;
+  try {
+    const a = JSON.parse(localStorage.getItem('lab_sb_auth')||'null');
+    configured = !!(a && a.email && a.pass);
+  } catch(e){}
+  return configured;
+}
+function injectSecurityCenter(){
+  const panel = document.getElementById('panel-links');
+  if (!panel || document.getElementById('sec-center')) return;
+  const configured = securityStatus();
+  const sec = document.createElement('div');
+  sec.id = 'sec-center';
+  sec.innerHTML = `
+    <div class="links-section-title" style="color:var(--danger);">Security Center</div>
+    <div style="background:var(--surface);border:1px solid ${configured?'rgba(76,175,130,.3)':'rgba(224,82,82,.35)'};border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;">
+        <span style="width:9px;height:9px;border-radius:50%;background:${configured?'var(--success)':'var(--danger)'};"></span>
+        <strong style="color:var(--text);">Supabase Auth: ${configured?'credentials saved':'not configured'}</strong>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.6;">
+        The Lab's data lives in Supabase. Until Row Level Security is turned on, anyone who finds the URL can read or change it. Do all three: create a login user, run the SQL, then save the same login here so the Lab can sign in.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:0.68rem;color:var(--text-dim);font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;">Supabase Login Email</label>
+        <input id="sb-auth-email" type="email" placeholder="you@email.com" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font);font-size:0.85rem;outline:none;" />
+        <label style="font-size:0.68rem;color:var(--text-dim);font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px;">Supabase Login Password</label>
+        <input id="sb-auth-pass" type="password" placeholder="the password you set for that user" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font);font-size:0.85rem;outline:none;" />
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <button class="add-btn" onclick="saveSbAuth()">Save Credentials</button>
+          <button class="add-btn" style="background:var(--surface2);border-color:var(--border);color:var(--text-mid);" onclick="testSbAuth()">Test Sign-in</button>
+        </div>
+        <div id="sb-auth-msg" style="font-size:0.75rem;font-family:var(--mono);margin-top:4px;"></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:10px;">
+        <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--mono);margin-bottom:6px;">STEP-BY-STEP</div>
+        <ol style="margin:0 0 0 18px;font-size:0.78rem;color:var(--text-mid);line-height:1.7;">
+          <li>Supabase dashboard, Authentication, Users, Add user (email + password). This is your Lab login.</li>
+          <li>SQL Editor, paste the SQL below, Run. This locks the tables.</li>
+          <li>Authentication, Providers, Email, turn OFF public signups so no one else can register.</li>
+          <li>Come back here, enter that email and password, Save Credentials, then Test Sign-in.</li>
+        </ol>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--mono);">ROW LEVEL SECURITY SQL</div>
+          <button class="add-btn" style="padding:4px 12px;font-size:0.72rem;" onclick="copyRlsSql()">Copy SQL</button>
+        </div>
+        <pre id="rls-sql" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:0.68rem;color:var(--text-mid);line-height:1.6;overflow-x:auto;white-space:pre;margin:0;">${escapeHtml(RLS_SQL)}</pre>
+        <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.5;">The Design Fusion order form stays open to the public for new orders (anon insert), so Rudy's customers can still submit. Only reading and editing orders requires your login.</div>
+      </div>
+    </div>`;
+  panel.appendChild(sec);
+  const a = (()=>{ try { return JSON.parse(localStorage.getItem('lab_sb_auth')||'null'); } catch(e){ return null; } })();
+  if (a){ const e=document.getElementById('sb-auth-email'); if(e) e.value=a.email||''; }
+}
+function saveSbAuth(){
+  const email = (document.getElementById('sb-auth-email').value||'').trim();
+  const pass = (document.getElementById('sb-auth-pass').value||'').trim();
+  const msg = document.getElementById('sb-auth-msg');
+  if (!email || !pass){ msg.style.color='var(--danger)'; msg.textContent='Enter both email and password.'; return; }
+  localStorage.setItem('lab_sb_auth', JSON.stringify({ email, pass }));
+  msg.style.color='var(--success)'; msg.textContent='Saved. Run Test Sign-in to confirm it works.';
+}
+async function testSbAuth(){
+  const msg = document.getElementById('sb-auth-msg');
+  const email = (document.getElementById('sb-auth-email').value||'').trim();
+  const pass = (document.getElementById('sb-auth-pass').value||'').trim();
+  if (!email || !pass){ msg.style.color='var(--danger)'; msg.textContent='Enter both first.'; return; }
+  if (!_db || !_db.auth){ msg.style.color='var(--danger)'; msg.textContent='Supabase not connected.'; return; }
+  msg.style.color='var(--text-mid)'; msg.textContent='Testing...';
+  try {
+    const { error } = await _db.auth.signInWithPassword({ email, password: pass });
+    if (error){ msg.style.color='var(--danger)'; msg.textContent='Sign-in failed: '+error.message; }
+    else { msg.style.color='var(--success)'; msg.textContent='Success. The Lab can now authenticate to Supabase.'; }
+  } catch(e){ msg.style.color='var(--danger)'; msg.textContent='Error: '+e.message; }
+}
+function copyRlsSql(){
+  navigator.clipboard.writeText(RLS_SQL).then(()=>{
+    const b = event.target; const o = b.textContent;
+    b.textContent = 'Copied!'; setTimeout(()=>b.textContent=o, 1500);
+  });
+}
+
+/* ---------- v3 init + nav hooks (capture-reassign) ---------- */
+const _v3_initApp = initApp;
+initApp = function(){
+  _v3_initApp();
+  try { injectSecurityCenter(); } catch(e){}
+  try { injectQuotesRefreshBtn(); updateQuotesStamp(); } catch(e){}
+};
+
+const _v3_switchPanel = switchPanel;
+switchPanel = function(id, btn){
+  _v3_switchPanel(id, btn);
+  if (id === 'stocks'){ maybeRefreshQuotes(); }
+  if (id === 'links'){ injectSecurityCenter(); }
+};
+
 </script>
 </body>
 </html>
