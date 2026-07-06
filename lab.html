@@ -2299,7 +2299,7 @@
               <div class="msg-avatar">AI</div>
               <div class="msg-bubble">
                 <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by Claude.</p>
-                <p>Drop a file, pick a quick prompt on the left, or just start typing. I've got full context on Proactive Digital, your vending blueprint, the SLP Masonry project, and everything else we've worked on.</p>
+                <p>Drop a file, pick a quick prompt on the left, or just start typing. I've got live context on your pipeline, clients, and everything else we've worked on.</p>
                 <p>What are we building today?</p>
               </div>
             </div>
@@ -3423,16 +3423,13 @@ async function sendMessage() {
   try {
     const systemPrompt = `You are The Lab AI, a private assistant built into Todd Blackwell Jr.'s personal command center at Proactive Digital. You know Todd well:
 
-- He runs Proactive Digital (web design business, just launched April 2026)
-- Active clients/prospects: SLP Masonry (Charlottesville VA, proposal sent), Jazz Barber & Beauty (Chester VA, mock redesign sent), Nicole (food business, no website yet)
-- He's based in Chesterfield/Chester, Virginia
-- He also runs Proactive Vending Blueprint (digital guide, proactivevendingblueprint.com) with his wife Robbyn
-- He's winding down a vending machine operation (8-9 machines)
-- He works as Assistant Branch Manager at Associated Scaffolding (B2B sales, VA/MD/DC territory)
-- Army veteran, fitness-focused, planning home purchase in ~18 months
-- Aruba trip April 23-27, 2026
+- He runs Proactive Digital, a veteran-owned web design and digital strategy agency based in Chesterfield/Richmond, VA
+- He also serves as Assistant Branch Manager of Sales & Operations at Associated Scaffolding (B2B sales, VA/MD/DC territory)
+- He also runs Proactive Vending Blueprint (digital guide, proactivevendingblueprint.com) with his wife Robbyn, and is IT Director for Angels of Snow Hill Cemetery
+- He's based in Chesterfield, Virginia
+- Army veteran, fitness-focused, planning a home purchase on an ~18-month horizon
 
-Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd what he needs fast. When writing copy or emails, produce the actual content immediately. When analyzing documents, be specific. You're a business partner, not a formal assistant.${buildMemoryContext()}`;
+Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd what he needs fast. When writing copy or emails, produce the actual content immediately. When analyzing documents, be specific. You're a business partner, not a formal assistant.${buildBusinessContext()}${buildMemoryContext()}`;
 
     const resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -6062,6 +6059,234 @@ switchPanel = function(id, btn){
   _v3_switchPanel(id, btn);
   if (id === 'stocks'){ maybeRefreshQuotes(); }
   if (id === 'links'){ injectSecurityCenter(); }
+};
+
+/* ============================================================
+   THE LAB v4 — LIVE AI CONTEXT + OPPORTUNITY FEED
+   ============================================================ */
+
+/* ---------- Live business context for AI Chat ---------- */
+function buildBusinessContext(){
+  try {
+    if (typeof RECORDS === 'undefined' || !RECORDS.length) return '';
+    const won = RECORDS.filter(r => r.status === 'won');
+    const active = won.filter(r => !(r.payments||[]).length || !(r.payments||[]).every(p=>p.paid));
+    const openPipe = RECORDS.filter(r => !['won','lost'].includes(r.status));
+    const openVal = openPipe.reduce((s,r)=> s + (Number(r.dealValue)||0), 0);
+    const mrr = won.filter(r=>r.hasRetainer).reduce((s,r)=> s + (Number(r.recurringValue)||0), 0);
+    const today = new Date().toISOString().slice(0,10);
+    const upcoming = [];
+    won.forEach(r => (r.payments||[]).forEach(p => {
+      if (!p.paid){
+        const days = Math.floor((new Date(p.dueDate) - new Date(today)) / 86400000);
+        if (days >= -3 && days <= 14) upcoming.push(`${r.name}: $${p.amount} due ${p.dueDate}`);
+      }
+    }));
+    const aging = openPipe.filter(r => r.status==='proposal').map(r=>r.name);
+    const replied = openPipe.filter(r => r.status==='replied').map(r=>r.name);
+    const clientNames = active.map(r=>r.name).slice(0,15).join(', ') || 'none yet';
+    const lines = [
+      `\n\nLIVE BUSINESS SNAPSHOT (current data from The Lab, use this over any older assumptions):`,
+      `- Active clients (${active.length}): ${clientNames}`,
+      `- Open pipeline: ${openPipe.length} records, $${openVal.toLocaleString()} total value`,
+      `- Monthly recurring revenue (MRR): $${mrr.toLocaleString()}/mo across ${won.filter(r=>r.hasRetainer).length} retainer clients`,
+      replied.length ? `- Waiting on your reply: ${replied.join(', ')}` : '',
+      aging.length ? `- Proposals out (awaiting response): ${aging.join(', ')}` : '',
+      upcoming.length ? `- Payments due soon: ${upcoming.slice(0,8).join('; ')}` : ''
+    ].filter(Boolean);
+    return lines.join('\n');
+  } catch(e){ return ''; }
+}
+
+/* ---------- Opportunity Engine (v1: five types, pure math, no AI calls) ---------- */
+function oppToday(){ return new Date().toISOString().slice(0,10); }
+function oppDaysUntil(dateStr){ return Math.floor((new Date(dateStr) - new Date(oppToday())) / 86400000); }
+function loadDismissed(){ try { return JSON.parse(localStorage.getItem('lab_opp_dismissed')||'[]'); } catch(e){ return []; } }
+function loadCompleted(){ try { return JSON.parse(localStorage.getItem('lab_opp_completed')||'[]'); } catch(e){ return []; } }
+function saveDismissed(a){ localStorage.setItem('lab_opp_dismissed', JSON.stringify(a)); }
+function saveCompleted(a){ localStorage.setItem('lab_opp_completed', JSON.stringify(a)); }
+
+function findPaymentDue(){
+  const out = [];
+  recordsByStatus('won').forEach(r => {
+    (r.payments||[]).forEach(p => {
+      if (p.paid) return;
+      const d = oppDaysUntil(p.dueDate);
+      if (d <= 10){
+        out.push({
+          id:'pay_'+r.id+'_'+p.num, type:'payment_due', recordId:r.id,
+          title:`${r.name} — $${p.amount} ${d<0?'overdue':'due '+(d===0?'today':'in '+d+' days')}`,
+          body: d<0 ? `Payment ${p.num} is ${Math.abs(d)} day(s) past due.` : `Payment ${p.num} of ${r.payments.length} is coming up.`,
+          revenueEst: p.amount, confidence:'high', effort:'easy',
+          dueContext: p.dueDate, actions:['reminder','complete','dismiss']
+        });
+      }
+    });
+  });
+  return out;
+}
+function findAgingProposals(){
+  return recordsByStatus('proposal').filter(r => daysSince(statusEnteredAt(r,'proposal')) > 7).map(r => ({
+    id:'prop_'+r.id, type:'aging_proposal', recordId:r.id,
+    title:`${r.name} — proposal going cold`,
+    body:`Sent ${daysSince(statusEnteredAt(r,'proposal'))} days ago with no response yet. $${Number(r.dealValue||0).toLocaleString()} at stake.`,
+    revenueEst:Number(r.dealValue)||0, confidence:'high', effort:'easy',
+    dueContext:null, actions:['followup','dismiss']
+  }));
+}
+function findReplyWaiting(){
+  return recordsByStatus('replied').map(r => ({
+    id:'reply_'+r.id, type:'reply_waiting', recordId:r.id,
+    title:`${r.name} replied — your move`,
+    body:`They responded ${daysSince(statusEnteredAt(r,'replied'))} day(s) ago. $${Number(r.dealValue||0).toLocaleString()} on the table.`,
+    revenueEst:Number(r.dealValue)||0, confidence:'high', effort:'easy',
+    dueContext:null, actions:['proposal','email','dismiss']
+  }));
+}
+function findNoRetainer(){
+  return recordsByStatus('won').filter(r => !r.hasRetainer).map(r => ({
+    id:'ret_'+r.id, type:'no_retainer', recordId:r.id,
+    title:`${r.name} — no maintenance retainer`,
+    body:`Won client with no recurring revenue attached. A typical $65/mo retainer here adds up over time.`,
+    revenueEst:65, confidence:'medium', effort:'medium',
+    dueContext:null, actions:['upsell','dismiss']
+  }));
+}
+function findBestNiche(){
+  const byNiche = {};
+  RECORDS.filter(r => beltRank(r.status) >= beltRank('contacted')).forEach(r => {
+    const n = (r.niche||'').trim(); if (!n) return;
+    byNiche[n] = byNiche[n] || { c:0, rep:0 };
+    byNiche[n].c++;
+    if (beltRank(r.status) >= beltRank('replied')) byNiche[n].rep++;
+  });
+  let best=null, bestRate=-1;
+  Object.entries(byNiche).forEach(([n,v]) => {
+    if (v.c >= 3){ const rate=v.rep/v.c; if (rate>bestRate){ bestRate=rate; best=n; } }
+  });
+  if (!best) return [];
+  return [{
+    id:'niche_'+best.replace(/\s+/g,'_'), type:'best_niche', recordId:null,
+    title:`${best} converts best — prospect there next`,
+    body:`${Math.round(bestRate*100)}% reply rate in this niche vs. your other prospecting. Worth a focused push.`,
+    revenueEst:null, confidence:'medium', effort:'medium',
+    dueContext:null, actions:['finder','dismiss'], niche:best
+  }];
+}
+function computeOpportunities(){
+  if (typeof RECORDS === 'undefined') return [];
+  const dismissed = loadDismissed(), completed = loadCompleted();
+  const hidden = new Set([...dismissed, ...completed]);
+  let all = [
+    ...findPaymentDue(), ...findAgingProposals(), ...findReplyWaiting(),
+    ...findNoRetainer(), ...findBestNiche()
+  ];
+  return all.filter(o => !hidden.has(o.id));
+}
+
+function oppDismiss(id){
+  const d = loadDismissed(); if (!d.includes(id)) d.push(id);
+  saveDismissed(d); renderOpportunities();
+}
+function oppComplete(id){
+  const c = loadCompleted(); if (!c.includes(id)) c.push(id);
+  saveCompleted(c); renderOpportunities();
+}
+function oppAction(action, recordId, niche){
+  if (action === 'reminder' || action === 'followup' || action === 'email'){
+    if (recordId) openOutreach(recordId);
+  } else if (action === 'proposal'){
+    if (recordId) setStatus(recordId, 'proposal');
+  } else if (action === 'upsell'){
+    if (recordId) openOutreach(recordId);
+  } else if (action === 'finder'){
+    const tab = [...document.querySelectorAll('.nav-tab')].find(t => (t.getAttribute('onclick')||'').includes("'finder'"));
+    switchPanel('finder', tab);
+    if (niche){
+      const sel = document.getElementById('lf-niche');
+      if (sel){
+        let found=false;
+        [...sel.options].forEach(o=>{ if(o.value.toLowerCase()===niche.toLowerCase()){ sel.value=o.value; found=true; }});
+        if (!found){ sel.value='custom'; document.getElementById('lf-niche-custom').style.display='block'; document.getElementById('lf-niche-custom').value=niche; }
+        lfNicheChange();
+      }
+    }
+  }
+}
+
+const ACTION_LABELS = {
+  reminder:'Generate Reminder', followup:'Generate Follow-up', email:'Generate Email',
+  proposal:'Send Proposal', upsell:'Generate Upsell Email', finder:'Open Lead Finder'
+};
+function oppCard(o){
+  const confColor = o.confidence==='high' ? 'var(--success)' : 'var(--gold)';
+  const effLabel = o.effort==='easy' ? 'Easy Win' : o.effort==='medium' ? 'Medium' : 'Long Shot';
+  const revenueStr = o.revenueEst != null ? `$${Number(o.revenueEst).toLocaleString()}` : '—';
+  const btns = (o.actions||[]).filter(a=>a!=='dismiss'&&a!=='complete').map(a =>
+    `<button class="ti-btn primary" onclick="oppAction('${a}','${o.recordId||''}','${o.niche||''}')">${ACTION_LABELS[a]||a}</button>`
+  ).join('');
+  const completeBtn = (o.actions||[]).includes('complete')
+    ? `<button class="ti-btn" onclick="oppComplete('${o.id}')">Mark Complete</button>` : '';
+  return `<div class="ti-card">
+    <div class="ti-top">
+      <span class="ti-name">${escapeHtml(o.title)}</span>
+      <span class="belt-badge" style="color:${confColor};border-color:${confColor}55;background:${confColor}15;">${revenueStr}</span>
+    </div>
+    <div class="ti-why">${escapeHtml(o.body)}</div>
+    <div class="ti-cadence" style="display:flex;gap:8px;">
+      <span style="opacity:.75">estimated confidence: ${o.confidence}</span>
+      <span style="opacity:.75">·</span>
+      <span style="opacity:.75">${effLabel}</span>
+    </div>
+    <div class="ti-actions">
+      ${btns}${completeBtn}
+      <button class="ti-btn" onclick="oppDismiss('${o.id}')">Dismiss</button>
+    </div>
+  </div>`;
+}
+
+function renderOpportunities(){
+  const wrap = document.getElementById('opp-feed-body');
+  const walletEl = document.getElementById('opp-wallet');
+  if (!wrap || !walletEl) return;
+  const opps = computeOpportunities();
+  const sums = { easy:0, medium:0, long:0 };
+  opps.forEach(o => {
+    const key = o.effort==='easy'?'easy':o.effort==='medium'?'medium':'long';
+    sums[key] += Number(o.revenueEst)||0;
+  });
+  walletEl.innerHTML = `
+    <div class="sb-stat"><div class="sb-val teal">$${Math.round(sums.easy).toLocaleString()}</div><div class="sb-label">Easy Wins</div></div>
+    <div class="sb-stat"><div class="sb-val">$${Math.round(sums.medium).toLocaleString()}</div><div class="sb-label">Medium Opportunities</div></div>
+    <div class="sb-stat"><div class="sb-val" style="opacity:.5">$${Math.round(sums.long).toLocaleString()}</div><div class="sb-label">Long Shots</div></div>`;
+  const order = { high:0, medium:1, low:2 };
+  opps.sort((a,b) => (order[a.confidence]-order[b.confidence]) || ((b.revenueEst||0)-(a.revenueEst||0)));
+  wrap.innerHTML = opps.length
+    ? opps.map(oppCard).join('')
+    : `<div class="today-empty">No open opportunities right now. Check back as leads and payments move.</div>`;
+}
+
+function installOpportunityFeed(){
+  const today = document.getElementById('panel-today');
+  if (!today || document.getElementById('opp-feed-section')) return;
+  const section = document.createElement('div');
+  section.id = 'opp-feed-section';
+  section.innerHTML = `
+    <div class="panel-header" style="margin-top:4px;">
+      <div class="panel-title">Opportunity <span>Feed</span></div>
+      <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--mono);">What to do next, ranked by confidence and value</div>
+    </div>
+    <div class="scoreboard" id="opp-wallet" style="grid-template-columns:repeat(3,1fr);"></div>
+    <div class="today-cols" id="opp-feed-body" style="grid-template-columns:1fr;"></div>`;
+  const cols = document.getElementById('today-cols');
+  today.insertBefore(section, cols);
+}
+
+const _v4_renderToday = renderToday;
+renderToday = function(){
+  _v4_renderToday();
+  installOpportunityFeed();
+  renderOpportunities();
 };
 
 </script>
