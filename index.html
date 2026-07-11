@@ -1237,6 +1237,29 @@ footer {
 .foot-leg a { color:var(--tx2); font-size:13px; transition:color .2s }
 .foot-leg a:hover { color:var(--teal) }
 
+
+/* V8 — BUILDING TRUST */
+.lab-link { color:var(--teal)!important; border:1px solid rgba(0,191,199,.22); }
+.project-actions { margin-top:16px; padding-top:14px; border-top:1px solid var(--bdr); }
+.project-link { color:var(--teal); font-size:13px; font-weight:700; letter-spacing:.2px; }
+.project-link:hover { text-decoration:underline; }
+.growth-journey { background:var(--bg2); }
+.journey-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:56px; }
+.journey-step { position:relative; background:var(--surf); border:1px solid var(--bdr); border-radius:14px; padding:28px 22px; min-height:220px; }
+.journey-step span { display:inline-flex; width:34px; height:34px; border-radius:50%; align-items:center; justify-content:center; background:var(--grad); color:white; font-size:11px; font-weight:800; margin-bottom:22px; }
+.journey-step h3 { font-family:var(--fh); font-size:19px; margin-bottom:10px; }
+.journey-step p { color:var(--tx2); font-size:13.5px; line-height:1.7; }
+.release-section { background:var(--bg); padding-top:70px; padding-bottom:70px; }
+.release-card { display:grid; grid-template-columns:1.3fr .8fr; gap:50px; background:linear-gradient(130deg,rgba(0,191,199,.08),rgba(33,89,224,.08)); border:1px solid rgba(0,191,199,.2); border-radius:18px; padding:46px; }
+.release-card h2 { font-family:var(--fh); font-size:38px; line-height:1.1; }
+.release-card h3 { color:var(--teal); font-family:var(--fh); font-size:21px; margin:8px 0 16px; }
+.release-card p { color:var(--tx2); max-width:650px; }
+.release-notes { display:flex; flex-direction:column; gap:12px; justify-content:center; }
+.release-notes strong { color:var(--tx); text-transform:uppercase; letter-spacing:1.5px; font-size:11px; }
+.release-notes span { color:var(--tx2); font-size:14px; padding:10px 0; border-bottom:1px solid var(--bdr); }
+@media(max-width:960px){ .journey-grid{grid-template-columns:1fr 1fr}.release-card{grid-template-columns:1fr} }
+@media(max-width:600px){ .journey-grid{grid-template-columns:1fr}.release-card{padding:30px 22px}.release-card h2{font-size:30px} }
+
 /* ─────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────── */
@@ -1302,14 +1325,15 @@ footer {
     </a>
     <nav class="nav-menu">
       <a href="#services">Services</a>
-      <a href="#portfolio">Portfolio</a>
+      <a href="#portfolio">Businesses We Help</a>
       <a href="#about">About</a>
       <a href="#why">Process</a>
       <a href="#pricing">Pricing</a>
       <a href="#testimonials">Reviews</a>
       <a href="#support">Monthly Support</a>
       <a href="#faq">FAQ</a>
-      <a href="/pay.html" style="color:var(--teal)">Pay Now</a>
+      <a href="/small-business-website-design-richmond-va.html">Local SEO</a>
+      <a href="/lab.html" class="lab-link">Lab Login</a>
     </nav>
     <div class="nav-r">
       <button class="tbtn" id="tbtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
@@ -1320,7 +1344,7 @@ footer {
 </nav>
 <div class="mob" id="mob">
   <a href="#services" onclick="closeMob()">Services</a>
-  <a href="#portfolio" onclick="closeMob()">Portfolio</a>
+  <a href="#portfolio" onclick="closeMob()">Businesses We Help</a>
   <a href="#about" onclick="closeMob()">About</a>
   <a href="#why" onclick="closeMob()">Process</a>
   <a href="#pricing" onclick="closeMob()">Pricing</a>
@@ -1328,8 +1352,8 @@ footer {
   <a href="#support" onclick="closeMob()">Monthly Support</a>
   <a href="#faq" onclick="closeMob()">FAQ</a>
   <a href="/small-business-website-design-richmond-va.html" onclick="closeMob()">Local SEO Page</a>
-  <a href="/design-fusion-case-study.html" onclick="closeMob()">Case Study</a>
-  <a href="/pay.html" onclick="closeMob()">Pay Now</a>
+  <a href="/lab.html" onclick="closeMob()">Lab Login</a>
+  <a href="/design-fusion-case-study.html" onclick="closeMob()">Case Studies</a>
   <a href="#contact" onclick="closeMob()">Get Started →</a>
 </div>
 
@@ -1343,24 +1367,14 @@ footer {
         <div class="hero-tag">
           <span class="chip">
             <span style="width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;display:inline-block"></span>
-            Veteran-Owned · Richmond &amp; Chesterfield, VA
+            Veteran-Owned · Veteran-Owned · VA, NC &amp; Nationwide
           </span>
         </div>
-        <h1 class="hero-h1">
-          Get found.<br/>
-          <span class="kin">
-            <span class="kin-list">
-              <span class="kin-w">Get calls.</span>
-              <span class="kin-w">Get booked.</span>
-              <span class="kin-w">Get customers.</span>
-              <span class="kin-w">Get growing.</span>
-            </span>
-          </span>
-        </h1>
-        <p class="hero-sub">Professional websites for contractors, service businesses, and nonprofits that turn local searches into paying customers. Flat pricing, fast delivery, you own everything.</p>
-        <p style="font-size:13px;color:var(--tx2);margin-top:-28px;margin-bottom:40px;font-weight:500;letter-spacing:.2px;">Richmond-based. Serving Virginia businesses. Available nationwide.</p>
+        <h1 class="hero-h1">Helping businesses build<br/><span class="g-text">their digital future.</span></h1>
+        <p class="hero-sub">We create custom websites, digital experiences, and business solutions that help companies build trust, attract customers, and grow with confidence.</p>
+        <p style="font-size:13px;color:var(--tx2);margin-top:-28px;margin-bottom:40px;font-weight:500;letter-spacing:.2px;">Based in Chesterfield, Virginia. Serving businesses in Virginia, North Carolina, and beyond.</p>
         <div class="hero-btns">
-          <a href="#contact" class="btn btn-p">Get a Free Mockup →</a>
+          <a href="#contact" class="btn btn-p">Schedule a Free Consultation →</a>
           <a href="#portfolio" class="btn btn-g">View Our Work</a>
         </div>
         <div class="hero-metrics">
@@ -1480,9 +1494,9 @@ footer {
 <section id="portfolio" class="sec">
   <div class="wrap">
     <div class="rv">
-      <div class="eyebrow">Our Work</div>
-      <h2 class="h2">Real sites. Real features.<br/>Not agency prices.</h2>
-      <p class="lead">Every project below is live or delivered. See exactly what's under the hood, and what it would cost you anywhere else.</p>
+      <div class="eyebrow">Businesses We Have Helped Grow</div>
+      <h2 class="h2">Real businesses.<br/>Built for what comes next.</h2>
+      <p class="lead">Every featured project started with a business goal. We turned that goal into a digital experience designed to build trust, create opportunity, and support long-term growth.</p>
     </div>
     <div class="port-grid">
 
@@ -1515,6 +1529,9 @@ footer {
             </div>
             <div class="pv-divider"></div>
             <div class="pv-ours">Built by Proactive Digital</div>
+          </div>
+          <div class="project-actions">
+            <a href="/angels-case-study.html" class="project-link">Read Case Study →</a>
           </div>
         </div>
       </div>
@@ -1555,22 +1572,21 @@ footer {
         <div class="port-thumb" style="background:linear-gradient(135deg,#1A0A04,#2D1408)">
           <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/anume.webp')"></div></div>
           <div class="port-ov">
-            <a href="https://mockupfortheeggrollplug.netlify.app" target="_blank" class="port-ov-link">View Spec Build →</a>
+            <a href="https://www.anumeprivatechef.com" target="_blank" class="port-ov-link">View Live Site →</a>
           </div>
-          <span class="port-badge" style="background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.3);color:#FB923C">Spec Build</span>
+          <span class="port-badge" style="background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.3);color:#FB923C">Live</span>
         </div>
         <div class="port-info">
           <div class="port-t">ANUME Private Chef & Catering</div>
-          <p class="port-d">Built as a spec before contract — full food brand site with ordering flow, loyalty program, and payment integration. This is how we prove the work first.</p>
+          <p class="port-d">A premium digital launch for a private chef and catering company, designed to present upscale dining experiences and turn interest into consultation requests.</p>
           <div class="port-tags">
-            <span class="port-tag">Menu System</span>
-            <span class="port-tag">Food Photography</span>
-            <span class="port-tag">Online Ordering Flow</span>
-            <span class="port-tag">Catering Inquiry</span>
-            <span class="port-tag">Loyalty Program</span>
-            <span class="port-tag">Multi-Payment</span>
-            <span class="port-tag">Product Launch Section</span>
-            <span class="port-tag">Real Reviews</span>
+            <span class="port-tag">Premium Brand Direction</span>
+            <span class="port-tag">Private Dining</span>
+            <span class="port-tag">Catering Inquiries</span>
+            <span class="port-tag">Taste Testings</span>
+            <span class="port-tag">Gold Rolls</span>
+            <span class="port-tag">Mobile-First</span>
+            <span class="port-tag">Custom Domain</span>
           </div>
           <div class="port-value">
             <div>
@@ -1579,6 +1595,9 @@ footer {
             </div>
             <div class="pv-divider"></div>
             <div class="pv-ours">Built by Proactive Digital</div>
+          </div>
+          <div class="project-actions">
+            <a href="/anume-case-study.html" class="project-link">Read Case Study →</a>
           </div>
         </div>
       </div>
@@ -1612,6 +1631,9 @@ footer {
             </div>
             <div class="pv-divider"></div>
             <div class="pv-ours">Built by Proactive Digital</div>
+          </div>
+          <div class="project-actions">
+            <a href="/design-fusion-case-study.html" class="project-link">Read Case Study →</a>
           </div>
         </div>
       </div>
@@ -1725,6 +1747,46 @@ footer {
         <p class="ai-b-text">Anyone can open an AI tool and prompt their way to a basic page. What you see above isn't a basic page, it's <strong>payment integrations, email funnels, event calendars, loyalty programs, and conversion-focused design</strong> delivered end-to-end, tested, deployed, and handed off ready to run. AI builds files. <strong>We deliver outcomes.</strong></p>
       </div>
       <a href="#contact" class="btn btn-p" style="flex-shrink:0">Let's Talk →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ GROWTH JOURNEY ═══════ -->
+<section id="growth-journey" class="sec growth-journey">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">How We Help Businesses Grow</div>
+      <h2 class="h2">From first idea to<br/>long-term growth.</h2>
+      <p class="lead">A clear process keeps the project moving and makes sure every decision supports the business behind the website.</p>
+    </div>
+    <div class="journey-grid">
+      <div class="journey-step rv"><span>01</span><h3>Discover</h3><p>We learn the business, audience, goals, and opportunities before touching the design.</p></div>
+      <div class="journey-step rv"><span>02</span><h3>Plan</h3><p>We shape the message, customer path, features, and digital strategy around what matters most.</p></div>
+      <div class="journey-step rv"><span>03</span><h3>Build</h3><p>We create a custom, mobile-first experience with direct feedback throughout the process.</p></div>
+      <div class="journey-step rv"><span>04</span><h3>Launch</h3><p>We connect the domain, test the experience, and make sure the site is ready for real customers.</p></div>
+      <div class="journey-step rv"><span>05</span><h3>Grow</h3><p>We continue improving content, systems, visibility, and future opportunities as the business evolves.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ RELEASE ═══════ -->
+<section id="release" class="sec release-section">
+  <div class="wrap">
+    <div class="release-card rv">
+      <div>
+        <div class="eyebrow">Current Release</div>
+        <h2>Proactive Digital v8</h2>
+        <h3>Building Trust</h3>
+        <p>This release introduces stronger growth-focused messaging, live client success stories, new ANUME and Angels case studies, and a clearer path from website launch to long-term digital growth.</p>
+      </div>
+      <div class="release-notes">
+        <strong>What changed</strong>
+        <span>New digital future positioning</span>
+        <span>Businesses We Have Helped Grow</span>
+        <span>Three live client case studies</span>
+        <span>Growth journey and Lab access</span>
+      </div>
     </div>
   </div>
 </section>
@@ -2316,7 +2378,7 @@ footer {
         <p>Website care plans for updates, form checks, promo changes, and practical support after launch.</p>
       </a>
       <a class="srv-card rv" href="/design-fusion-case-study.html" style="display:block;color:inherit;">
-        <span class="chip">Case Study</span>
+        <span class="chip">Case Studies</span>
         <h3>Design Fusion</h3>
         <p>A custom apparel order request system that turned scattered details into a cleaner digital flow.</p>
       </a>
@@ -2441,7 +2503,7 @@ footer {
       <div class="foot-col">
         <div class="foot-col-t">Navigate</div>
         <a href="#services">Services</a>
-        <a href="#portfolio">Portfolio</a>
+        <a href="#portfolio">Businesses We Help</a>
         <a href="#about">About</a>
         <a href="#why">Process</a>
         <a href="#pricing">Pricing</a>
@@ -2463,8 +2525,9 @@ footer {
       </div>
     </div>
     <div class="foot-bot">
-      <div class="foot-copy">© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
+      <div class="foot-copy"><strong style="color:var(--teal)">Current Release: v8 — Building Trust</strong><br>© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
       <div class="foot-leg">
+        <a href="/lab.html">Lab Login</a>
         <a href="/privacy.html">Privacy Policy</a>
         <a href="/terms.html">Terms of Service</a>
       </div>
