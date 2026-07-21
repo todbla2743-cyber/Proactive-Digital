@@ -262,13 +262,18 @@ img { display: block; max-width: 100% }
 .tbtn:hover { border-color:var(--teal) }
 .nav-cta { padding:9px 20px; font-size:13.5px }
 .ham {
-  display:none; flex-direction:column; gap:4.5px;
-  padding:8px; border-radius:8px;
-  background:var(--surf); border:1px solid var(--bdr);
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  width:46px; height:46px; padding:0; border-radius:11px;
+  background:rgba(0,191,199,.10); border:1px solid rgba(0,191,199,.55);
+  box-shadow:0 0 0 3px rgba(0,191,199,.06);
 }
 .ham span {
-  display:block; width:20px; height:1.5px;
-  background:var(--tx); border-radius:2px; transition:all .3s;
+  display:block; width:24px; height:2.5px;
+  background:var(--tx); border-radius:3px; transition:all .3s;
+}
+.ham:hover, .ham:focus-visible {
+  background:rgba(0,191,199,.18); border-color:var(--teal);
+  outline:none;
 }
 .mob {
   display:none; position:fixed; top:65px; left:0; right:0;
@@ -1333,7 +1338,6 @@ footer {
       <a href="#support">Monthly Support</a>
       <a href="#faq">FAQ</a>
       <a href="/small-business-website-design-richmond-va.html">Local SEO</a>
-      <a href="/lab.html" class="lab-link">Lab Login</a>
     </nav>
     <div class="nav-r">
       <button class="tbtn" id="tbtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
@@ -1352,7 +1356,6 @@ footer {
   <a href="#support" onclick="closeMob()">Monthly Support</a>
   <a href="#faq" onclick="closeMob()">FAQ</a>
   <a href="/small-business-website-design-richmond-va.html" onclick="closeMob()">Local SEO Page</a>
-  <a href="/lab.html" onclick="closeMob()">Lab Login</a>
   <a href="/design-fusion-case-study.html" onclick="closeMob()">Case Studies</a>
   <a href="#contact" onclick="closeMob()">Get Started →</a>
 </div>
@@ -1787,14 +1790,14 @@ footer {
         <div class="eyebrow">Current Release</div>
         <h2>Proactive Digital v8</h2>
         <h3>Building Trust</h3>
-        <p>This release introduces stronger growth-focused messaging, live client success stories, new ANUME and Angels case studies, and a clearer path from website launch to long-term digital growth.</p>
+        <p>We continuously improve the Proactive Digital experience so businesses can understand their options, see real client work, and move from idea to launch with confidence.</p>
       </div>
       <div class="release-notes">
-        <strong>What changed</strong>
-        <span>New digital future positioning</span>
-        <span>Businesses We Have Helped Grow</span>
-        <span>Three live client case studies</span>
-        <span>Growth journey and Lab access</span>
+        <strong>Built for clients</strong>
+        <span>Clearer service options</span>
+        <span>Real client success stories</span>
+        <span>Improved mobile navigation</span>
+        <span>A stronger path to ongoing support</span>
       </div>
     </div>
   </div>
@@ -2536,7 +2539,7 @@ footer {
     <div class="foot-bot">
       <div class="foot-copy"><strong style="color:var(--teal)">Current Release: v8 — Building Trust</strong><br>© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
       <div class="foot-leg">
-        <a href="/lab.html">Lab Login</a>
+        <a href="/pay.html">Client Payment</a>
         <a href="/privacy.html">Privacy Policy</a>
         <a href="/terms.html">Terms of Service</a>
       </div>
