@@ -1,0 +1,31 @@
+PROACTIVE DIGITAL v8.3 — BUILT FOR GROWTH
+
+RECOMMENDED GITHUB UPDATE
+Replace these files in the repository root:
+1. index.html
+2. social-preview.png
+3. small-business-website-design-richmond-va.html
+4. monthly-website-support.html
+
+Keep all other files in place.
+
+IMPORTANT
+- pay.html must remain in the repository root.
+- lab.html must remain in the repository root.
+- The Lab is intentionally NOT linked publicly.
+- Direct Lab access remains:
+  https://getproactivedigital.com/lab.html
+- Client Payment remains:
+  https://getproactivedigital.com/pay.html
+
+Suggested commit message:
+Proactive Digital v8.3 - Built for Growth
+
+AFTER DEPLOYMENT
+1. Open the homepage in a private/incognito window.
+2. Confirm the new hero no longer shows $440.
+3. Confirm Businesses We Have Helped Grow appears before Solutions.
+4. Confirm the footer has Client Payment.
+5. Confirm /lab.html still loads directly.
+6. Share the homepage link to yourself and confirm the new social preview appears after platform cache refresh.
+7. Google search titles can take time to recrawl and update; the code is updated immediately, but search results may lag.
