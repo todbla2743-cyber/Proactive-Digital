@@ -1,0 +1,53 @@
+PROACTIVE DIGITAL v8.3 — BUILT FOR GROWTH
+Internal release theme: Positioning
+
+PURPOSE
+Move Proactive Digital away from being perceived as a low-cost website provider and toward a modern digital growth studio for owner-led businesses.
+
+POSITIONING CHANGES
+- Removed $440 / $750 / $1,200 website pricing from the homepage.
+- Removed price anchoring from the hero, stats, project cards, FAQ, contact form, and footer language.
+- Replaced package-led selling with four solution categories:
+  1. Website & Brand Presence
+  2. Growth & Lead Systems
+  3. Digital Business Systems
+  4. Ongoing Digital Partnership
+- Reframed services around business outcomes, customer journeys, integrations, and growth.
+- Updated founder positioning from Web Designer to Founder & Digital Strategist.
+
+PROOF & CREDIBILITY
+- Moved Businesses We Have Helped Grow ahead of the services section.
+- Replaced “Typical Agency Cost” comparisons on project cards with “Project Focus.”
+- Removed the early-client / founder-level pricing testimonial promo card.
+- Preserved real client work and case-study links.
+
+BRAND EXPERIENCE
+- Added a new connected-system hero visual: Website → Lead → Book/Buy → Follow-up.
+- Introduced the first version of the “Proactive Pulse” visual language through a moving gradient connection path.
+- Added reduced-motion support for visitors who prefer less animation.
+- Updated the ticker to emphasize strategy, lead systems, payments, automation, ownership, and ongoing support.
+
+SEARCH / SHARING
+- Homepage title changed to: Web Design & Digital Strategy | Proactive Digital | Richmond, VA
+- Homepage metadata now emphasizes strategy, web design, lead systems, integrations, and digital growth.
+- Local Richmond/Chesterfield landing-page metadata no longer uses “affordable” positioning.
+- Monthly support metadata no longer uses “affordable” positioning.
+- Rebuilt social-preview.png around “Helping businesses build their digital future.”
+- Updated structured data so services are described without public price anchors.
+
+ONGOING SUPPORT
+- Removed monthly plan prices and low-cost add-on pricing from the homepage.
+- Kept the dedicated monthly-support page for visitors intentionally looking for plan details.
+- Reframed support as an ongoing digital partnership.
+
+ACCESS PRESERVED
+- /pay.html remains available and Client Payment remains linked in the footer.
+- /lab.html remains fully intact and directly accessible at:
+  https://getproactivedigital.com/lab.html
+- No public Lab link was added.
+
+NEXT ROADMAP
+v8.4 — Experience
+- Expand the Proactive Pulse visual system.
+- Refine micro-interactions, transitions, typography, and client showcase behavior.
+- Improve visual storytelling without sacrificing speed or clarity.
