@@ -1387,6 +1387,82 @@ footer {
 }
 
 /* ─────────────────────────────────────────
+   v8.3.1 — POSITIONING + MOBILE NAV REFINEMENT
+───────────────────────────────────────── */
+/* Compact release signature — visible, but secondary to the customer journey */
+.release-section { padding-top:36px; padding-bottom:36px; }
+.release-card.release-signature {
+  display:flex; align-items:center; justify-content:space-between; gap:28px;
+  background:linear-gradient(120deg,rgba(0,191,199,.065),rgba(33,89,224,.055));
+  border:1px solid rgba(0,191,199,.16); border-radius:14px; padding:22px 26px;
+}
+.release-signature .release-copy { min-width:0; }
+.release-signature .release-label {
+  color:var(--teal); text-transform:uppercase; letter-spacing:1.7px;
+  font-size:9.5px; font-weight:800; margin-bottom:5px;
+}
+.release-signature h2 { font-family:var(--fh); font-size:20px; line-height:1.2; letter-spacing:-.35px; margin:0 0 4px; }
+.release-signature p { color:var(--tx2); font-size:12.5px; line-height:1.55; margin:0; max-width:720px; }
+.release-tags { display:flex; flex-wrap:wrap; gap:7px; justify-content:flex-end; flex-shrink:0; }
+.release-tags span {
+  border:1px solid var(--bdr); background:rgba(255,255,255,.025); color:var(--tx2);
+  border-radius:999px; padding:7px 10px; font-size:9.5px; font-weight:700;
+  letter-spacing:.45px; white-space:nowrap;
+}
+
+/* Transparent pricing without making the entry price the brand */
+.investment-intro { max-width:760px; margin:0 auto; text-align:center; }
+.eng-card .eng-price {
+  display:flex; align-items:baseline; gap:7px; margin:16px 0 6px;
+  font-family:var(--fh); color:var(--tx);
+}
+.eng-price strong {
+  font-size:38px; line-height:1; letter-spacing:-1.5px; font-weight:650;
+  background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.eng-price span { color:var(--tx2); font-size:11px; font-weight:650; letter-spacing:.5px; text-transform:uppercase; }
+.eng-price.custom strong { font-size:29px; letter-spacing:-.8px; }
+.investment-note {
+  margin:0 0 58px; padding:16px 20px; border-radius:12px; border:1px solid var(--bdr);
+  background:var(--bg); color:var(--tx2); text-align:center; font-size:12px; line-height:1.65;
+}
+.investment-note strong { color:var(--tx); }
+
+/* Mobile navigation: reserve space for the logo and keep controls inside the viewport */
+html, body { overflow-x:hidden; }
+.nav-logo { min-width:0; flex:0 1 auto; }
+.nav-logo svg { width:220px; max-width:100%; height:auto; display:block; }
+.nav-r { flex:0 0 auto; min-width:0; }
+@media(max-width:760px) {
+  #nav { padding:11px 0; }
+  #nav.scrolled { padding:9px 0; }
+  .nav-in { padding:0 14px; gap:10px; width:100%; }
+  .nav-logo { flex:1 1 auto; overflow:hidden; }
+  .nav-logo svg { width:184px; max-width:100%; }
+  .nav-cta { display:none; }
+  .nav-r { gap:7px; }
+  .tbtn { width:42px; height:42px; flex:0 0 42px; }
+  .ham { display:flex; width:46px; height:46px; flex:0 0 46px; }
+  .mob { top:64px; padding:18px 14px 24px; max-height:calc(100vh - 64px); overflow-y:auto; }
+}
+@media(max-width:430px) {
+  .nav-logo svg { width:164px; }
+  .tbtn { width:40px; height:40px; flex-basis:40px; }
+  .ham { width:44px; height:44px; flex-basis:44px; }
+  .ham span { width:22px; }
+}
+@media(max-width:360px) {
+  .nav-in { padding:0 10px; gap:6px; }
+  .nav-logo svg { width:148px; }
+  .nav-r { gap:5px; }
+}
+
+@media(max-width:760px) {
+  .release-card.release-signature { align-items:flex-start; flex-direction:column; gap:14px; padding:20px; }
+  .release-tags { justify-content:flex-start; }
+}
+
+/* ─────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────── */
 @media(max-width:960px) {
@@ -1454,7 +1530,7 @@ footer {
       <a href="#portfolio">Businesses We Help</a>
       <a href="#about">About</a>
       <a href="#why">Process</a>
-      <a href="#pricing">Work With Us</a>
+      <a href="#pricing">Pricing</a>
       <a href="#testimonials">Reviews</a>
       <a href="#support">Ongoing Support</a>
       <a href="#faq">FAQ</a>
@@ -1472,7 +1548,7 @@ footer {
   <a href="#portfolio" onclick="closeMob()">Businesses We Help</a>
   <a href="#about" onclick="closeMob()">About</a>
   <a href="#why" onclick="closeMob()">Process</a>
-  <a href="#pricing" onclick="closeMob()">Work With Us</a>
+  <a href="#pricing" onclick="closeMob()">Pricing</a>
   <a href="#testimonials" onclick="closeMob()">Reviews</a>
   <a href="#support" onclick="closeMob()">Ongoing Support</a>
   <a href="#faq" onclick="closeMob()">FAQ</a>
@@ -1892,23 +1968,17 @@ footer {
   </div>
 </section>
 
-<!-- ═══════ RELEASE ═══════ -->
-<section id="release" class="sec release-section">
+<!-- ═══════ RELEASE SIGNATURE ═══════ -->
+<section id="release" class="release-section" aria-label="Current Proactive Digital release">
   <div class="wrap">
-    <div class="release-card rv">
-      <div>
-        <div class="eyebrow">Current Release</div>
-        <h2>Proactive Digital v8.3</h2>
-        <h3>Built for Growth</h3>
-        <p>This release sharpens what Proactive Digital stands for: strategy, thoughtful design, practical systems, and long-term value for growing businesses.</p>
+    <div class="release-card release-signature rv">
+      <div class="release-copy">
+        <div class="release-label">Current Release</div>
+        <h2>Proactive Digital v8.3.1 · Built for Growth</h2>
+        <p>Our latest evolution: sharper strategy, stronger client experiences, and digital solutions built around real businesses.</p>
       </div>
-      <div class="release-notes">
-        <strong>What changed</strong>
-        <span>Strategy-led positioning</span>
-        <span>Client work placed before service explanation</span>
-        <span>Solution-based engagements instead of bargain packages</span>
-        <span>Stronger search and social presentation</span>
-        <span>A more connected visual experience</span>
+      <div class="release-tags" aria-label="Release focus">
+        <span>Strategy</span><span>Experience</span><span>Digital Systems</span>
       </div>
     </div>
   </div>
@@ -2049,71 +2119,71 @@ footer {
   </div>
 </section>
 
-<!-- ═══════ ENGAGEMENTS ═══════ -->
+<!-- ═══════ INVESTMENT ═══════ -->
 <section id="pricing" class="sec">
   <div class="wrap">
-    <div class="price-hd rv">
-      <div class="eyebrow" style="justify-content:center">Ways We Can Help</div>
-      <h2 class="h2">Built around the outcome.<br/><span class="g-text">Not a package.</span></h2>
-      <p class="lead">Every engagement is scoped around your goals, customers, workflow, and complexity. We recommend what makes sense for the business — no more, no less.</p>
+    <div class="price-hd rv investment-intro">
+      <div class="eyebrow" style="justify-content:center">Starting Investment</div>
+      <h2 class="h2">Clear investment.<br/><span class="g-text">Built around your business.</span></h2>
+      <p class="lead">Every business is different, but you should not have to schedule a sales call just to find out whether we are in your budget. These starting points make it easier to plan while keeping the final scope tied to what your business actually needs.</p>
     </div>
 
     <div class="engagement-grid">
       <div class="eng-card rv" style="transition-delay:.04s">
-        <div class="eng-kicker">Foundation</div>
-        <h3>Website &amp; Brand Presence</h3>
-        <p>For businesses launching, refreshing, or elevating the way they show up online.</p>
+        <div class="eng-kicker">Focused Launch</div>
+        <h3>One-Page Website</h3>
+        <div class="eng-price"><span>From</span><strong>$440</strong></div>
+        <p>For businesses that need a polished, focused digital presence without unnecessary complexity.</p>
         <ul>
-          <li>Messaging &amp; site strategy</li>
-          <li>Custom responsive design</li>
-          <li>Lead and contact pathways</li>
+          <li>Custom mobile-first design</li>
+          <li>Core business messaging</li>
+          <li>Contact or lead pathway</li>
           <li>Search-ready foundation</li>
         </ul>
-        <div class="eng-best">Best for: credibility, service businesses, new brands, stronger first impressions</div>
+        <div class="eng-best">Best for: new businesses, focused offers, simple service brands, professional credibility</div>
       </div>
       <div class="eng-card rv" style="transition-delay:.08s">
-        <div class="eng-kicker">Growth</div>
-        <h3>Growth &amp; Lead Systems</h3>
-        <p>For businesses that need their digital presence to create more measurable opportunity.</p>
+        <div class="eng-kicker">Business Website</div>
+        <h3>Multi-Page Presence</h3>
+        <div class="eng-price"><span>From</span><strong>$750</strong></div>
+        <p>For businesses that need more room to explain services, build trust, and guide customers toward action.</p>
         <ul>
-          <li>Landing pages &amp; campaigns</li>
-          <li>Lead capture &amp; routing</li>
-          <li>Analytics &amp; conversion paths</li>
-          <li>Local search improvements</li>
+          <li>Multi-page site architecture</li>
+          <li>Lead capture and conversion paths</li>
+          <li>SEO and local visibility foundation</li>
+          <li>Stronger brand and content depth</li>
         </ul>
-        <div class="eng-best">Best for: lead generation, campaigns, expansion, stronger customer journeys</div>
+        <div class="eng-best">Best for: established service businesses, local companies, growing brands, stronger customer journeys</div>
       </div>
       <div class="eng-card rv" style="transition-delay:.12s">
-        <div class="eng-kicker">Systems</div>
-        <h3>Digital Business Systems</h3>
-        <p>For businesses ready to connect the website to the way customers actually transact and communicate.</p>
+        <div class="eng-kicker">Growth &amp; Systems</div>
+        <h3>Connected Digital Experience</h3>
+        <div class="eng-price"><span>From</span><strong>$1,200</strong></div>
+        <p>For businesses ready to connect the website to the way customers actually buy, book, request, or communicate.</p>
         <ul>
-          <li>Payments, deposits &amp; donations</li>
-          <li>Booking, ordering &amp; intake</li>
-          <li>Custom forms &amp; integrations</li>
-          <li>Workflow and AI-ready automation</li>
+          <li>Payments, deposits, donations, or ordering</li>
+          <li>Booking, intake, or advanced forms</li>
+          <li>Integrations and customer workflows</li>
+          <li>Conversion, analytics, and growth planning</li>
         </ul>
-        <div class="eng-best">Best for: reducing manual work, customer self-service, connected operations</div>
+        <div class="eng-best">Best for: reducing manual work, customer self-service, transactions, lead systems, connected operations</div>
       </div>
       <div class="eng-card rv" style="transition-delay:.16s">
-        <div class="eng-kicker">Partnership</div>
-        <h3>Ongoing Digital Partnership</h3>
-        <p>For businesses that want a reliable digital partner after launch, not another vendor they have to chase.</p>
+        <div class="eng-kicker">Custom Partnership</div>
+        <h3>Strategy &amp; Ongoing Growth</h3>
+        <div class="eng-price custom"><strong>Let's Talk</strong></div>
+        <p>For larger builds, evolving systems, automation, or businesses that want a long-term digital partner.</p>
         <ul>
-          <li>Website care &amp; improvements</li>
-          <li>Campaign and content support</li>
-          <li>Performance and visibility reviews</li>
-          <li>Roadmap planning as needs evolve</li>
+          <li>Custom scoping and roadmap planning</li>
+          <li>Ongoing website and system improvements</li>
+          <li>Campaign, content, and visibility support</li>
+          <li>Practical automation and AI opportunities</li>
         </ul>
-        <div class="eng-best">Best for: active businesses that want continuity and strategic support</div>
+        <div class="eng-best">Best for: complex requirements, phased builds, active growth, ongoing strategic support</div>
       </div>
     </div>
 
-    <div class="scope-strip rv">
-      <div><strong>Clear scope</strong><span>Know what is being built, why it matters, and what success looks like.</span></div>
-      <div><strong>Right-sized investment</strong><span>Simple needs stay lean. More complex systems are scoped to the strategy and build depth required.</span></div>
-      <div><strong>No surprise expansion</strong><span>Any meaningful change in scope is discussed and approved before it becomes work.</span></div>
-    </div>
+    <div class="investment-note rv"><strong>Starting prices are reference points, not bait-and-switch packages.</strong> Final investment depends on scope, content, integrations, timeline, and business requirements. You receive a clear scope before work begins.</div>
 
     <div class="rv" style="margin-bottom:28px">
       <div class="eyebrow">What Shapes an Engagement</div>
@@ -2158,8 +2228,8 @@ footer {
 
     <div class="quote-cta rv">
       <div>
-        <div class="qc-title">Start with the business, not a package.</div>
-        <p class="qc-text">Tell us what you are trying to improve. We will recommend the simplest solution that gets the job done well, then provide a clear scope, timeline, and investment before work begins.</p>
+        <div class="qc-title">Not sure which starting point fits?</div>
+        <p class="qc-text">Tell us what you are trying to accomplish. We will recommend the simplest path that gets the job done well and confirm the scope, timeline, and investment before work begins.</p>
       </div>
       <a href="#contact" class="btn btn-p" style="flex-shrink:0">Get a Recommendation →</a>
     </div>
@@ -2412,7 +2482,7 @@ footer {
         <a href="#portfolio">Businesses We Help</a>
         <a href="#about">About</a>
         <a href="#why">Process</a>
-        <a href="#pricing">Work With Us</a>
+        <a href="#pricing">Pricing</a>
         <a href="#testimonials">Reviews</a>
         <a href="#support">Ongoing Support</a>
         <a href="#contact">Contact</a>
@@ -2431,7 +2501,7 @@ footer {
       </div>
     </div>
     <div class="foot-bot">
-      <div class="foot-copy"><strong style="color:var(--teal)">Current Release: v8.3 — Built for Growth</strong><br>© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
+      <div class="foot-copy"><strong style="color:var(--teal)">Current Release: v8.3.1 — Built for Growth</strong><br>© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div>
       <div class="foot-leg">
         <a href="/pay.html">Client Payment</a>
         <a href="/privacy.html">Privacy Policy</a>
