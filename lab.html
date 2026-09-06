@@ -2096,6 +2096,10 @@
 
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// OpenAI migration: browser calls this server-side gateway. Provider keys stay server-side.
+const LAB_AI_GATEWAY = '/.netlify/functions/lab-ai';
+</script>
 </head>
 <body>
 
@@ -2167,7 +2171,7 @@
     </div>
     <div class="nav-right">
       <span id="clock"></span>
-      <button class="logout-btn" onclick="changeApiKey()" style="border-color:var(--teal-mid);color:var(--teal);" title="Change API Key">⚙ key</button>
+      <button class="logout-btn" onclick="changeApiKey()" style="border-color:var(--teal-mid);color:var(--teal);" title="AI Gateway Settings">⚙ AI</button>
       <button class="logout-btn" onclick="doLogout()">logout</button>
     </div>
   </nav>
@@ -2298,7 +2302,7 @@
             <div class="msg assistant">
               <div class="msg-avatar">AI</div>
               <div class="msg-bubble">
-                <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by Claude.</p>
+                <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by OpenAI.</p>
                 <p>Drop a file, pick a quick prompt on the left, or just start typing. I've got live context on your pipeline, clients, and everything else we've worked on.</p>
                 <p>What are we building today?</p>
               </div>
@@ -2353,7 +2357,7 @@
         </div>
       </div>
       <div class="stocks-grid" id="stocks-grid"></div>
-      <div style="font-size:0.7rem; color:var(--text-dim); font-family:var(--mono); margin-top:auto;">Live quotes via your Anthropic key, refreshed every 15 minutes. Tap Refresh Quotes to update now.</div>
+      <div style="font-size:0.7rem; color:var(--text-dim); font-family:var(--mono); margin-top:auto;">Live quotes via the secure Lab AI Gateway, refreshed every 15 minutes. Tap Refresh Quotes to update now.</div>
     </div>
 
     <!-- PIPELINE PANEL -->
@@ -2470,7 +2474,7 @@
       <div>
         <div class="links-section-title">AI & Tools</div>
         <div class="links-grid">
-          <div class="link-card" onclick="openLink('https://claude.ai')"><div class="link-name">Claude.ai</div><div class="link-desc">Full Claude interface</div></div>
+          <div class="link-card" onclick="openLink('https://platform.openai.com')"><div class="link-name">OpenAI</div><div class="link-desc">API platform</div></div>
           <div class="link-card" onclick="openLink('https://chat.openai.com')"><div class="link-name">ChatGPT</div><div class="link-desc">OpenAI assistant</div></div>
           <div class="link-card" onclick="openLink('https://canva.com')"><div class="link-name">Canva</div><div class="link-desc">Graphics & design</div></div>
           <div class="link-card" onclick="openLink('https://docs.google.com')"><div class="link-name">Google Docs</div><div class="link-desc">Documents & sheets</div></div>
@@ -2914,7 +2918,7 @@ function doLogout() {
     <div class="msg assistant">
       <div class="msg-avatar">AI</div>
       <div class="msg-bubble">
-        <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by Claude.</p>
+        <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by OpenAI.</p>
         <p>Drop a file, pick a quick prompt on the left, or just start typing.</p>
         <p>What are we building today?</p>
       </div>
@@ -3037,48 +3041,15 @@ function removeTyping() {
   if (el) el.remove();
 }
 
-let apiKey = localStorage.getItem('lab_api_key') || '';
+let apiKey = 'server-gateway';
 
 function checkApiKey() {
-  if (!apiKey) {
-    const container = document.getElementById('chat-messages');
-    container.innerHTML = `
-      <div class="msg assistant">
-        <div class="msg-avatar">AI</div>
-        <div class="msg-bubble">
-          <p><strong>One-time setup:</strong> Paste your Anthropic API key to activate your private AI assistant.</p>
-          <p style="font-size:0.8rem;color:var(--text-mid);">Your key is stored locally in your browser only — it's never sent anywhere except directly to Anthropic's API.</p>
-          <div style="display:flex;gap:6px;margin-top:10px;">
-            <input type="password" id="api-key-input" placeholder="sk-ant-..." style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--mono);font-size:0.8rem;outline:none;" />
-            <button onclick="saveApiKey()" style="background:var(--teal);color:#0a0a0c;border:none;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-family:var(--font);font-size:0.82rem;">Save</button>
-          </div>
-          <p style="font-size:0.75rem;color:var(--text-dim);margin-top:10px;">Get a key at <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--teal);">console.anthropic.com/settings/keys</a></p>
-        </div>
-      </div>`;
-    return false;
-  }
+  // OpenAI migration: no provider API key is stored in the browser.
+  // The server-side Lab AI Gateway reads OPENAI_API_KEY from environment variables.
   return true;
 }
-
 function saveApiKey() {
-  const input = document.getElementById('api-key-input');
-  const key = input.value.trim();
-  if (!key.startsWith('sk-ant-')) {
-    alert("That doesn't look right. API keys start with sk-ant-");
-    return;
-  }
-  apiKey = key;
-  localStorage.setItem('lab_api_key', key);
-  // Reset to welcome
-  document.getElementById('chat-messages').innerHTML = `
-    <div class="msg assistant">
-      <div class="msg-avatar">AI</div>
-      <div class="msg-bubble">
-        <p>AI key saved. Welcome to <strong>The Lab</strong>, Todd.</p>
-        <p>Drop a file, pick a quick prompt, or just start typing. I've got full context on Proactive Digital, your vending blueprint, and everything else we've worked on.</p>
-        <p>What are we building today?</p>
-      </div>
-    </div>`;
+  alert('API keys are now managed server-side through the Lab AI Gateway. Set OPENAI_API_KEY in Netlify or Supabase secrets.');
 }
 
 // ============ MOBILE SIDEBAR TOGGLE ============
@@ -3235,16 +3206,11 @@ async function summarizeCurrentChat() {
   }).join('\n\n');
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch(LAB_AI_GATEWAY, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'gpt-5-mini',
         max_tokens: 300,
         messages: [{
           role: 'user',
@@ -3431,16 +3397,11 @@ async function sendMessage() {
 
 Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd what he needs fast. When writing copy or emails, produce the actual content immediately. When analyzing documents, be specific. You're a business partner, not a formal assistant.${buildBusinessContext()}${buildMemoryContext()}`;
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch(LAB_AI_GATEWAY, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'gpt-5',
         max_tokens: 2048,
         system: systemPrompt,
         messages: chatHistory
@@ -3883,7 +3844,7 @@ function initApp() {
   setInterval(tickStocks, 30000);
   renderPipeline();
   renderChatHistoryList();
-  if (!apiKey) checkApiKey(); // Show API key setup if missing
+  checkApiKey(); // AI key is server-side through Lab AI Gateway
 }
 
 // ═══════════════════════════════════════════════════════
@@ -4047,10 +4008,10 @@ Context:
 Write the ${type === 'email' ? 'email with a subject line' : type === 'facebook' ? 'Facebook DM' : 'text message'} in Todd's voice: direct, real, no corporate fluff, friendly but professional. Focus on their specific problem (${lead.issue || 'outdated website'}) and how Todd can fix it fast. Keep it concise. No em dashes.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(LAB_AI_GATEWAY, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-5', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await res.json();
     document.getElementById('ob-content').textContent = data.content?.[0]?.text || 'No response.';
@@ -4252,16 +4213,11 @@ async function bpSend() {
   bpShowTyping();
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(LAB_AI_GATEWAY, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'gpt-5',
         max_tokens: 1500,
         system: BP_SYSTEM,
         messages: bpMessages
@@ -5102,9 +5058,11 @@ function loadNews(force){
     if (cache && cache.items){
       LAB_NEWS = cache.items;
       renderNews();
-      if (!force && (Date.now() - cache.at) < 6*60*60*1000) return; // fresh enough
     }
   } catch(e){}
+  // v5: live fetch ONLY on explicit Refresh click. Opening the tab never
+  // fires a web search anymore, that was a silent credit drain.
+  if (!force) return;
   loadNewsLive();
 }
 
@@ -5122,10 +5080,10 @@ Return ONLY a JSON array, no markdown, no backticks, no preamble:
 
 Only include real articles you actually found with working URLs. Target 12 items, newest first. No em dashes in any text.`;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(LAB_AI_GATEWAY, {
       method:'POST',
-      headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ model:'gpt-5-mini', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}], messages:[{role:'user',content:prompt}] })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
@@ -5540,12 +5498,12 @@ function lfError(msg){
   lfReady();
 }
 async function lfApi(prompt){
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(LAB_AI_GATEWAY, {
     method:'POST',
-    headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
+    headers:{ 'Content-Type':'application/json' },
     body: JSON.stringify({
-      model:'claude-sonnet-4-6', max_tokens:4000,
-      tools:[{type:'web_search_20250305',name:'web_search'}],
+      model:'gpt-5', max_tokens:4000,
+      tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],
       messages:[{role:'user',content:prompt}]
     })
   });
@@ -5748,16 +5706,9 @@ switchPanel = function(id, btn){
 <script>
 /* changeApiKey — nav ⚙ key button */
 function changeApiKey(){
-  const cur = localStorage.getItem('lab_api_key') || '';
-  const k = prompt('Paste your Anthropic API key (sk-ant-...). Leave blank to cancel.', cur);
-  if (k === null) return;
-  const key = k.trim();
-  if (!key) return;
-  if (!key.startsWith('sk-ant-')){ alert("That doesn't look right. Keys start with sk-ant-"); return; }
-  apiKey = key;
-  localStorage.setItem('lab_api_key', key);
-  alert('API key updated.');
+  alert('The Lab now uses the secure server-side OpenAI gateway. Set or rotate OPENAI_API_KEY in Netlify environment variables or Supabase Edge Function secrets.');
 }
+
 </script>
 
 <script>
@@ -5861,7 +5812,7 @@ async function refreshQuotes(force){
     const cacheRaw = localStorage.getItem('lab_stocks_quotes');
     if (!force && cacheRaw){
       const cache = JSON.parse(cacheRaw);
-      if (cache && (Date.now() - cache.at) < 15*60*1000) return; // fresh
+      if (cache && (Date.now() - cache.at) < 60*60*1000) return; // fresh (v5: 60 min)
     }
   } catch(e){}
   const tickers = stocks.map(s=>s.ticker).join(', ');
@@ -5871,10 +5822,10 @@ async function refreshQuotes(force){
 [{"ticker":"","name":"company short name","price":0.00,"changePct":0.00}]
 Use the latest available market data. price is a number in USD, changePct is the day's percent change as a number (negative if down). No em dashes.`;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(LAB_AI_GATEWAY, {
       method:'POST',
-      headers:{ 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1500, tools:[{type:'web_search_20250305',name:'web_search'}], messages:[{role:'user',content:prompt}] })
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ model:'gpt-5-mini', max_tokens:1500, tools:[{type:'web_search_20250305',name:'web_search',max_uses:1}], messages:[{role:'user',content:prompt}] })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
@@ -5941,7 +5892,7 @@ function updateQuotesStamp(){
     const cache = JSON.parse(localStorage.getItem('lab_stocks_quotes')||'null');
     if (foot && cache && cache.at){
       const t = new Date(cache.at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-      foot.textContent = `Live quotes via your Anthropic key. Last updated ${t}. Auto-refreshes every 15 minutes on this tab.`;
+      foot.textContent = `Live quotes via the secure Lab AI Gateway. Last updated ${t}. Auto-refreshes every 15 minutes on this tab.`;
     }
   } catch(e){}
 }
@@ -6287,6 +6238,161 @@ renderToday = function(){
   _v4_renderToday();
   installOpportunityFeed();
   renderOpportunities();
+};
+
+</script>
+
+<script>
+/* ============================================================
+   THE LAB v5 - USAGE GUARD
+   Tracks real API spend, confirms expensive calls, caps waste.
+   ============================================================ */
+
+/* ---------- pricing (per 1M tokens; estimates, update if plans change) ---------- */
+const LAB_PRICING = {
+  'gpt-5': { inM: 1.25, outM: 10.00 },
+  'gpt-5-mini': { inM: 0.25, outM: 2.00 },
+  _searchPerCall: 0.01  // $10 per 1,000 web searches
+};
+
+function loadUsageLog(){ try { return JSON.parse(localStorage.getItem('lab_usage_log')||'[]'); } catch(e){ return []; } }
+function saveUsageLog(log){
+  // prune to last 60 days
+  const cutoff = Date.now() - 60*86400000;
+  localStorage.setItem('lab_usage_log', JSON.stringify(log.filter(e => e.at > cutoff)));
+}
+
+function logApiUsage(usage, model){
+  try {
+    const m = LAB_PRICING[model] || LAB_PRICING['gpt-5'];
+    const searches = (usage.server_tool_use && usage.server_tool_use.web_search_requests) || 0;
+    const inTok = usage.input_tokens || 0;
+    const outTok = usage.output_tokens || 0;
+    const cost = (inTok/1e6)*m.inM + (outTok/1e6)*m.outM + searches*LAB_PRICING._searchPerCall;
+    const log = loadUsageLog();
+    log.push({ at: Date.now(), model: model||'?', inTok, outTok, searches, cost });
+    saveUsageLog(log);
+    updateCostMeter();
+  } catch(e){}
+}
+
+function usageTotals(){
+  const log = loadUsageLog();
+  const dayStart = new Date(); dayStart.setHours(0,0,0,0);
+  const monthStart = new Date(); monthStart.setDate(1); monthStart.setHours(0,0,0,0);
+  let day = {cost:0, calls:0, searches:0}, month = {cost:0, calls:0, searches:0};
+  log.forEach(e => {
+    if (e.at >= monthStart.getTime()){ month.cost += e.cost; month.calls++; month.searches += e.searches; }
+    if (e.at >= dayStart.getTime()){ day.cost += e.cost; day.calls++; day.searches += e.searches; }
+  });
+  return { day, month };
+}
+
+function updateCostMeter(){
+  let el = document.getElementById('cost-meter');
+  if (!el){
+    const navRight = document.querySelector('.nav-right');
+    if (!navRight) return;
+    el = document.createElement('span');
+    el.id = 'cost-meter';
+    el.style.cssText = 'cursor:pointer;color:var(--success);font-family:var(--mono);font-size:0.75rem;';
+    el.title = 'Estimated API spend today. Tap for detail.';
+    el.onclick = showCostDetail;
+    navRight.insertBefore(el, navRight.firstChild);
+  }
+  const t = usageTotals();
+  el.textContent = '$' + t.day.cost.toFixed(2);
+  el.style.color = t.day.cost >= 1 ? 'var(--danger)' : t.day.cost >= 0.5 ? '#f5c518' : 'var(--success)';
+}
+
+function showCostDetail(){
+  const t = usageTotals();
+  alert(
+    'API SPEND (estimated)\n\n' +
+    'Today:  $' + t.day.cost.toFixed(2) + '  (' + t.day.calls + ' calls, ' + t.day.searches + ' web searches)\n' +
+    'Month:  $' + t.month.cost.toFixed(2) + '  (' + t.month.calls + ' calls, ' + t.month.searches + ' web searches)\n\n' +
+    'Web searches are the main driver. Lead Finder and News Refresh\n' +
+    'are the expensive buttons; chat and outreach are cheap.'
+  );
+}
+
+/* ---------- intercept API responses to capture real usage ---------- */
+(function(){
+  if (window._labFetchWrapped) return;
+  window._labFetchWrapped = true;
+  const _origFetch = window.fetch;
+  window.fetch = async function(url, opts){
+    const resp = await _origFetch.apply(this, arguments);
+    try {
+      if (typeof url === 'string' && url.indexOf('/.netlify/functions/lab-ai') !== -1){
+        const clone = resp.clone();
+        clone.json().then(data => {
+          if (data && data.usage) logApiUsage(data.usage, data.model);
+        }).catch(function(){});
+      }
+    } catch(e){}
+    return resp;
+  };
+})();
+
+/* ---------- Lead Finder: confirm every run + same-day result cache ---------- */
+function lfConfirmCost(kind){
+  const t = usageTotals();
+  return confirm(
+    kind + ' uses live web search (est. $0.05 to $0.25 per run).\n' +
+    'Spent today so far: $' + t.day.cost.toFixed(2) + '\n\nRun it?'
+  );
+}
+function lfCacheKey(mode){
+  const { niche, loc } = lfInputs();
+  return 'lf_cache_' + mode + '_' + (niche+'_'+loc).toLowerCase().replace(/\s+/g,'-') + '_' + new Date().toISOString().slice(0,10);
+}
+
+const _v5_runLeadSearch = runLeadSearch;
+runLeadSearch = async function(){
+  const key = lfCacheKey('find');
+  try {
+    const cached = JSON.parse(localStorage.getItem(key)||'null');
+    if (cached && cached.length){
+      if (!confirm('You already searched this niche + area today (' + cached.length + ' results cached, free to view).\n\nOK = view cached results\nCancel = run a fresh paid search')){
+        if (!lfConfirmCost('Find Leads')) return;
+        await _v5_runLeadSearch();
+        try { localStorage.setItem(key, JSON.stringify(lfAll)); } catch(e){}
+        return;
+      }
+      lfAll = cached; lfMode='find'; lfRenderResults(); return;
+    }
+  } catch(e){}
+  if (!lfConfirmCost('Find Leads')) return;
+  await _v5_runLeadSearch();
+  try { if (lfAll && lfAll.length) localStorage.setItem(key, JSON.stringify(lfAll)); } catch(e){}
+};
+
+const _v5_lfFindIntent = lfFindIntent;
+lfFindIntent = async function(){
+  const key = lfCacheKey('intent');
+  try {
+    const cached = JSON.parse(localStorage.getItem(key)||'null');
+    if (cached && cached.length){
+      if (!confirm('You already ran an intent scan for this niche + area today (' + cached.length + ' results cached, free to view).\n\nOK = view cached results\nCancel = run a fresh paid scan')){
+        if (!lfConfirmCost('Intent Signals')) return;
+        await _v5_lfFindIntent();
+        try { localStorage.setItem(key, JSON.stringify(lfAll)); } catch(e){}
+        return;
+      }
+      lfAll = cached; lfMode='intent'; lfRenderResults(); return;
+    }
+  } catch(e){}
+  if (!lfConfirmCost('Intent Signals')) return;
+  await _v5_lfFindIntent();
+  try { if (lfAll && lfAll.length) localStorage.setItem(key, JSON.stringify(lfAll)); } catch(e){}
+};
+
+/* ---------- init hook ---------- */
+const _v5_initApp = initApp;
+initApp = function(){
+  _v5_initApp();
+  try { updateCostMeter(); } catch(e){}
 };
 
 </script>
