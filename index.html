@@ -1495,7 +1495,32 @@ html, body { overflow-x:hidden; }
   .stats-g { grid-template-columns:1fr 1fr }
 }
 </style>
-</head>
+<style>
+/* Portfolio: real desktop captures, September 2026 */
+#portfolio{scroll-margin-top:90px}
+#portfolio .port-grid{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:22px;gap:28px}
+#portfolio .port-card{min-width:0;display:flex;flex-direction:column}
+#portfolio .portfolio-featured{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;margin-top:42px;border-color:rgba(0,191,199,.3)}
+#portfolio .portfolio-preview{display:block;min-width:0;background:var(--bg2);border-bottom:1px solid var(--bdr)}
+#portfolio .portfolio-preview img{display:block;width:100%;height:auto;aspect-ratio:1348/926;object-fit:contain}
+#portfolio .browser-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;color:var(--tx2);background:var(--bg2);font-size:11px;border-bottom:1px solid var(--bdr)}
+#portfolio .browser-bar>span:nth-child(2){flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#portfolio .browser-dots{color:var(--teal);font-size:8px;letter-spacing:2px;white-space:nowrap}
+#portfolio .port-info{padding:26px;display:flex;flex-direction:column;flex:1}
+#portfolio .portfolio-featured .port-info{padding:32px}
+#portfolio .portfolio-featured .port-t{font-size:clamp(24px,2.4vw,34px);line-height:1.15;margin:12px 0 16px}
+#portfolio .port-t{font-size:22px;line-height:1.3;margin:10px 0}
+#portfolio .port-d{font-size:14px;line-height:1.75}
+#portfolio .project-status{color:var(--teal);text-transform:uppercase;font-size:10px;letter-spacing:1.8px;font-weight:700}
+#portfolio .project-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:auto;padding-top:20px}
+#portfolio .project-link{display:inline-flex;align-items:center;gap:8px;min-height:44px}
+#portfolio .visit-link{border:1px solid var(--bdr2);border-radius:8px;padding:8px 14px;background:var(--bg2)}
+#portfolio a:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+#portfolio .portfolio-heading{margin-top:54px}
+#portfolio .portfolio-heading h3{font:600 27px var(--fh);margin:0 0 8px}
+#portfolio .portfolio-heading p{color:var(--tx2);font-size:14px;line-height:1.7}
+@media(max-width:760px){#portfolio .port-grid{grid-template-columns:1fr}#portfolio .portfolio-featured{grid-template-columns:1fr}#portfolio .port-info,#portfolio .portfolio-featured .port-info{padding:22px}#portfolio .browser-bar{font-size:10px}#portfolio .portfolio-heading{margin-top:38px}}
+</style></head>
 <body>
 
 <div id="cdot"></div>
@@ -1553,7 +1578,7 @@ html, body { overflow-x:hidden; }
   <a href="#support" onclick="closeMob()">Ongoing Support</a>
   <a href="#faq" onclick="closeMob()">FAQ</a>
   <a href="/small-business-website-design-richmond-va.html" onclick="closeMob()">Local SEO Page</a>
-  <a href="/design-fusion-case-study.html" onclick="closeMob()">Case Studies</a>
+  <a href="#portfolio" onclick="closeMob()">Case Studies</a>
   <a href="#contact" onclick="closeMob()">Get Started →</a>
 </div>
 
@@ -1660,251 +1685,73 @@ html, body { overflow-x:hidden; }
 </div>
 
 <!-- ═══════ PORTFOLIO ═══════ -->
-<section id="portfolio" class="sec">
-  <div class="wrap">
-    <div class="rv">
-      <div class="eyebrow">Businesses We Have Helped Grow</div>
-      <h2 class="h2">Real businesses.<br/>Built for what comes next.</h2>
-      <p class="lead">Every featured project started with a business goal. We turned that goal into a digital experience designed to build trust, create opportunity, and support long-term growth.</p>
-    </div>
-    <div class="port-grid">
-
-      <!-- Angels -->
-      <div class="port-card rv" style="transition-delay:.04s">
-        <div class="port-thumb" style="background:linear-gradient(135deg,#160808,#251010)">
-          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/angels.webp')"></div></div>
-          <div class="port-ov">
-            <a href="https://angelsofsnowhillcemetery.com" target="_blank" class="port-ov-link">View Live Site →</a>
-          </div>
-          <span class="port-badge">Live</span>
-        </div>
-        <div class="port-info">
-          <div class="port-t">Angels of Snow Hill Cemetery</div>
-          <p class="port-d">Full nonprofit memorial site built for preservation, community outreach, and active fundraising.</p>
-          <div class="port-tags">
-            <span class="port-tag">Multi-page</span>
-            <span class="port-tag">Stripe Donations</span>
-            <span class="port-tag">Event Calendar</span>
-            <span class="port-tag">Volunteer Signup</span>
-            <span class="port-tag">Board Directory</span>
-            <span class="port-tag">News System</span>
-            <span class="port-tag">501(c)(3) Compliant</span>
-            <span class="port-tag">Google Maps</span>
-          </div>
-          <div class="port-value port-focus">
-            <div>
-              <div class="pv-label">Project Focus</div>
-              <div class="pv-focus">Trust · Donations · Community engagement</div>
-            </div>
-          </div>
-          <div class="project-actions">
-            <a href="/angels-case-study.html" class="project-link">Read Case Study →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- PVB -->
-      <div class="port-card rv" style="transition-delay:.08s">
-        <div class="port-thumb" style="background:linear-gradient(135deg,#080F20,#0D1A36)">
-          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/pvb.webp')"></div></div>
-          <div class="port-ov">
-            <a href="https://www.proactivevendingblueprint.com" target="_blank" class="port-ov-link">View Live Site →</a>
-          </div>
-          <span class="port-badge">Live</span>
-        </div>
-        <div class="port-info">
-          <div class="port-t">Proactive Vending Blueprint</div>
-          <p class="port-d">Digital product brand site with a full conversion funnel, built to capture leads and sell on autopilot.</p>
-          <div class="port-tags">
-            <span class="port-tag">Lead Magnet Funnel</span>
-            <span class="port-tag">ConvertKit Integration</span>
-            <span class="port-tag">Email Sequence</span>
-            <span class="port-tag">Digital Product Delivery</span>
-            <span class="port-tag">Brand System</span>
-            <span class="port-tag">Mobile-First</span>
-          </div>
-          <div class="port-value port-focus">
-            <div>
-              <div class="pv-label">Project Focus</div>
-              <div class="pv-focus">Lead generation · Product delivery · Automation</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ANUME -->
-      <div class="port-card rv" style="transition-delay:.12s">
-        <div class="port-thumb" style="background:linear-gradient(135deg,#1A0A04,#2D1408)">
-          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/anume.webp')"></div></div>
-          <div class="port-ov">
-            <a href="https://www.anumeprivatechef.com" target="_blank" class="port-ov-link">View Live Site →</a>
-          </div>
-          <span class="port-badge" style="background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.3);color:#FB923C">Live</span>
-        </div>
-        <div class="port-info">
-          <div class="port-t">ANUME Private Chef & Catering</div>
-          <p class="port-d">A premium digital launch for a private chef and catering company, designed to present upscale dining experiences and turn interest into consultation requests.</p>
-          <div class="port-tags">
-            <span class="port-tag">Premium Brand Direction</span>
-            <span class="port-tag">Private Dining</span>
-            <span class="port-tag">Catering Inquiries</span>
-            <span class="port-tag">Taste Testings</span>
-            <span class="port-tag">Gold Rolls</span>
-            <span class="port-tag">Mobile-First</span>
-            <span class="port-tag">Custom Domain</span>
-          </div>
-          <div class="port-value port-focus">
-            <div>
-              <div class="pv-label">Project Focus</div>
-              <div class="pv-focus">Premium positioning · Consultation conversion</div>
-            </div>
-          </div>
-          <div class="project-actions">
-            <a href="/anume-case-study.html" class="project-link">Read Case Study →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Design Fusion -->
-      <div class="port-card rv" style="transition-delay:.16s">
-        <div class="port-thumb" style="background:linear-gradient(135deg,#0F1923,#1a2a3a)">
-          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/designfusion.webp')"></div></div>
-          <div class="port-ov">
-            <a href="https://designfusion.it.com" target="_blank" class="port-ov-link">View Live Site →</a>
-          </div>
-          <span class="port-badge">Live</span>
-        </div>
-        <div class="port-info">
-          <div class="port-t">Design Fusion</div>
-          <p class="port-d">Custom embroidery brand site with an interactive order builder, color picker, garment selector, and multi-payment integration.</p>
-          <div class="port-tags">
-            <span class="port-tag">Order Builder</span>
-            <span class="port-tag">Color Picker</span>
-            <span class="port-tag">Bring Your Own Garment</span>
-            <span class="port-tag">Payment Options</span>
-            <span class="port-tag">Meet the Owner</span>
-            <span class="port-tag">Mobile Responsive</span>
-            <span class="port-tag">Custom SVG Icons</span>
-            <span class="port-tag">No CDN Dependencies</span>
-          </div>
-          <div class="port-value port-focus">
-            <div>
-              <div class="pv-label">Project Focus</div>
-              <div class="pv-focus">Ordering workflow · Payments · Customer experience</div>
-            </div>
-          </div>
-          <div class="project-actions">
-            <a href="/design-fusion-case-study.html" class="project-link">Read Case Study →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- In Great Taste -->
-      <div class="port-card rv" style="transition-delay:.20s">
-        <div class="port-thumb" style="background:linear-gradient(135deg,#061410,#0C2018)">
-          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/ingreattaste.webp')"></div></div>
-          <div class="port-ov">
-            <a href="https://ingreattastecatering.netlify.app" target="_blank" class="port-ov-link">View Spec Build →</a>
-          </div>
-          <span class="port-badge" style="background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.3);color:#FB923C">Spec Build</span>
-        </div>
-        <div class="port-info">
-          <div class="port-t">In Great Taste Catering</div>
-          <p class="port-d">Built as a full client preview before contract — same process, same quality as paid work. Rotating menu, ordering flow, gallery, and event booking.</p>
-          <div class="port-tags">
-            <span class="port-tag">Weekly Menu System</span>
-            <span class="port-tag">Online Ordering Flow</span>
-            <span class="port-tag">Photo Gallery</span>
-            <span class="port-tag">Event Booking</span>
-            <span class="port-tag">Client Reviews</span>
-            <span class="port-tag">Mobile Responsive</span>
-            <span class="port-tag">Netlify Forms</span>
-          </div>
-          <div class="port-value port-focus">
-            <div>
-              <div class="pv-label">Project Focus</div>
-              <div class="pv-focus">Menu discovery · Ordering · Event inquiries</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <!-- SLP Masonry -->
-      <div class="port-card rv" style="transition-delay:.20s">
-        <div class="port-thumb" style="background:linear-gradient(135deg,#111008,#1E1A0C)">
-          <div class="port-phone"><div class="port-phone-screen" style="background-image:url('img/slp.webp')"></div></div>
-          <div class="port-ov">
-            <a href="https://biggerbetterpresenceforslp.netlify.app" target="_blank" class="port-ov-link">View Spec Build →</a>
-          </div>
-          <span class="port-badge" style="background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.3);color:#FB923C">Spec Build</span>
-        </div>
-        <div class="port-info">
-          <div class="port-t">SLP Masonry LLC</div>
-          <p class="port-d">Built as a spec to show what's possible — full contractor site with filtered project gallery, estimate form, and local SEO. Built to win the contract.</p>
-          <div class="port-tags">
-            <span class="port-tag">Filtered Project Gallery</span>
-            <span class="port-tag">Estimate Form</span>
-            <span class="port-tag">Service Pages</span>
-            <span class="port-tag">Client Reviews</span>
-            <span class="port-tag">Photo Gallery</span>
-            <span class="port-tag">Mobile Responsive</span>
-            <span class="port-tag">Local SEO Ready</span>
-          </div>
-          <div class="port-value port-focus">
-            <div>
-              <div class="pv-label">Project Focus</div>
-              <div class="pv-focus">Local credibility · Estimate requests · Project proof</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <!-- AI Callout Banner -->
-    
-      <!-- H&C Cleaning Services -->
-      <div class="port-card rv" style="transition-delay:.24s">
-        <div class="port-thumb" style="background:linear-gradient(135deg,#1A0A06,#2E1610)">
-          <div class="port-phone">
-            <div class="port-phone-screen" style="background-image:url('img/hc.webp')"></div>
-          </div>
-          <div class="port-ov">
-            <a href="https://mockupforhana.netlify.app/" target="_blank" class="port-ov-link">View Spec Build →</a>
-          </div>
-          <span class="port-badge" style="background:rgba(251,146,60,.12);border-color:rgba(251,146,60,.3);color:#FB923C">Spec Build</span>
-        </div>
-        <div class="port-info">
-          <div class="port-t">H&amp;C Cleaning Services</div>
-          <p class="port-d">Upscale residential &amp; commercial cleaning brand for Hannah Roberts — Upstate South Carolina. Elegant serif design, full service menu, booking flow, photo gallery, and reviews. Built to convert first-time visitors into repeat clients.</p>
-          <div class="port-tags">
-            <span class="port-tag">Elegant Brand Design</span>
-            <span class="port-tag">Service Pages</span>
-            <span class="port-tag">Photo Gallery</span>
-            <span class="port-tag">Booking Form</span>
-            <span class="port-tag">Client Reviews</span>
-            <span class="port-tag">Service Area Map</span>
-            <span class="port-tag">In-Home Laundry</span>
-            <span class="port-tag">Maintenance Plans</span>
-            <span class="port-tag">Mobile Responsive</span>
-            <span class="port-tag">Licensed &amp; Insured</span>
-          </div>
-          <div class="port-value port-focus">
-            <div>
-              <div class="pv-label">Project Focus</div>
-              <div class="pv-focus">Service clarity · Booking · Local trust</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <div class="ai-banner rv">
-      <div>
-        <div class="ai-b-title">AI is part of the toolkit. It is not the strategy.</div>
-        <p class="ai-b-text">We use modern tools where they create real leverage, but the work still needs <strong>business judgment, brand direction, customer experience, integration decisions, testing, and accountability.</strong> The goal is not to use more technology. The goal is to make digital work better for your business.</p>
-      </div>
-      <a href="#contact" class="btn btn-p" style="flex-shrink:0">Let's Talk →</a>
-    </div>
-  </div>
-</section>
+<section id="portfolio" class="sec"><div class="wrap">
+<div><div class="eyebrow">Selected work</div><h2 class="h2">Real businesses.<br>Thoughtfully built.</h2><p class="lead">Explore the websites, meet the businesses, and see the thinking behind the work.</p></div>
+<article class="port-card portfolio-featured">
+      <a class="portfolio-preview" href="https://mralegacypublishing.com/" target="_blank" rel="noopener noreferrer" aria-label="Open MRA Legacy Publishing website in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>mralegacypublishing.com</span><span aria-hidden="true">↗</span></div>
+        <img src="img/mra-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage of MRA Legacy Publishing">
+      </a>
+      <div class="port-info"><div class="project-status">Featured project · Live</div><h3 class="port-t">MRA Legacy Publishing</h3>
+        <p class="port-d">A publishing home for Tamesha McRae and Rooted in Him, with a clear reader journey and hands-on support connecting the website, domain, and business email.</p><div class="port-tags"><span class="port-tag">Author &amp; book website</span><span class="port-tag">Domain coordination</span><span class="port-tag">Business email</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="https://mralegacypublishing.com/" target="_blank" rel="noopener noreferrer">Visit Website <span aria-hidden="true">↗</span></a><a class="project-link" href="/mra-case-study.html">Read Case Study <span aria-hidden="true">→</span></a></div>
+      </div></article><div class="portfolio-heading"><h3>More live projects</h3><p>Client work and our own Proactive Vending brand.</p></div><div class="port-grid"><article class="port-card">
+      <a class="portfolio-preview" href="https://angelsofsnowhillcemetery.com" target="_blank" rel="noopener noreferrer" aria-label="Open Angels of Snow Hill Cemetery website in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>angelsofsnowhillcemetery.com</span><span aria-hidden="true">↗</span></div>
+        <img src="img/angels-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage of Angels of Snow Hill Cemetery">
+      </a>
+      <div class="port-info"><div class="project-status">Live website</div><h3 class="port-t">Angels of Snow Hill Cemetery</h3>
+        <p class="port-d">Full nonprofit memorial site built for preservation, community outreach, and active fundraising.</p><div class="port-tags"><span class="port-tag">Multi-page</span><span class="port-tag">Stripe Donations</span><span class="port-tag">Event Calendar</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="https://angelsofsnowhillcemetery.com" target="_blank" rel="noopener noreferrer">Visit Website <span aria-hidden="true">↗</span></a><a class="project-link" href="/angels-case-study.html">Read Case Study <span aria-hidden="true">→</span></a></div>
+      </div></article><article class="port-card">
+      <a class="portfolio-preview" href="https://www.proactivevendingblueprint.com" target="_blank" rel="noopener noreferrer" aria-label="Open Proactive Vending Blueprint website in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>www.proactivevendingblueprint.com</span><span aria-hidden="true">↗</span></div>
+        <img src="img/pvb-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage of Proactive Vending Blueprint">
+      </a>
+      <div class="port-info"><div class="project-status">Live website</div><h3 class="port-t">Proactive Vending Blueprint</h3>
+        <p class="port-d">A digital guide storefront built around real vending experience, practical tools, and a clear path to purchase.</p><div class="port-tags"><span class="port-tag">Digital products</span><span class="port-tag">Founder story</span><span class="port-tag">Purchase pathway</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="https://www.proactivevendingblueprint.com" target="_blank" rel="noopener noreferrer">Visit Website <span aria-hidden="true">↗</span></a></div>
+      </div></article><article class="port-card">
+      <a class="portfolio-preview" href="https://www.anumeprivatechef.com" target="_blank" rel="noopener noreferrer" aria-label="Open ANUME Private Chef &amp; Catering website in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>www.anumeprivatechef.com</span><span aria-hidden="true">↗</span></div>
+        <img src="img/anume-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage of ANUME Private Chef &amp; Catering">
+      </a>
+      <div class="port-info"><div class="project-status">Live website</div><h3 class="port-t">ANUME Private Chef &amp; Catering</h3>
+        <p class="port-d">A premium digital launch for a private chef and catering company, designed to present upscale dining experiences and turn interest into consultation requests.</p><div class="port-tags"><span class="port-tag">Premium Brand Direction</span><span class="port-tag">Private Dining</span><span class="port-tag">Catering Inquiries</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="https://www.anumeprivatechef.com" target="_blank" rel="noopener noreferrer">Visit Website <span aria-hidden="true">↗</span></a><a class="project-link" href="/anume-case-study.html">Read Case Study <span aria-hidden="true">→</span></a></div>
+      </div></article><article class="port-card">
+      <a class="portfolio-preview" href="https://designfusion.it.com" target="_blank" rel="noopener noreferrer" aria-label="Open Design Fusion website in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>designfusion.it.com</span><span aria-hidden="true">↗</span></div>
+        <img src="img/designfusion-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage of Design Fusion">
+      </a>
+      <div class="port-info"><div class="project-status">Live website</div><h3 class="port-t">Design Fusion</h3>
+        <p class="port-d">Custom embroidery brand site with an interactive order builder, color picker, garment selector, and multi-payment integration.</p><div class="port-tags"><span class="port-tag">Order Builder</span><span class="port-tag">Color Picker</span><span class="port-tag">Bring Your Own Garment</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="https://designfusion.it.com" target="_blank" rel="noopener noreferrer">Visit Website <span aria-hidden="true">↗</span></a><a class="project-link" href="/design-fusion-case-study.html">Read Case Study <span aria-hidden="true">→</span></a></div>
+      </div></article></div><div class="portfolio-heading" id="concepts"><h3>Concept builds</h3><p>Design explorations prepared for prospective clients. These are previews of what is possible.</p></div><div class="port-grid"><article class="port-card">
+      <a class="portfolio-preview" href="https://ingreattastecatering.netlify.app" target="_blank" rel="noopener noreferrer" aria-label="Open In Great Taste Catering concept in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>ingreattastecatering.netlify.app</span><span aria-hidden="true">↗</span></div>
+        <img src="img/ingreattaste-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage of In Great Taste Catering">
+      </a>
+      <div class="port-info"><div class="project-status">Concept build</div><h3 class="port-t">In Great Taste Catering</h3>
+        <p class="port-d">Built as a full client preview before contract, same process, same quality as paid work. Rotating menu, ordering flow, gallery, and event booking.</p><div class="port-tags"><span class="port-tag">Weekly Menu System</span><span class="port-tag">Online Ordering Flow</span><span class="port-tag">Photo Gallery</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="https://ingreattastecatering.netlify.app" target="_blank" rel="noopener noreferrer">View Concept <span aria-hidden="true">↗</span></a></div>
+      </div></article><article class="port-card">
+      <a class="portfolio-preview" href="img/masonry-company-desktop.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open a local masonry company concept preview in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>Local masonry company website concept</span><span aria-hidden="true">↗</span></div>
+        <img src="img/masonry-company-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage concept for a local masonry company">
+      </a>
+      <div class="port-info"><div class="project-status">Concept build</div><h3 class="port-t">Local Masonry Company</h3>
+        <p class="port-d">Built as a spec for a local masonry company, featuring a full contractor site with a filtered project gallery, estimate form, service pages, and local SEO.</p><div class="port-tags"><span class="port-tag">Filtered Project Gallery</span><span class="port-tag">Estimate Form</span><span class="port-tag">Service Pages</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="img/masonry-company-desktop.jpg" target="_blank" rel="noopener noreferrer">View Concept <span aria-hidden="true">↗</span></a></div>
+      </div></article><article class="port-card">
+      <a class="portfolio-preview" href="https://mockupforhana.netlify.app/" target="_blank" rel="noopener noreferrer" aria-label="Open H&amp;C Cleaning Services concept in a new tab">
+        <div class="browser-bar"><span class="browser-dots" aria-hidden="true">● ● ●</span><span>mockupforhana.netlify.app</span><span aria-hidden="true">↗</span></div>
+        <img src="img/hc-desktop.jpg" width="1348" height="926" loading="lazy" decoding="async" alt="Desktop homepage of H&amp;C Cleaning Services">
+      </a>
+      <div class="port-info"><div class="project-status">Concept build</div><h3 class="port-t">H&amp;C Cleaning Services</h3>
+        <p class="port-d">Upscale residential &amp; commercial cleaning brand for Hannah Roberts , Upstate South Carolina. Elegant serif design, full service menu, booking flow, photo gallery, and reviews. Built to convert first-time visitors into repeat clients.</p><div class="port-tags"><span class="port-tag">Elegant Brand Design</span><span class="port-tag">Service Pages</span><span class="port-tag">Photo Gallery</span></div>
+        <div class="project-actions"><a class="project-link visit-link" href="https://mockupforhana.netlify.app/" target="_blank" rel="noopener noreferrer">View Concept <span aria-hidden="true">↗</span></a></div>
+      </div></article></div></div></section>
 
 <!-- ═══════ SERVICES ═══════ -->
 <section id="services" class="sec">
@@ -2491,7 +2338,8 @@ html, body { overflow-x:hidden; }
         <div class="foot-col-t">Explore</div>
         <a href="/small-business-website-design-richmond-va.html">Richmond Web Design</a>
         <a href="/monthly-website-support.html">Ongoing Digital Support</a>
-        <a href="/design-fusion-case-study.html">Design Fusion Case Study</a>
+        <a href="/mra-case-study.html">MRA Legacy Case Study</a>
+<a href="/design-fusion-case-study.html">Design Fusion Case Study</a>
         <a href="/anume-case-study.html">ANUME Case Study</a>
       </div>
       <div class="foot-col">
