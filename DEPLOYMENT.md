@@ -24,8 +24,10 @@ The public release retains the portfolio, MRA case study, `/pay` and `/payment` 
 
 `lab-workspace.js` adds persistent Project Notes, dated Activity & Follow-ups,
 safe basic Markdown rendering, and a visible save indicator. Workspace content
-is stored in the existing private `lab_store` as `project_notes` and `activity`;
-it is never embedded in the deployed source. No database schema change is needed.
+is stored through `netlify/functions/lab-store.mts` in site-scoped Netlify Blobs;
+it is never embedded in the deployed source. The endpoint requires the same
+server-verified Lab access code as AI requests. Production and preview stores
+are separate. No additional login or database schema change is needed.
 
 Active project notes are included in every main AI-chat request independently
 of recent conversation summaries. Notes support editing and archiving. The
@@ -36,8 +38,10 @@ both new collections and older backups remain supported.
 
 Cloud writes are serialized per key and failed writes remain in a local pending
 queue across reloads. Local pending values take precedence when loading the
-cloud copy. The indicator reports success only after the database returns the
-saved key; failed writes show a retry action. This confirms database acceptance,
+cloud copy. Existing readable Supabase data and local collections migrate on
+the first successful load without deleting the originals; authentication
+credentials are excluded. The indicator reports success only after storage returns the
+saved key; failed writes show a retry action. This confirms storage acceptance,
 not a guarantee against concurrent edits from another device.
 
 Validation: `node --test tests/*.test.mjs`. For the full DOM workflow, install

@@ -5958,14 +5958,14 @@ function injectSecurityCenter(){
   const sec = document.createElement('div');
   sec.id = 'sec-center';
   sec.innerHTML = `
-    <div class="links-section-title" style="color:var(--danger);">Security Center</div>
+    <div class="links-section-title">Legacy Supabase connection</div>
     <div style="background:var(--surface);border:1px solid ${configured?'rgba(76,175,130,.3)':'rgba(224,82,82,.35)'};border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;">
         <span style="width:9px;height:9px;border-radius:50%;background:${configured?'var(--success)':'var(--danger)'};"></span>
         <strong style="color:var(--text);">Supabase Auth: ${configured?'credentials saved':'not configured'}</strong>
       </div>
       <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.6;">
-        The Lab's data lives in Supabase. Until Row Level Security is turned on, anyone who finds the URL can read or change it. Do all three: create a login user, run the SQL, then save the same login here so the Lab can sign in.
+        The Lab workspace now saves through its protected Netlify connection using your Lab access code. This separate Supabase connection remains for legacy data and Design Fusion orders. It is not required for project notes, activities, or chats. Review the existing database access policies before changing them; migration leaves the original data intact.
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;">
         <label style="font-size:0.68rem;color:var(--text-dim);font-family:var(--mono);letter-spacing:0.1em;text-transform:uppercase;">Supabase Login Email</label>
@@ -6440,6 +6440,6 @@ initApp = function(){
 };
 
 </script>
-<script src="/lab-workspace.js?v=20260929.2"></script>
+<script src="/lab-workspace.js?v=20260929.3"></script>
 </body>
 </html>

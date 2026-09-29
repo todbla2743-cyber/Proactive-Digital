@@ -85,20 +85,28 @@
   const bar=document.createElement('div');bar.id='workspace-save-bar';bar.innerHTML='<span id="workspace-save-text" role="status" aria-live="polite">Cloud not checked yet</span><button class="ws-btn" id="workspace-retry" type="button">Retry cloud save</button>';
   document.querySelector('.topnav').after(bar);
   const status=(state,text)=>{bar.dataset.state=state;$('workspace-save-text').textContent=text;$('workspace-retry').hidden=!['error','pending'].includes(state);};
+  async function cloud(body){
+    const response=await fetch('/.netlify/functions/lab-store',{method:'POST',headers:{'Content-Type':'application/json','X-Lab-Access-Code':labAccessCode},body:JSON.stringify(body)});
+    const result=await response.json();if(!response.ok||!result.ok)throw new Error('Cloud request failed');return result;
+  }
   const sync=createSync({storage:localStorage,status,write:async(key,value)=>{
-    if(!_db)throw new Error('Cloud unavailable');
-    const {data,error}=await _db.from('lab_store').upsert({key,value,updated_at:new Date().toISOString()}).select('key');
-    if(error||!data?.some(row=>row.key===key))throw new Error('Cloud save not confirmed');
+    const result=await cloud({action:'save',key,value});
+    if(result.key!==key)throw new Error('Cloud save not confirmed');
   }});
   SB.save=sync.save;SB._sbSaveRaw=sync.save;
   $('workspace-retry').onclick=()=>sync.flush();
   window.addEventListener('online',()=>{if(sync.hasPending())sync.flush();});
   window.addEventListener('beforeunload',event=>{if(sync.hasPending()){event.preventDefault();event.returnValue='';}});
   const originalLoad=SB.load.bind(SB);
+  let cloudLoaded=false,remoteKeys=new Set();
   SB.load=async()=>{
     status('saving','Checking cloud…');
-    const store=await originalLoad();
-    if(!store){status('error','Cloud unavailable · using this device’s copy');return null;}
+    let result;
+    try{result=await cloud({action:'load'});}catch{status('error','Cloud unavailable · using this device’s copy');return null;}
+    remoteKeys=new Set(Object.keys(result.data));cloudLoaded=true;
+    // Read legacy data only for the initial migration; do not delete or alter it.
+    const legacy=remoteKeys.has('records')?{}:(await originalLoad()||{});
+    const store={...legacy,...result.data};SB._cloudLast=result.updatedAt||SB._cloudLast;
     const merged=sync.overlay(store);
     if(Array.isArray(merged.project_notes)){notes=merged.project_notes;localStorage.setItem('lab_project_notes',JSON.stringify(notes));}
     if(Array.isArray(merged.activity)){activities=merged.activity;localStorage.setItem('lab_activity',JSON.stringify(activities));}
@@ -112,7 +120,14 @@
   const oldContext=buildMemoryContext;
   buildMemoryContext=()=>context(notes,activities)+oldContext();
   const oldInit=initApp;
-  initApp=()=>{oldInit();renderNotes();renderActivity();if(sync.hasPending())sync.flush();};
+  initApp=()=>{
+    oldInit();renderNotes();renderActivity();
+    if(cloudLoaded){
+      const pairs={records:'lab_records',pipeline:'lab_pipeline',clients:'lab_clients',leads:'lab_leads',proof:'lab_proof_v2',swipe:'lab_swipe_file',settings:'lab_settings',saved_chats:'lab_saved_chats',memory_summaries:'lab_memory_summaries',project_notes:'lab_project_notes',activity:'lab_activity'};
+      for(const [key,localKey] of Object.entries(pairs)){const value=read(localKey,null);if(!remoteKeys.has(key)&&value!==null)SB.save(key,value);}
+    }
+    if(sync.hasPending())sync.flush();
+  };
 
   function mount(id,label,html){
     const button=document.createElement('button');button.className='nav-tab';button.textContent=label;button.onclick=()=>switchPanel(id,button);document.querySelector('.nav-tabs').appendChild(button);
