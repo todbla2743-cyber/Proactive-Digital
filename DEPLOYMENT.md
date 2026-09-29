@@ -20,3 +20,28 @@ The Lab remains at `/lab.html` (also `/lab`). It is not linked from the public s
 Run `node --test tests/lab-ai.test.mjs` and `bash scripts/build-public.sh` before deployment. Node 24 can load the .mts function directly for these tests. No provider credentials or network access are required for the mocked tests.
 
 The public release retains the portfolio, MRA case study, `/pay` and `/payment` routes, and the Stripe payment link.
+# Workspace updates (September 29, 2026)
+
+`lab-workspace.js` adds persistent Project Notes, dated Activity & Follow-ups,
+safe basic Markdown rendering, and a visible save indicator. Workspace content
+is stored in the existing private `lab_store` as `project_notes` and `activity`;
+it is never embedded in the deployed source. No database schema change is needed.
+
+Active project notes are included in every main AI-chat request independently
+of recent conversation summaries. Notes support editing and archiving. The
+combined active-note limit is 30,000 characters. AI activity context includes
+up to 50 open and 20 recent completed entries; the Activity tab retains all
+entries with month, project, and status filters. Backup version 3 includes
+both new collections and older backups remain supported.
+
+Cloud writes are serialized per key and failed writes remain in a local pending
+queue across reloads. Local pending values take precedence when loading the
+cloud copy. The indicator reports success only after the database returns the
+saved key; failed writes show a retry action. This confirms database acceptance,
+not a guarantee against concurrent edits from another device.
+
+Validation: `node --test tests/*.test.mjs`. For the full DOM workflow, install
+jsdom in a temporary directory and run `JSDOM_MODULE=/absolute/path/to/jsdom/lib/api.js
+node tests/lab-workspace-ui.mjs`. This checks notes, context, activities,
+completion, backup, failed saves, navigation, and Markdown without contacting
+the live database or model.
