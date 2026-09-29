@@ -27,12 +27,13 @@ test('production client import adds missing work once without replacing existing
    const data=stores.get(options.name);
    return {setJSON:async(k,v)=>data.set(k,v),get:async k=>data.get(k)||null};
  });
- const seed={records:[{id:'seed-tribe',name:'Tribe Fitness',status:'won',dealValue:0}],project_notes:[{id:'note-tribe',project:'Tribe Fitness',body:'Test form delivery'}],activity:[]};
- globalThis.Netlify.env.get=key=>key==='LAB_ACCESS_CODE_SHA256'?createHash('sha256').update('TEST-CODE').digest('hex'):key==='LAB_CLIENT_IMPORT_20260929'?JSON.stringify(seed):undefined;
+ const seed={records:Array.from({length:6},(_,i)=>({id:'seed-'+i,name:i?'Client '+i:'Tribe Fitness',status:'won',dealValue:0})),project_notes:[{id:'note-tribe',project:'Tribe Fitness',body:'Test form delivery'}],activity:[]};
+ const raw=JSON.stringify(seed),parts=[raw.slice(0,30),raw.slice(30,60),raw.slice(60)];
+ globalThis.Netlify.env.get=key=>key==='LAB_ACCESS_CODE_SHA256'?createHash('sha256').update('TEST-CODE').digest('hex'):({'LAB_CLIENT_IMPORT_20260929_A':parts[0],'LAB_CLIENT_IMPORT_20260929_B':parts[1],'LAB_CLIENT_IMPORT_20260929_C':parts[2]})[key];
  const prod={deploy:{context:'production'}},preview={deploy:{context:'deploy-preview'}};
  await handler(request({action:'save',key:'records',value:[{id:'existing',name:'Tribe Fitness',status:'won',notes:'User edit'}]}),prod);
  let live=await (await handler(request({action:'load'}),prod)).json();
- assert.equal(live.data.records.length,1);
+ assert.equal(live.data.records.length,6);
  assert.equal(live.data.records[0].notes,'User edit');
  assert.equal(live.data.project_notes[0].body,'Test form delivery');
  live=await (await handler(request({action:'load'}),prod)).json();
