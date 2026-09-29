@@ -4,6 +4,27 @@ import { getStore } from '@netlify/blobs';
 declare const Netlify: { env: { get(name: string): string | undefined } };
 const keys = ['records','pipeline','clients','leads','proof','swipe','settings','saved_chats','memory_summaries','project_notes','activity'];
 const json = (status: number, data: unknown) => Response.json(data, {status,headers:{'Cache-Control':'no-store'}});
+// A one-time, private migration supplied through a production-only Netlify
+// environment variable. Client details never enter the published site bundle.
+export async function applyClientImport(store: ReturnType<typeof getStore>, raw: string | undefined) {
+  if (!raw || await store.get('client-import-20260929', {type:'json'})) return;
+  const seed = JSON.parse(raw) as Record<string, unknown>;
+  for (const key of ['records','project_notes','activity']) {
+    const additions = seed[key];
+    if (!Array.isArray(additions)) continue;
+    const current = await store.get(key,{type:'json'}) as {value?: unknown; updatedAt?: string} | null;
+    const existing = Array.isArray(current?.value) ? current.value as Record<string, unknown>[] : [];
+    const ids = new Set(existing.map(item=>String(item.id)));
+    const names = key==='records' ? new Set(existing.map(item=>String(item.name||'').trim().toLowerCase())) : new Set<string>();
+    const newItems = additions.filter((item: Record<string, unknown>)=>{
+      if (!item || !item.id || ids.has(String(item.id))) return false;
+      if (key==='records' && names.has(String(item.name||'').trim().toLowerCase())) return false;
+      return true;
+    });
+    if (newItems.length) await store.setJSON(key,{value:[...existing,...newItems],updatedAt:new Date().toISOString()});
+  }
+  await store.setJSON('client-import-20260929',{appliedAt:new Date().toISOString()});
+}
 export function makeHandler(openStore: typeof getStore = getStore) {
   return async (req: Request, context?: {deploy?:{context?:string}}) => {
     if(req.method !== 'POST')return json(405,{error:'Method not allowed.'});
@@ -25,6 +46,7 @@ export function makeHandler(openStore: typeof getStore = getStore) {
         await store.setJSON(body.key,{value:body.value,updatedAt});
         return json(200,{ok:true,key:body.key,updatedAt});
       }
+      if(environment==='production') await applyClientImport(store,Netlify.env.get('LAB_CLIENT_IMPORT_20260929'));
       const entries=await Promise.all(keys.map(async key=>[key,await store.get(key,{type:'json'})] as const));
       const data: Record<string,unknown>={};let updatedAt='';
       for(const [key,entry] of entries){if(entry && typeof entry==='object' && 'value' in entry){data[key]=entry.value;const at=String(entry.updatedAt||'');if(at>updatedAt)updatedAt=at;}}
