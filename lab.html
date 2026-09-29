@@ -4841,7 +4841,7 @@ function renderClients(){
       <div class="client-head">
         <div>
           <div class="client-name">${escapeHtml(c.name)}</div>
-          <div class="client-project">${escapeHtml(c.notes || 'No description')} · $${Number(c.dealValue||0).toLocaleString()}</div>
+          <div class="client-project">${escapeHtml(c.notes || 'No description')}${Number(c.dealValue)>0?' · $'+Number(c.dealValue).toLocaleString():''}</div>
         </div>
         <span class="client-status ${statusBadge}">${statusText}</span>
       </div>
