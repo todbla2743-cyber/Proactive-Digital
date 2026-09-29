@@ -10,7 +10,7 @@ The Lab remains at `/lab.html` (also `/lab`). It is not linked from the public s
 - Lightweight model: `gpt-6-luna` (GPT-6 Luna).
 - Uses OpenAI Responses with low reasoning, actual image/PDF inputs, and web search for existing research features. No automatic provider fallback.
 - The existing access code is verified server-side for every AI request. The browser holds it only in memory for the current page session. This protects the AI endpoint, not the static HTML or existing Supabase authorization policies.
-- Keep `LAB_ACCESS_CODE_SHA256` in Netlify environment variables with Functions scope. It is the SHA-256 digest of the normalized existing code (remove whitespace and uppercase). Never include it in public JavaScript.
+- Keep `LAB_ACCESS_CODE_SHA256` in Netlify environment variables with Functions scope for production and deploy previews. Redeploy after changing environment variables; an existing deployment will not necessarily pick up the new values. It is the SHA-256 digest of the normalized existing code (remove whitespace and uppercase). Never include it in public JavaScript.
 - `LAB_OPENAI_MODEL` and `LAB_OPENAI_FAST_MODEL` can override the model defaults.
 - `OPENAI_API_KEY` and optional `OPENAI_BASE_URL` are read only on the server. Existing direct OpenAI credentials remain supported; Netlify AI Gateway's injected variables are supported too. If either variable is explicitly configured, Netlify does not inject its own pair.
 - GET the gateway for non-secret configuration readiness. A readiness result does not prove API billing or a completed model call. The UI shows the model returned by successful responses.
