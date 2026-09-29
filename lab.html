@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="robots" content="noindex, nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Lab — Proactive Digital</title>
@@ -2298,11 +2299,12 @@ const LAB_AI_GATEWAY = '/.netlify/functions/lab-ai';
 
         <!-- Chat -->
         <div class="ai-main">
+          <div id="lab-ai-status" role="status" style="padding:10px 18px;color:var(--teal);font:0.75rem var(--mono);border-bottom:1px solid var(--border);">Connecting to OpenAI…</div>
           <div class="chat-messages" id="chat-messages">
             <div class="msg assistant">
               <div class="msg-avatar">AI</div>
               <div class="msg-bubble">
-                <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by OpenAI.</p>
+                <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by GPT-6.1 Sol from OpenAI.</p>
                 <p>Drop a file, pick a quick prompt on the left, or just start typing. I've got live context on your pipeline, clients, and everything else we've worked on.</p>
                 <p>What are we building today?</p>
               </div>
@@ -2853,20 +2855,25 @@ const SB = {
 // ══════════════════════════════════════════════════════
 
 // ============ AUTH ============
-// v3: access code is stored as a SHA-256 hash only. The plaintext
-// code no longer appears anywhere in this file's source.
-const PASS_HASH = '30ad888919b84dbbc82f856937b027f4fbc610aee0e26431ca73af85e06dac5a';
-async function sha256Hex(s){
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
-  return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2,'0')).join('');
-}
+let labAccessCode = '';
 
 async function doLogin() {
   const val = document.getElementById('pw-input').value.replace(/\s/g,'').toUpperCase();
   let ok = false;
-  try { ok = (await sha256Hex(val)) === PASS_HASH; }
-  catch(e) { alert('Secure login requires HTTPS. Open The Lab at its https:// address.'); return; }
+  try {
+    const response = await fetch(LAB_AI_GATEWAY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Lab-Access-Code': val },
+      body: JSON.stringify({ action: 'authenticate' })
+    });
+    const result = await response.json();
+    ok = response.ok && result.ok;
+    if (!ok && response.status !== 401) throw new Error(result.error?.message || 'Login is unavailable.');
+  } catch(e) { alert(e.message || 'Unable to connect. Please try again.'); return; }
   if (ok) {
+    labAccessCode = val;
+    document.getElementById('pw-input').value = '';
+    refreshLabAIStatus();
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     // Show sync indicator
@@ -2902,11 +2909,12 @@ async function doLogin() {
 
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-function doLogout() {
+async function doLogout() {
   // Summarize current chat before logging out
   if (currentChatId && chatHistory.length >= 2) {
-    summarizeCurrentChat();
+    await summarizeCurrentChat();
   }
+  labAccessCode = "";
   document.getElementById('app').classList.remove('visible');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('pw-input').value = '';
@@ -2918,7 +2926,7 @@ function doLogout() {
     <div class="msg assistant">
       <div class="msg-avatar">AI</div>
       <div class="msg-bubble">
-        <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by OpenAI.</p>
+        <p>Welcome to <strong>The Lab</strong>, Todd. I'm your built-in AI assistant powered by GPT-6.1 Sol from OpenAI.</p>
         <p>Drop a file, pick a quick prompt on the left, or just start typing.</p>
         <p>What are we building today?</p>
       </div>
@@ -3049,7 +3057,7 @@ function checkApiKey() {
   return true;
 }
 function saveApiKey() {
-  alert('API keys are now managed server-side through the Lab AI Gateway. Set OPENAI_API_KEY in Netlify or Supabase secrets.');
+  changeApiKey();
 }
 
 // ============ MOBILE SIDEBAR TOGGLE ============
@@ -3210,7 +3218,7 @@ async function summarizeCurrentChat() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-5-mini',
+        model: 'fast',
         max_tokens: 300,
         messages: [{
           role: 'user',
@@ -3368,7 +3376,7 @@ async function sendMessage() {
       userContent.push({ type: 'image', source: { type: 'base64', media_type: f.type, data: b64 } });
     } else if (f.type === 'application/pdf') {
       const b64 = f.data.split(',')[1];
-      userContent.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } });
+      userContent.push({ type: 'document', filename: f.name, source: { type: 'base64', media_type: 'application/pdf', data: b64 } });
     } else {
       userContent.push({ type: 'text', text: `[File: ${f.name}]\n${f.data}` });
     }
@@ -3377,7 +3385,7 @@ async function sendMessage() {
   if (text) userContent.push({ type: 'text', text });
 
   // Add to history
-  chatHistory.push({ role: 'user', content: userContent.length === 1 && userContent[0].type === 'text' ? text : userContent });
+  chatHistory.push({ role: 'user', content: userContent.length === 1 && userContent[0].type === 'text' ? userContent[0].text : userContent });
 
   input.value = '';
   input.style.height = 'auto';
@@ -3401,7 +3409,7 @@ Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd w
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-5',
+        model: 'standard',
         max_tokens: 2048,
         system: systemPrompt,
         messages: chatHistory
@@ -3412,7 +3420,7 @@ Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd w
     removeTyping();
 
     if (data.error) {
-      appendMsg('assistant', `API error: ${data.error.message || 'Unknown error'}. If this is an auth issue, click Logout and log back in to re-enter your key.`);
+      appendMsg('assistant', `API error: ${data.error.message || 'Unknown error'}. If your session expired, log out and enter your Lab access code again.`);
       chatHistory.pop(); // remove the failed user message from history
     } else {
       const reply = data.content?.map(b => b.text || '').filter(Boolean).join('\n') || 'Empty response. Try again.';
@@ -3423,7 +3431,7 @@ Be direct, practical, and results-oriented. Skip excessive preamble. Give Todd w
     }
   } catch (err) {
     removeTyping();
-    appendMsg('assistant', `Connection error: ${err.message}. Check your network and API key.`);
+    appendMsg('assistant', `Connection error: ${err.message}. Please check your connection and try again.`);
     chatHistory.pop();
   }
 
@@ -4011,7 +4019,7 @@ Write the ${type === 'email' ? 'email with a subject line' : type === 'facebook'
     const res = await fetch(LAB_AI_GATEWAY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-5', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
+      body: JSON.stringify({ model: 'standard', max_tokens: 600, messages: [{ role: 'user', content: prompt }] })
     });
     const data = await res.json();
     document.getElementById('ob-content').textContent = data.content?.[0]?.text || 'No response.';
@@ -4217,7 +4225,7 @@ async function bpSend() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-5',
+        model: 'standard',
         max_tokens: 1500,
         system: BP_SYSTEM,
         messages: bpMessages
@@ -5083,7 +5091,7 @@ Only include real articles you actually found with working URLs. Target 12 items
     const res = await fetch(LAB_AI_GATEWAY, {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ model:'gpt-5-mini', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}], messages:[{role:'user',content:prompt}] })
+      body: JSON.stringify({ model:'fast', max_tokens:4000, tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}], messages:[{role:'user',content:prompt}] })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
@@ -5502,7 +5510,7 @@ async function lfApi(prompt){
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
     body: JSON.stringify({
-      model:'gpt-5', max_tokens:4000,
+      model:'standard', max_tokens:4000,
       tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],
       messages:[{role:'user',content:prompt}]
     })
@@ -5704,9 +5712,28 @@ switchPanel = function(id, btn){
 </script>
 
 <script>
+function modelDisplayName(model) {
+  return ({'gpt-6.1-sol':'GPT-6.1 Sol','gpt-6-luna':'GPT-6 Luna'})[model] || model;
+}
+async function refreshLabAIStatus(showDetails = false) {
+  const el = document.getElementById('lab-ai-status');
+  try {
+    const response = await fetch(LAB_AI_GATEWAY);
+    const info = await response.json();
+    const summary = info.configured
+      ? 'OpenAI · ' + modelDisplayName(info.model) + ' · ' + modelDisplayName(info.fast_model) + ' for lighter tasks'
+      : 'AI setup needs attention: server credentials are not available.';
+    if (el) el.textContent = summary;
+    if (showDetails) alert(summary + '\n\nKeys are kept on the server. Usage costs are estimates; check your provider billing for totals.');
+  } catch (e) {
+    if (el) el.textContent = 'AI connection unavailable. Please try again.';
+    if (showDetails) alert('Unable to reach the Lab AI service. Please try again.');
+  }
+}
+
 /* changeApiKey — nav ⚙ key button */
 function changeApiKey(){
-  alert('The Lab now uses the secure server-side OpenAI gateway. Set or rotate OPENAI_API_KEY in Netlify environment variables or Supabase Edge Function secrets.');
+  refreshLabAIStatus(true);
 }
 
 </script>
@@ -5825,7 +5852,7 @@ Use the latest available market data. price is a number in USD, changePct is the
     const res = await fetch(LAB_AI_GATEWAY, {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ model:'gpt-5-mini', max_tokens:1500, tools:[{type:'web_search_20250305',name:'web_search',max_uses:1}], messages:[{role:'user',content:prompt}] })
+      body: JSON.stringify({ model:'fast', max_tokens:1500, tools:[{type:'web_search_20250305',name:'web_search',max_uses:1}], messages:[{role:'user',content:prompt}] })
     });
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
@@ -6250,6 +6277,8 @@ renderToday = function(){
 
 /* ---------- pricing (per 1M tokens; estimates, update if plans change) ---------- */
 const LAB_PRICING = {
+  'gpt-6.1-sol': { inM: 2.00, outM: 10.00 },
+  'gpt-6-luna': { inM: 0.10, outM: 0.50 },
   'gpt-5': { inM: 1.25, outM: 10.00 },
   'gpt-5-mini': { inM: 0.25, outM: 2.00 },
   _searchPerCall: 0.01  // $10 per 1,000 web searches
@@ -6264,7 +6293,7 @@ function saveUsageLog(log){
 
 function logApiUsage(usage, model){
   try {
-    const m = LAB_PRICING[model] || LAB_PRICING['gpt-5'];
+    const m = LAB_PRICING[model] || LAB_PRICING['gpt-6.1-sol'];
     const searches = (usage.server_tool_use && usage.server_tool_use.web_search_requests) || 0;
     const inTok = usage.input_tokens || 0;
     const outTok = usage.output_tokens || 0;
@@ -6322,12 +6351,23 @@ function showCostDetail(){
   window._labFetchWrapped = true;
   const _origFetch = window.fetch;
   window.fetch = async function(url, opts){
-    const resp = await _origFetch.apply(this, arguments);
+    const isLabAI = typeof url === 'string' && url === LAB_AI_GATEWAY;
+    if (isLabAI) {
+      opts = { ...(opts || {}) };
+      const headers = new Headers(opts.headers || {});
+      if (labAccessCode && !headers.has('X-Lab-Access-Code')) headers.set('X-Lab-Access-Code', labAccessCode);
+      opts.headers = headers;
+    }
+    const resp = await _origFetch.call(this, url, opts);
     try {
       if (typeof url === 'string' && url.indexOf('/.netlify/functions/lab-ai') !== -1){
         const clone = resp.clone();
         clone.json().then(data => {
           if (data && data.usage) logApiUsage(data.usage, data.model);
+          if (data?.model) {
+            const status = document.getElementById('lab-ai-status');
+            if (status) status.textContent = 'OpenAI · Last response: ' + modelDisplayName(data.model);
+          }
         }).catch(function(){});
       }
     } catch(e){}

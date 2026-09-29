@@ -1,3 +1,18 @@
 [build]
   command = "bash scripts/build-public.sh"
   publish = "dist"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/lab.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "private, no-store"
+
+[[redirects]]
+  from = "/lab"
+  to = "/lab.html"
+  status = 301
