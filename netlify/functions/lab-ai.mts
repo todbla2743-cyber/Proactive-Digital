@@ -55,7 +55,7 @@ function providerError(status: number, code?: string) {
 export default async function handler(req: Request) {
   const cfg = settings();
   if (req.method === 'GET') {
-    return json(200, { provider: 'OpenAI', model: cfg.model, fast_model: cfg.fast, configured: Boolean(cfg.key), access_configured: Boolean(cfg.accessHash), version: '2026-09-29' });
+    return json(200, { provider: 'OpenAI', model: cfg.model, fast_model: cfg.fast, configured: Boolean(cfg.key), access_configured: Boolean(cfg.accessHash), version: '2026-09-29.1' });
   }
   if (req.method !== 'POST') return error(405, 'Method not allowed.');
   const origin = req.headers.get('origin');
