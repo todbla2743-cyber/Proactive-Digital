@@ -9,7 +9,7 @@ const json = (status: number, data: unknown) => Response.json(data, {status,head
 export async function applyClientImport(store: ReturnType<typeof getStore>, raw: string | undefined) {
   if (!raw) return;
   const previous = await store.get('client-import-20260929', {type:'json'});
-  if (previous?.importVersion === 'v2') return;
+  if (previous?.importVersion === 'v3') return;
   const seed = JSON.parse(raw) as Record<string, unknown>;
   if (!Array.isArray(seed.records) || seed.records.length < 6 ||
       !Array.isArray(seed.project_notes) || !Array.isArray(seed.activity)) return;
@@ -20,14 +20,29 @@ export async function applyClientImport(store: ReturnType<typeof getStore>, raw:
     const existing = Array.isArray(current?.value) ? current.value as Record<string, unknown>[] : [];
     const ids = new Set(existing.map(item=>String(item.id)));
     const names = key==='records' ? new Set(existing.map(item=>String(item.name||'').trim().toLowerCase())) : new Set<string>();
+    let changed = false;
+    if(key==='records'){
+      for(const item of additions as Record<string, unknown>[]){
+        if(item.status!=='won') continue;
+        const match=existing.find(row=>String(row.name||'').trim().toLowerCase()===String(item.name||'').trim().toLowerCase());
+        if(!match) continue;
+        if(match.status!=='won'){
+          match.status='won';
+          match.statusHistory=[...(Array.isArray(match.statusHistory)?match.statusHistory:[]),{status:'won',at:new Date().toISOString()}];
+          changed=true;
+        }
+        if(!match.notes && item.notes){match.notes=item.notes;changed=true;}
+        if(!match.nextAction && item.nextAction){match.nextAction=item.nextAction;changed=true;}
+      }
+    }
     const newItems = additions.filter((item: Record<string, unknown>)=>{
       if (!item || !item.id || ids.has(String(item.id))) return false;
       if (key==='records' && names.has(String(item.name||'').trim().toLowerCase())) return false;
       return true;
     });
-    if (newItems.length) await store.setJSON(key,{value:[...existing,...newItems],updatedAt:new Date().toISOString()});
+    if (newItems.length || changed) await store.setJSON(key,{value:[...existing,...newItems],updatedAt:new Date().toISOString()});
   }
-  await store.setJSON('client-import-20260929',{importVersion:'v2',appliedAt:new Date().toISOString()});
+  await store.setJSON('client-import-20260929',{importVersion:'v3',appliedAt:new Date().toISOString()});
 }
 export function makeHandler(openStore: typeof getStore = getStore) {
   return async (req: Request, context?: {deploy?:{context?:string}}) => {
