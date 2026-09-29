@@ -1,0 +1,33 @@
+// Run with JSDOM_MODULE pointing to an installed jsdom module.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const {JSDOM}=await import(process.env.JSDOM_MODULE||'jsdom');
+const html=fs.readFileSync(new URL('../lab.html',import.meta.url),'utf8');
+const dom=new JSDOM(html,{url:'https://lab.example/lab.html',runScripts:'outside-only'});
+const w=dom.window;w.setInterval=()=>0;w.alert=message=>{throw Error(message)};w.confirm=()=>false;
+w.eval=source=>vm.runInContext(source,dom.getInternalVMContext());
+w.fetch=async()=>({ok:true,json:async()=>({configured:true,access_configured:true,model:'gpt-6.1-sol'})});
+w.localStorage.setItem('lab_sb_migrated','1');
+for(const script of w.document.querySelectorAll('script:not([src])'))w.eval(script.textContent);
+w.eval(fs.readFileSync(new URL('../lab-workspace.js',import.meta.url),'utf8'));
+w.eval('initApp()');
+const $=id=>w.document.getElementById(id);
+function submit(id){$(id).dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));}
+$('ws-add-note').click();$('ws-note-project').value='Project Alpha';$('ws-note-title').value='Confirmed scope';$('ws-note-body').value='Keep this project decision across chats.';submit('ws-note-form');
+assert.match($('ws-note-list').textContent,/Confirmed scope/);
+assert.match(w.eval('buildMemoryContext()'),/Keep this project decision/);
+assert.equal(JSON.parse(w.localStorage.getItem('lab_project_notes')).length,1);
+await new Promise(resolve=>setTimeout(resolve,0));
+assert.match($('workspace-save-text').textContent,/cloud save pending/);
+$('ws-add-activity').click();$('ws-activity-project').value='Project Alpha';$('ws-activity-title').value='Verify notification';$('ws-activity-date').value='2026-09-29';$('ws-activity-owner').value='Todd';$('ws-activity-status').value='open';submit('ws-activity-form');
+$('ws-month').value='2026-09';$('ws-month').dispatchEvent(new w.Event('input'));
+assert.match($('ws-activity-list').textContent,/Verify notification/);
+w.document.querySelector('[data-complete-activity]').click();
+assert.equal(w.LabWorkspace.snapshot().activity[0].status,'done');
+assert(w.LabWorkspace.snapshot().activity[0].completedAt);
+const backup=w.LabWorkspace.snapshot();w.LabWorkspace.restore(backup);assert.equal(w.LabWorkspace.snapshot().project_notes.length,1);
+w.eval("appendMsg('assistant','# Test heading\\n- **bold** bullet')");assert(w.document.querySelector('.msg-bubble h4'));assert(w.document.querySelector('.msg-bubble li strong'));
+const query=w.document.querySelectorAll('.nav-tab');Array.from(query).find(b=>b.textContent==='Activity').click();assert($('panel-activity').classList.contains('active'));
+console.log('UI passed: notes/context, activity/completion/filter, backup round-trip, failure status, navigation, Markdown.');
+w.close();

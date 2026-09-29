@@ -3026,7 +3026,8 @@ function appendMsg(role, content, fileNames = []) {
     });
   }
 
-  bubble.innerHTML += escapeHtml(content).replace(/\n/g, '<br>');
+  bubble.innerHTML += role === 'assistant' && window.LabWorkspaceCore
+    ? LabWorkspaceCore.markdown(content) : escapeHtml(content).replace(/\n/g, '<br>');
   div.appendChild(avatar);
   div.appendChild(bubble);
   container.appendChild(div);
@@ -3195,11 +3196,10 @@ function renderChatHistoryList() {
 
 async function summarizeCurrentChat() {
   if (!apiKey || chatHistory.length < 2) return;
+  const summaryChatId = currentChatId;
+  const summaryTitle = savedChats.find(c => c.id === summaryChatId)?.title || generateChatTitle(chatHistory[0]?.content);
   // Don't resummarize if already summarized for this chat
-  if (currentChatId && memorySummaries.find(m => m.chatId === currentChatId)) {
-    // Update existing
-    memorySummaries = memorySummaries.filter(m => m.chatId !== currentChatId);
-  }
+  // Keep the previous summary until its replacement succeeds.
 
   // Build a plain-text transcript
   const transcript = chatHistory.map(m => {
@@ -3228,10 +3228,11 @@ async function summarizeCurrentChat() {
     });
     const data = await resp.json();
     if (data.content?.[0]?.text) {
+      memorySummaries = memorySummaries.filter(m => m.chatId !== summaryChatId);
       memorySummaries.unshift({
-        chatId: currentChatId,
+        chatId: summaryChatId,
         date: new Date().toISOString(),
-        title: savedChats.find(c => c.id === currentChatId)?.title || 'Untitled',
+        title: summaryTitle,
         summary: data.content[0].text.trim()
       });
       // Keep max 30 summaries
@@ -3262,7 +3263,7 @@ function viewMemory() {
       return `
         <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-            <div style="font-size:0.85rem;font-weight:600;color:var(--text);">${escapeHtml(m.title)}</div>
+            <div style="font-size:0.85rem;font-weight:600;color:var(--text);">${escapeHtml(m.title && m.title !== 'Untitled' ? m.title : 'Saved conversation summary')}</div>
             <div style="font-size:0.7rem;color:var(--text-dim);font-family:var(--mono);">${d}</div>
           </div>
           <div style="font-size:0.78rem;color:var(--text-mid);line-height:1.5;white-space:pre-wrap;">${escapeHtml(m.summary)}</div>
@@ -5111,7 +5112,8 @@ Only include real articles you actually found with working URLs. Target 12 items
    ============================================================ */
 function exportBackup(){
   const backup = {
-    version:'2.0', exportDate:nowISO(),
+    version:'3.0', exportDate:nowISO(),
+    workspace: window.LabWorkspace?.snapshot(),
     records: RECORDS,
     savedChats: (typeof savedChats!=='undefined'?savedChats:[]),
     memorySummaries: (typeof memorySummaries!=='undefined'?memorySummaries:[]),
@@ -5137,9 +5139,11 @@ Records: ${b.records?.length || 0}
 Chats: ${b.savedChats?.length || 0}
 This will REPLACE your current Lab data. Continue?`;
       if (!confirm(msg)){ event.target.value=''; return; }
+      if (b.workspace && window.LabWorkspace) LabWorkspace.restore(b.workspace);
       if (b.records){ RECORDS = b.records; saveRecords(); localStorage.setItem('lab_migrated_v2','true'); }
       if (b.savedChats && typeof savedChats!=='undefined'){ savedChats = b.savedChats; localStorage.setItem('lab_saved_chats', JSON.stringify(savedChats)); }
       if (b.memorySummaries && typeof memorySummaries!=='undefined'){ memorySummaries = b.memorySummaries; localStorage.setItem('lab_memory_summaries', JSON.stringify(memorySummaries)); }
+      saveChatState();
       if (b.stocks && typeof stocks!=='undefined'){ stocks = b.stocks; localStorage.setItem('lab_stocks', JSON.stringify(stocks)); }
       if (b.newsCache) localStorage.setItem('lab_news_cache', JSON.stringify(b.newsCache));
       renderToday(); renderPipeline(); renderLeads(); renderClients(); updateClientStats();
@@ -6436,5 +6440,6 @@ initApp = function(){
 };
 
 </script>
+<script src="/lab-workspace.js?v=20260929.2"></script>
 </body>
 </html>

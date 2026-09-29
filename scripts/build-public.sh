@@ -26,6 +26,7 @@ files=(
   img/pvb.webp
   index.html
   lab.html
+  lab-workspace.js
   monthly-website-support.html
   mra-case-study.html
   pay.html
