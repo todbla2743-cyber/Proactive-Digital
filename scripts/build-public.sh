@@ -25,6 +25,7 @@ files=(
   img/pvb-desktop.jpg
   img/pvb.webp
   index.html
+  lab.html
   monthly-website-support.html
   mra-case-study.html
   pay.html
