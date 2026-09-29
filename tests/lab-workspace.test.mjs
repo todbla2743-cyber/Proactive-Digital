@@ -29,6 +29,12 @@ test('active project notes survive beyond recent chat memory and completed activ
  const text=context([{title:'Old decision',project:'MRA',body:'Keep this',updatedAt:'2026-09-01',archived:false},{title:'Retired',body:'Do not use',archived:true}], [{project:'Tribe',title:'Test notification',date:'2026-09-29',status:'open',details:'Not yet verified',due:'',owner:''}]);
  assert(text.includes('Keep this'));assert(!text.includes('Do not use'));assert(text.includes('Not yet verified'));assert(text.includes('Due: Not set'));
 });
+test('a different collection queued during a save is flushed in the same run',async()=>{
+ let release;const block=new Promise(resolve=>release=resolve);const keys=[];
+ const queue=createSync({storage:storage(),status:()=>{},write:async key=>{keys.push(key);if(keys.length===1)await block;}});
+ const saving=queue.save('project_notes',[]);await queue.save('activity',[]);release();await saving;
+ assert.deepEqual(keys,['project_notes','activity']);assert(!queue.hasPending());
+});
 test('summary uses the original conversation identity even when New Chat resets state',async()=>{
  const html=fs.readFileSync(new URL('../lab.html',import.meta.url),'utf8');
  const fn=html.slice(html.indexOf('async function summarizeCurrentChat()'),html.indexOf('function buildMemoryContext()'));

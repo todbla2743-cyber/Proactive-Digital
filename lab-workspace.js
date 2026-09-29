@@ -36,7 +36,10 @@
       if(running)return;running=true;
       let failed=false;
       try{
-        for(const key of Object.keys(pending)){
+        const attempted=new Set();
+        let key;
+        while((key=Object.keys(pending).find(candidate=>!attempted.has(candidate)))){
+          attempted.add(key);
           while(pending[key]){
             const entry=pending[key];status('saving','Saving to cloud…');
             try{await write(key,entry.value);}catch{failed=true;break;}
