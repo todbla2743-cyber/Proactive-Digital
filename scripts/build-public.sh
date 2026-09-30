@@ -24,6 +24,11 @@ files=(
   img/mra-desktop.jpg
   img/pvb-desktop.jpg
   img/pvb.webp
+  food-businesses.css
+  food-businesses.js
+  virginia-food-businesses.html
+  private-chefs-virginia.html
+  catering-businesses-virginia.html
   index.html
   lab.html
   lab-workspace.js
