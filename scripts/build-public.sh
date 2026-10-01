@@ -29,6 +29,15 @@ files=(
   virginia-food-businesses.html
   private-chefs-virginia.html
   catering-businesses-virginia.html
+  site.css
+  homepage.css
+  site-navigation.js
+  services.html
+  investment.html
+  digital-support.html
+  process-faq.html
+  work.html
+  contact.html
   index.html
   lab.html
   lab-workspace.js
