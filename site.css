@@ -1,35 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Design Fusion Case Study | Custom Apparel Website &amp; Order Request System</title>
-<meta name="description" content="See how Get Proactive Digital helped Design Fusion create a cleaner online order request experience for custom apparel, embroidery, garment options, and customer inquiries.">
-<meta name="keywords" content="custom apparel website design, online order request website, custom embroidery website design, apparel business website">
-<meta name="author" content="Proactive Digital"><meta name="robots" content="index, follow">
-<link rel="canonical" href="https://getproactivedigital.com/design-fusion-case-study.html">
-<meta property="og:title" content="Design Fusion Case Study | Custom Apparel Website &amp; Order Request System"><meta property="og:description" content="See how Get Proactive Digital helped Design Fusion create a cleaner online order request experience for custom apparel, embroidery, garment options, and customer inquiries."><meta property="og:type" content="website"><meta property="og:url" content="https://getproactivedigital.com/design-fusion-case-study.html"><meta property="og:image" content="https://getproactivedigital.com/social-preview.png">
-<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Design Fusion Case Study | Custom Apparel Website &amp; Order Request System"><meta name="twitter:description" content="See how Get Proactive Digital helped Design Fusion create a cleaner online order request experience for custom apparel, embroidery, garment options, and customer inquiries."><meta name="twitter:image" content="https://getproactivedigital.com/social-preview.png">
-<script type="application/ld+json">{
-  "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  "name": "Proactive Digital",
-  "url": "https://getproactivedigital.com",
-  "areaServed": [
-    "Chesterfield VA",
-    "Richmond VA",
-    "Midlothian VA",
-    "Henrico VA",
-    "Petersburg VA"
-  ],
-  "serviceType": "Website design and monthly website support",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Chesterfield",
-    "addressRegion": "VA",
-    "addressCountry": "US"
-  }
-}</script>
-<style>
+
 /* ─────────────────────────────────────────
    DESIGN SYSTEM
 ───────────────────────────────────────── */
@@ -230,13 +199,18 @@ img { display: block; max-width: 100% }
 .tbtn:hover { border-color:var(--teal) }
 .nav-cta { padding:9px 20px; font-size:13.5px }
 .ham {
-  display:none; flex-direction:column; gap:4.5px;
-  padding:8px; border-radius:8px;
-  background:var(--surf); border:1px solid var(--bdr);
+  display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  width:46px; height:46px; padding:0; border-radius:11px;
+  background:rgba(0,191,199,.10); border:1px solid rgba(0,191,199,.55);
+  box-shadow:0 0 0 3px rgba(0,191,199,.06);
 }
 .ham span {
-  display:block; width:20px; height:1.5px;
-  background:var(--tx); border-radius:2px; transition:all .3s;
+  display:block; width:24px; height:2.5px;
+  background:var(--tx); border-radius:3px; transition:all .3s;
+}
+.ham:hover, .ham:focus-visible {
+  background:rgba(0,191,199,.18); border-color:var(--teal);
+  outline:none;
 }
 .mob {
   display:none; position:fixed; top:65px; left:0; right:0;
@@ -1133,6 +1107,48 @@ img { display: block; max-width: 100% }
 }
 
 /* ─────────────────────────────────────────
+   FAQ
+───────────────────────────────────────── */
+#faq { background:var(--bg2) }
+.faq-grid {
+  margin-top:56px; display:flex; flex-direction:column; gap:12px; max-width:780px;
+}
+.faq-item {
+  background:var(--surf); border:1px solid var(--bdr);
+  border-radius:12px; overflow:hidden;
+  transition:border-color .25s var(--ease);
+}
+.faq-item:hover { border-color:var(--bdr2) }
+.faq-item[open] { border-color:rgba(0,191,199,.25) }
+.faq-item summary {
+  list-style:none; padding:20px 24px;
+  font-family:var(--fh); font-weight:600;
+  font-size:16px; letter-spacing:-.2px; color:var(--tx);
+  display:flex; justify-content:space-between; align-items:center;
+  gap:16px; cursor:none;
+  transition:color .2s;
+}
+.faq-item summary::-webkit-details-marker { display:none }
+.faq-item summary:hover { color:var(--teal) }
+.faq-item[open] summary { color:var(--teal) }
+.faq-item summary::after {
+  content:'+'; font-size:20px; font-weight:300;
+  color:var(--tx2); flex-shrink:0; line-height:1;
+  transition:transform .25s var(--ease), color .2s;
+}
+.faq-item[open] summary::after { transform:rotate(45deg); color:var(--teal) }
+.faq-body {
+  padding:0 24px 20px; color:var(--tx2);
+  font-size:15px; line-height:1.8; border-top:1px solid var(--bdr);
+  padding-top:16px;
+}
+.faq-cta {
+  margin-top:40px; color:var(--tx2); font-size:15px;
+}
+.faq-cta a { color:var(--teal); font-weight:600; transition:opacity .2s }
+.faq-cta a:hover { opacity:.75 }
+
+/* ─────────────────────────────────────────
    FOOTER
 ───────────────────────────────────────── */
 footer {
@@ -1163,6 +1179,182 @@ footer {
 .foot-leg a { color:var(--tx2); font-size:13px; transition:color .2s }
 .foot-leg a:hover { color:var(--teal) }
 
+
+/* V8 — BUILDING TRUST */
+.lab-link { color:var(--teal)!important; border:1px solid rgba(0,191,199,.22); }
+.project-actions { margin-top:16px; padding-top:14px; border-top:1px solid var(--bdr); }
+.project-link { color:var(--teal); font-size:13px; font-weight:700; letter-spacing:.2px; }
+.project-link:hover { text-decoration:underline; }
+.growth-journey { background:var(--bg2); }
+.journey-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:56px; }
+.journey-step { position:relative; background:var(--surf); border:1px solid var(--bdr); border-radius:14px; padding:28px 22px; min-height:220px; }
+.journey-step span { display:inline-flex; width:34px; height:34px; border-radius:50%; align-items:center; justify-content:center; background:var(--grad); color:white; font-size:11px; font-weight:800; margin-bottom:22px; }
+.journey-step h3 { font-family:var(--fh); font-size:19px; margin-bottom:10px; }
+.journey-step p { color:var(--tx2); font-size:13.5px; line-height:1.7; }
+.release-section { background:var(--bg); padding-top:70px; padding-bottom:70px; }
+.release-card { display:grid; grid-template-columns:1.3fr .8fr; gap:50px; background:linear-gradient(130deg,rgba(0,191,199,.08),rgba(33,89,224,.08)); border:1px solid rgba(0,191,199,.2); border-radius:18px; padding:46px; }
+.release-card h2 { font-family:var(--fh); font-size:38px; line-height:1.1; }
+.release-card h3 { color:var(--teal); font-family:var(--fh); font-size:21px; margin:8px 0 16px; }
+.release-card p { color:var(--tx2); max-width:650px; }
+.release-notes { display:flex; flex-direction:column; gap:12px; justify-content:center; }
+.release-notes strong { color:var(--tx); text-transform:uppercase; letter-spacing:1.5px; font-size:11px; }
+.release-notes span { color:var(--tx2); font-size:14px; padding:10px 0; border-bottom:1px solid var(--bdr); }
+@media(max-width:960px){ .journey-grid{grid-template-columns:1fr 1fr}.release-card{grid-template-columns:1fr} }
+@media(max-width:600px){ .journey-grid{grid-template-columns:1fr}.release-card{padding:30px 22px}.release-card h2{font-size:30px} }
+
+
+/* ─────────────────────────────────────────
+   v8.3 — BUILT FOR GROWTH
+───────────────────────────────────────── */
+.hm-n.words { font-size:22px; letter-spacing:-.4px }
+
+/* Proactive Pulse / connected system visual */
+.hero-system {
+  position:relative; overflow:hidden;
+  background:linear-gradient(145deg,rgba(22,29,46,.96),rgba(8,11,19,.98));
+  border:1px solid var(--bdr2); border-radius:18px;
+  padding:22px; min-height:420px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+.hero-system::after {
+  content:''; position:absolute; width:250px; height:250px; border-radius:50%;
+  right:-100px; bottom:-120px; background:rgba(0,191,199,.10); filter:blur(18px);
+}
+.hs-top { display:flex; align-items:center; justify-content:space-between; gap:18px; padding-bottom:18px; border-bottom:1px solid var(--bdr); position:relative; z-index:1 }
+.hs-live { display:flex; align-items:center; gap:8px; text-transform:uppercase; letter-spacing:1.3px; font-size:10px; font-weight:700; color:var(--tx3) }
+.hs-live i { width:7px; height:7px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 0 rgba(0,191,199,.5); animation:hsPulse 2.4s infinite }
+.hs-url { font-family:monospace; font-size:10px; color:var(--tx2); background:var(--bg2); border:1px solid var(--bdr); padding:5px 9px; border-radius:6px }
+.hs-copy { padding:34px 4px 26px; position:relative; z-index:1 }
+.hs-kicker { color:var(--teal); text-transform:uppercase; letter-spacing:1.8px; font-size:10px; font-weight:700 }
+.hs-copy h3 { font-family:var(--fh); font-size:34px; line-height:1.05; letter-spacing:-1px; margin:8px 0 12px }
+.hs-copy p { color:var(--tx2); font-size:13px; line-height:1.7; max-width:430px }
+.system-flow { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; position:relative; padding:12px 0 24px; z-index:1 }
+.system-flow::before { content:''; position:absolute; left:12.5%; right:12.5%; top:31px; height:2px; background:linear-gradient(90deg,rgba(0,191,199,.25),#00BFC7,#2159E0,rgba(33,89,224,.25)); background-size:180% 100%; animation:pulseLine 3.4s linear infinite; box-shadow:0 0 18px rgba(0,191,199,.16) }
+.sf-node { text-align:center; position:relative; z-index:2 }
+.sf-dot { width:16px; height:16px; border-radius:50%; margin:11px auto 14px; display:block; background:var(--bg); border:3px solid var(--teal); box-shadow:0 0 0 5px rgba(0,191,199,.08),0 0 18px rgba(0,191,199,.22) }
+.sf-node:nth-child(3) .sf-dot,.sf-node:nth-child(4) .sf-dot { border-color:#4B75E8; box-shadow:0 0 0 5px rgba(33,89,224,.08),0 0 18px rgba(33,89,224,.22) }
+.sf-node strong { display:block; font-family:var(--fh); font-size:12px; line-height:1.2 }
+.sf-node small { display:block; color:var(--tx2); font-size:9px; margin-top:4px; line-height:1.35 }
+.system-footer { display:flex; flex-wrap:wrap; gap:8px; padding-top:18px; border-top:1px solid var(--bdr); position:relative; z-index:1 }
+.system-footer span { font-size:10px; font-weight:600; letter-spacing:.4px; color:var(--tx3); padding:6px 10px; border-radius:999px; border:1px solid var(--bdr); background:rgba(255,255,255,.02) }
+@keyframes hsPulse { 0%{box-shadow:0 0 0 0 rgba(0,191,199,.5)} 70%{box-shadow:0 0 0 8px rgba(0,191,199,0)} 100%{box-shadow:0 0 0 0 rgba(0,191,199,0)} }
+@keyframes pulseLine { from{background-position:100% 0} to{background-position:-80% 0} }
+
+/* Portfolio proof without price anchoring */
+.port-value.port-focus { display:block }
+.pv-focus { color:var(--tx); font-size:13px; font-weight:600; line-height:1.55; margin-top:3px }
+
+/* Solution-based engagements */
+.engagement-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin:56px 0 34px }
+.eng-card { background:var(--surf); border:1px solid var(--bdr); border-radius:16px; padding:34px; position:relative; overflow:hidden; transition:all .3s var(--ease) }
+.eng-card::before { content:''; position:absolute; inset:0 auto auto 0; width:100%; height:2px; background:var(--grad); opacity:.65 }
+.eng-card:hover { transform:translateY(-4px); border-color:rgba(0,191,199,.22); box-shadow:0 18px 50px rgba(0,0,0,.18) }
+.eng-kicker { color:var(--teal); text-transform:uppercase; letter-spacing:1.8px; font-size:10px; font-weight:800; margin-bottom:12px }
+.eng-card h3 { font-family:var(--fh); font-size:25px; line-height:1.15; letter-spacing:-.5px; margin-bottom:12px }
+.eng-card > p { color:var(--tx2); font-size:14px; line-height:1.75; min-height:74px }
+.eng-card ul { list-style:none; margin:24px 0; display:grid; gap:9px }
+.eng-card li { color:var(--tx3); font-size:13px; padding-left:18px; position:relative }
+.eng-card li::before { content:'↗'; color:var(--teal); position:absolute; left:0; top:0; font-size:11px }
+.eng-best { border-top:1px solid var(--bdr); padding-top:18px; color:var(--tx2); font-size:11px; line-height:1.55 }
+.scope-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; border:1px solid var(--bdr); background:var(--bdr); border-radius:14px; overflow:hidden; margin:0 0 64px }
+.scope-strip > div { background:var(--bg2); padding:24px }
+.scope-strip strong { display:block; font-family:var(--fh); font-size:15px; margin-bottom:6px }
+.scope-strip span { display:block; color:var(--tx2); font-size:12px; line-height:1.65 }
+.stat-word { font-size:31px }
+
+/* Proof should feel intentional, not like a placeholder grid */
+.testi-g { grid-template-columns:repeat(2,minmax(0,1fr)); max-width:900px; margin:64px auto 0 }
+
+@media(max-width:960px) {
+  .engagement-grid { grid-template-columns:1fr }
+  .scope-strip { grid-template-columns:1fr }
+  .testi-g { grid-template-columns:1fr }
+}
+@media(max-width:600px) {
+  .hm-n.words { font-size:20px }
+  .eng-card { padding:28px 22px }
+}
+@media(prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto }
+  *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important }
+}
+
+/* ─────────────────────────────────────────
+   v8.3.1 — POSITIONING + MOBILE NAV REFINEMENT
+───────────────────────────────────────── */
+/* Compact release signature — visible, but secondary to the customer journey */
+.release-section { padding-top:36px; padding-bottom:36px; }
+.release-card.release-signature {
+  display:flex; align-items:center; justify-content:space-between; gap:28px;
+  background:linear-gradient(120deg,rgba(0,191,199,.065),rgba(33,89,224,.055));
+  border:1px solid rgba(0,191,199,.16); border-radius:14px; padding:22px 26px;
+}
+.release-signature .release-copy { min-width:0; }
+.release-signature .release-label {
+  color:var(--teal); text-transform:uppercase; letter-spacing:1.7px;
+  font-size:9.5px; font-weight:800; margin-bottom:5px;
+}
+.release-signature h2 { font-family:var(--fh); font-size:20px; line-height:1.2; letter-spacing:-.35px; margin:0 0 4px; }
+.release-signature p { color:var(--tx2); font-size:12.5px; line-height:1.55; margin:0; max-width:720px; }
+.release-tags { display:flex; flex-wrap:wrap; gap:7px; justify-content:flex-end; flex-shrink:0; }
+.release-tags span {
+  border:1px solid var(--bdr); background:rgba(255,255,255,.025); color:var(--tx2);
+  border-radius:999px; padding:7px 10px; font-size:9.5px; font-weight:700;
+  letter-spacing:.45px; white-space:nowrap;
+}
+
+/* Transparent pricing without making the entry price the brand */
+.investment-intro { max-width:760px; margin:0 auto; text-align:center; }
+.eng-card .eng-price {
+  display:flex; align-items:baseline; gap:7px; margin:16px 0 6px;
+  font-family:var(--fh); color:var(--tx);
+}
+.eng-price strong {
+  font-size:38px; line-height:1; letter-spacing:-1.5px; font-weight:650;
+  background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.eng-price span { color:var(--tx2); font-size:11px; font-weight:650; letter-spacing:.5px; text-transform:uppercase; }
+.eng-price.custom strong { font-size:29px; letter-spacing:-.8px; }
+.investment-note {
+  margin:0 0 58px; padding:16px 20px; border-radius:12px; border:1px solid var(--bdr);
+  background:var(--bg); color:var(--tx2); text-align:center; font-size:12px; line-height:1.65;
+}
+.investment-note strong { color:var(--tx); }
+
+/* Mobile navigation: reserve space for the logo and keep controls inside the viewport */
+html, body { overflow-x:hidden; }
+.nav-logo { min-width:0; flex:0 1 auto; }
+.nav-logo svg { width:220px; max-width:100%; height:auto; display:block; }
+.nav-r { flex:0 0 auto; min-width:0; }
+@media(max-width:760px) {
+  #nav { padding:11px 0; }
+  #nav.scrolled { padding:9px 0; }
+  .nav-in { padding:0 14px; gap:10px; width:100%; }
+  .nav-logo { flex:1 1 auto; overflow:hidden; }
+  .nav-logo svg { width:184px; max-width:100%; }
+  .nav-cta { display:none; }
+  .nav-r { gap:7px; }
+  .tbtn { width:42px; height:42px; flex:0 0 42px; }
+  .ham { display:flex; width:46px; height:46px; flex:0 0 46px; }
+  .mob { top:64px; padding:18px 14px 24px; max-height:calc(100vh - 64px); overflow-y:auto; }
+}
+@media(max-width:430px) {
+  .nav-logo svg { width:164px; }
+  .tbtn { width:40px; height:40px; flex-basis:40px; }
+  .ham { width:44px; height:44px; flex-basis:44px; }
+  .ham span { width:22px; }
+}
+@media(max-width:360px) {
+  .nav-in { padding:0 10px; gap:6px; }
+  .nav-logo svg { width:148px; }
+  .nav-r { gap:5px; }
+}
+
+@media(max-width:760px) {
+  .release-card.release-signature { align-items:flex-start; flex-direction:column; gap:14px; padding:20px; }
+  .release-tags { justify-content:flex-start; }
+}
+
 /* ─────────────────────────────────────────
    RESPONSIVE
 ───────────────────────────────────────── */
@@ -1185,6 +1377,8 @@ footer {
 }
 @media(max-width:600px) {
   .sec { padding:80px 0 }
+  .chip { font-size:11px; padding:4px 10px; letter-spacing:.1px }
+  .hero-tag { padding-right:16px }
   .srv-grid { grid-template-columns:1fr }
   .fr { grid-template-columns:1fr }
   .byo { padding:28px 22px }
@@ -1193,100 +1387,29 @@ footer {
   .hero-metrics { flex-wrap:wrap; gap:20px }
   .stats-g { grid-template-columns:1fr 1fr }
 }
-</style>
-
-<style>
-.seo-hero { padding:150px 0 80px; position:relative; overflow:hidden; }
-.seo-hero .wrap { position:relative; z-index:2; }
-.seo-kicker { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:999px; border:1px solid var(--bdr); background:var(--surf); color:var(--teal); font-family:var(--fb); font-weight:600; font-size:12px; letter-spacing:.8px; text-transform:uppercase; margin-bottom:22px; }
-.seo-title { font-family:var(--fh); font-weight:600; font-size:clamp(40px,7vw,78px); line-height:1.02; letter-spacing:-2px; margin:0 0 24px; max-width:980px; }
-.seo-lead { font-size:clamp(18px,2vw,22px); line-height:1.7; color:var(--mut); max-width:850px; margin-bottom:34px; }
-.seo-actions { display:flex; gap:14px; flex-wrap:wrap; }
-.seo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:42px; }
-.seo-card { background:var(--surf); border:1px solid var(--bdr); border-radius:16px; padding:30px; }
-.seo-card h3 { font-family:var(--fh); font-size:24px; margin:0 0 12px; }
-.seo-card p, .seo-card li { color:var(--mut); line-height:1.7; }
-.seo-card ul { margin:10px 0 0; padding-left:20px; }
-.seo-content { max-width:940px; }
-.seo-content h2 { font-family:var(--fh); font-size:clamp(30px,4vw,46px); margin:0 0 16px; }
-.seo-content p { color:var(--mut); line-height:1.8; font-size:17px; margin:0 0 22px; }
-.seo-list { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:28px; }
-.seo-pill { border:1px solid var(--bdr); background:var(--surf); border-radius:12px; padding:16px 18px; color:var(--tx); }
-.seo-cta { background:linear-gradient(135deg,rgba(0,191,199,.13),rgba(33,89,224,.13)); border:1px solid rgba(0,191,199,.25); border-radius:22px; padding:42px; margin-top:50px; }
-.seo-cta h2 { font-family:var(--fh); font-size:clamp(32px,4vw,48px); margin:0 0 14px; }
-.seo-cta p { color:var(--mut); line-height:1.8; max-width:760px; }
-@media(max-width:900px){ .seo-grid,.seo-list{grid-template-columns:1fr} .seo-hero{padding-top:130px} }
-</style>
-
-</head><body>
-
-<div id="cdot"></div><div id="cring"></div><div id="pgbar"></div>
-<nav id="nav"><div class="nav-in"><a href="/index.html#hero" class="nav-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 54" height="36">
-        <defs>
-          <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#00BFC7"/>
-            <stop offset="100%" stop-color="#2159E0"/>
-          </linearGradient>
-        </defs>
-        <g transform="translate(0,6)">
-          <rect x="0" y="0" width="3.5" height="30" rx="1.75" fill="url(#lg)"/>
-          <rect x="0" y="0" width="15" height="3.5" rx="1.75" fill="url(#lg)"/>
-          <rect x="0" y="15" width="15" height="3.5" rx="1.75" fill="url(#lg)"/>
-          <rect x="11.5" y="0" width="3.5" height="18.5" rx="1.75" fill="url(#lg)"/>
-          <polygon points="19,18 26,25 19,32" fill="none" stroke="url(#lg)" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
-        </g>
-        <text x="38" y="28" font-family="'Outfit',sans-serif" font-weight="500" font-size="21" letter-spacing="3" fill="var(--tx)">PROACTIVE</text>
-        <text x="39.5" y="46" font-family="'Outfit',sans-serif" font-weight="300" font-size="13" letter-spacing="9" fill="url(#lg)">DIGITAL</text>
-      </svg></a><nav class="nav-menu"><a href="/services.html">Services</a>
-<a href="/index.html#portfolio">Portfolio</a>
-<a href="/investment.html">Pricing</a>
-<a href="/digital-support.html">Monthly Support</a>
-<a href="/small-business-website-design-richmond-va.html">Local SEO Page</a>
-<a href="/design-fusion-case-study.html" aria-current="page">Case Study</a></nav><div class="nav-r"><button class="tbtn" id="tbtn" onclick="toggleTheme()" title="Toggle theme">🌙</button><a href="/contact.html" class="btn btn-p nav-cta">Get Started</a><button class="ham" onclick="toggleMob()"><span></span><span></span><span></span></button></div></div></nav>
-<div class="mob" id="mob"><a href="/services.html" onclick="closeMob()">Services</a>
-<a href="/index.html#portfolio" onclick="closeMob()">Portfolio</a>
-<a href="/investment.html" onclick="closeMob()">Pricing</a>
-<a href="/digital-support.html" onclick="closeMob()">Monthly Support</a>
-<a href="/small-business-website-design-richmond-va.html" onclick="closeMob()">Local SEO Page</a>
-<a href="/design-fusion-case-study.html" onclick="closeMob()">Case Study</a>
-<a href="/contact.html" onclick="closeMob()">Get Started →</a></div>
 
 
-<section class="seo-hero"><div class="mesh"></div><div class="hgrid"></div><div class="wrap">
-  <div class="seo-kicker">Client Case Study</div><h1 class="seo-title">Design Fusion Case Study: A Cleaner Online Order Request System</h1><p class="seo-lead">Design Fusion needed more than a basic website. They needed a cleaner way for customers to view services, submit order details, choose options, and start the custom apparel request process.</p><div class="seo-actions"><a class="btn btn-p" href="/contact.html">Build a Similar System</a><a class="btn btn-g" href="/index.html#portfolio">View More Work</a></div>
-</div></section>
-<section class="sec"><div class="wrap"><div class="seo-grid">
-  <div class="seo-card rv"><h3>The problem</h3><p>Custom apparel orders can get messy when details come through texts, DMs, screenshots, and scattered messages. Sizes, colors, artwork status, quantities, and payment details can easily get lost.</p></div>
-  <div class="seo-card rv"><h3>The solution</h3><p>Get Proactive Digital helped create a mobile-friendly experience with service options, garment selections, color choices, artwork/design status, contact details, and a more organized request process.</p></div>
-  <div class="seo-card rv"><h3>The business value</h3><p>The site gives customers a clearer way to start an order and gives the business a more organized way to collect request details before final review.</p></div>
-</div></div></section>
-<section class="sec"><div class="wrap"><div class="seo-content rv"><h2>Built for how custom apparel businesses actually work</h2><p>Custom apparel and embroidery businesses often need flexibility. Customers may bring their own garment, request different services, choose different colors, upload or reference artwork, and ask for pricing before the order is finalized.</p><p>The goal was to support that process with a website that feels professional, works well on mobile, and helps reduce back-and-forth before the owner reviews the request.</p></div></div></section>
-<section class="sec"><div class="wrap"><div class="seo-content rv"><h2>What this shows about Get Proactive Digital</h2><p>This project shows that Get Proactive Digital can help small businesses clean up customer communication, lead intake, quote requests, online ordering, and digital presentation. The work is not just about making pages look nice. It is about making the business easier to understand and easier to contact.</p><div class="seo-list"><div class="seo-pill">Custom order request flow</div><div class="seo-pill">Mobile-friendly customer experience</div><div class="seo-pill">Service and garment selection</div><div class="seo-pill">Artwork/design status collection</div><div class="seo-pill">Cleaner customer intake</div><div class="seo-pill">Professional brand presentation</div></div></div></div></section>
-<section class="sec"><div class="wrap"><div class="seo-content rv"><div class="seo-cta"><h2>Need a cleaner way to collect orders or customer requests?</h2><p>If your business is losing time through scattered texts, DMs, screenshots, and unclear requests, a cleaner website flow can help customers give you the right information earlier.</p><a class="btn btn-p" href="/contact.html">Request a Digital System</a></div></div></div></section>
-
-
-<footer>
-  <div class="wrap">
-    <div class="foot-g">
-      <div class="foot-brand"><h3 style="font-family:var(--fh);font-size:26px;margin-bottom:12px;">Proactive Digital</h3><p>Clean, modern websites and practical digital support for small businesses in Chesterfield, Richmond, and beyond.</p></div>
-      <div class="foot-col"><div class="foot-col-t">SEO Pages</div><a href="/small-business-website-design-richmond-va.html">Small Business Website Design</a><a href="/monthly-website-support.html">Monthly Website Support</a><a href="/design-fusion-case-study.html">Design Fusion Case Study</a></div>
-      <div class="foot-col"><div class="foot-col-t">Main Site</div><a href="/services.html">Services</a><a href="/index.html#portfolio">Portfolio</a><a href="/investment.html">Pricing</a><a href="/contact.html">Contact</a></div>
-      <div class="foot-col"><div class="foot-col-t">Connect</div><a href="mailto:hello@getproactivedigital.com">Email Us</a><a href="https://calendly.com/getproactivedigital" target="_blank">Book a Call</a></div>
-    </div>
-    <div class="foot-bot"><div class="foot-copy">© 2026 Proactive Digital · A TRB Family Business · Veteran-Owned</div><div class="foot-leg"><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a></div></div>
-  </div>
-</footer>
-
-
-<script>
-const cdot=document.getElementById('cdot'),cring=document.getElementById('cring');let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;if(cdot){cdot.style.left=mx+'px';cdot.style.top=my+'px';}});
-(function animR(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;if(cring){cring.style.left=rx+'px';cring.style.top=ry+'px';}requestAnimationFrame(animR);})();
-document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>document.body.classList.add('cursor-hover'));el.addEventListener('mouseleave',()=>document.body.classList.remove('cursor-hover'));});
-window.addEventListener('scroll',()=>{const pct=(scrollY/(document.documentElement.scrollHeight-innerHeight))*100;const pg=document.getElementById('pgbar'); if(pg) pg.style.width=pct+'%'; const nav=document.getElementById('nav'); if(nav) nav.classList.toggle('scrolled',scrollY>40);},{ passive:true });
-const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in') });},{threshold:.1});document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(el=>ro.observe(el));
-function toggleTheme(){const d=document.documentElement;const dark=d.getAttribute('data-theme')==='dark';d.setAttribute('data-theme',dark?'light':'dark');document.getElementById('tbtn').textContent=dark?'🌙':'☀️';}
-function toggleMob(){document.getElementById('mob').classList.toggle('open')}function closeMob(){document.getElementById('mob').classList.remove('open')}
-</script>
-
-<div style="text-align:center;padding:18px;background:#080B13;color:#8A96B0;font:13px Arial">Proactive Digital · v8 Building Trust</div></body></html>
+/* Portfolio: real desktop captures, September 2026 */
+#portfolio{scroll-margin-top:90px}
+#portfolio .port-grid{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:22px;gap:28px}
+#portfolio .port-card{min-width:0;display:flex;flex-direction:column}
+#portfolio .portfolio-featured{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;margin-top:42px;border-color:rgba(0,191,199,.3)}
+#portfolio .portfolio-preview{display:block;min-width:0;background:var(--bg2);border-bottom:1px solid var(--bdr)}
+#portfolio .portfolio-preview img{display:block;width:100%;height:auto;aspect-ratio:1348/926;object-fit:contain}
+#portfolio .browser-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;color:var(--tx2);background:var(--bg2);font-size:11px;border-bottom:1px solid var(--bdr)}
+#portfolio .browser-bar>span:nth-child(2){flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#portfolio .browser-dots{color:var(--teal);font-size:8px;letter-spacing:2px;white-space:nowrap}
+#portfolio .port-info{padding:26px;display:flex;flex-direction:column;flex:1}
+#portfolio .portfolio-featured .port-info{padding:32px}
+#portfolio .portfolio-featured .port-t{font-size:clamp(24px,2.4vw,34px);line-height:1.15;margin:12px 0 16px}
+#portfolio .port-t{font-size:22px;line-height:1.3;margin:10px 0}
+#portfolio .port-d{font-size:14px;line-height:1.75}
+#portfolio .project-status{color:var(--teal);text-transform:uppercase;font-size:10px;letter-spacing:1.8px;font-weight:700}
+#portfolio .project-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:auto;padding-top:20px}
+#portfolio .project-link{display:inline-flex;align-items:center;gap:8px;min-height:44px}
+#portfolio .visit-link{border:1px solid var(--bdr2);border-radius:8px;padding:8px 14px;background:var(--bg2)}
+#portfolio a:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+#portfolio .portfolio-heading{margin-top:54px}
+#portfolio .portfolio-heading h3{font:600 27px var(--fh);margin:0 0 8px}
+#portfolio .portfolio-heading p{color:var(--tx2);font-size:14px;line-height:1.7}
+@media(max-width:760px){#portfolio .port-grid{grid-template-columns:1fr}#portfolio .portfolio-featured{grid-template-columns:1fr}#portfolio .port-info,#portfolio .portfolio-featured .port-info{padding:22px}#portfolio .browser-bar{font-size:10px}#portfolio .portfolio-heading{margin-top:38px}}
