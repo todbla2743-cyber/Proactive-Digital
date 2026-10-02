@@ -106,6 +106,7 @@
   const today=()=>{const date=new Date();return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');};
   const style=document.createElement('style');
   style.textContent=`
+    @media(min-width:769px){.topnav{gap:12px}.topnav .nav-tabs{min-width:0;overflow-x:auto;flex:1}.topnav .nav-brand,.topnav .nav-right{flex-shrink:0}}
     #workspace-save-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:8px 24px;background:var(--surface);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-mid)}
     #workspace-save-bar[data-state=error]{color:#ffb780}#workspace-save-bar[data-state=saved]{color:var(--success)}
     .ws-wrap{max-width:1200px;margin:auto;padding:24px}.ws-wrap h2{font-size:24px;margin-bottom:8px}.ws-muted{color:var(--text-mid);font-size:13px;line-height:1.6}
