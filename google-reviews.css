@@ -5,6 +5,7 @@
   --review-muted: var(--muted, #aeb9ce);
   --review-accent: var(--teal, #00bfc7);
   --review-line: var(--bdr2, var(--line, rgba(255,255,255,.12)));
+  scroll-margin-top: 96px;
   padding: 60px 0;
   color: var(--review-text);
   background: var(--bg, #080b13);
