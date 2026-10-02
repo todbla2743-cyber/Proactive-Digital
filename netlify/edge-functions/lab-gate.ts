@@ -1,28 +1,41 @@
 import type { Context } from "@netlify/edge-functions";
 
 // Password-gate for the private Lab dashboard.
-// The password lives in the LAB_PASSWORD environment variable
-// (Netlify dashboard > Site configuration > Environment variables),
-// never in this repo.
+// Uses the SAME access code as the Lab API functions: the SHA256 of the
+// code must match LAB_ACCESS_CODE_SHA256 (already set in Netlify).
+// One code unlocks both the page and the Lab's data.
 
 const REALM = "Proactive Digital Lab";
 const USERNAME = "todd";
 
-export default async function gate(request: Request, context: Context) {
-  const password = Netlify.env.get("LAB_PASSWORD");
+async function sha256Hex(input: string): Promise<string> {
+  const data = new TextEncoder().encode(input);
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(hash)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 
-  if (!password) {
-    return new Response(
-      "The Lab is not configured yet. Set the LAB_PASSWORD environment variable in Netlify.",
-      { status: 503, headers: { "content-type": "text/plain" } }
-    );
+export default async function gate(request: Request, context: Context) {
+  const expected = Netlify.env.get("LAB_ACCESS_CODE_SHA256") ?? "";
+
+  if (!/^[a-f0-9]{64}$/i.test(expected)) {
+    return new Response("The Lab access code is not configured yet.", {
+      status: 503,
+      headers: { "content-type": "text/plain" },
+    });
   }
 
   const header = request.headers.get("authorization") ?? "";
   let authorized = false;
   if (header.startsWith("Basic ")) {
     try {
-      authorized = atob(header.slice(6)) === `${USERNAME}:${password}`;
+      const decoded = atob(header.slice(6));
+      const sep = decoded.indexOf(":");
+      if (sep > 0 && decoded.slice(0, sep) === USERNAME) {
+        const code = decoded.slice(sep + 1).replace(/\s/g, "").toUpperCase();
+        authorized = (await sha256Hex(code)).toLowerCase() === expected.toLowerCase();
+      }
     } catch {
       authorized = false;
     }
