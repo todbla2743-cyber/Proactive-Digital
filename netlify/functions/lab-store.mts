@@ -2,7 +2,7 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { getStore } from '@netlify/blobs';
 
 declare const Netlify: { env: { get(name: string): string | undefined } };
-const keys = ['records','pipeline','clients','leads','proof','swipe','settings','saved_chats','memory_summaries','project_notes','activity'];
+const keys = ['records','pipeline','clients','leads','proof','swipe','settings','saved_chats','memory_summaries','project_notes','activity','management'];
 const json = (status: number, data: unknown) => Response.json(data, {status,headers:{'Cache-Control':'no-store'}});
 // A one-time, private migration supplied through a production-only Netlify
 // environment variable. Client details never enter the published site bundle.

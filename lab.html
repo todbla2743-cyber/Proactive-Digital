@@ -4634,14 +4634,17 @@ function renderPipeline(){
       const idx = beltRank(stage);
       return `<div class="pipeline-card">
         <div class="pc-name">${escapeHtml(d.name)}</div>
+        <button type="button" class="ws-btn" data-lab-edit-record="${escapeHtml(d.id).replace(/'/g,'&#39;')}">Edit details</button>
+        ${d.notes ? `<div class="pc-next">${escapeHtml(d.notes)}</div>` : ''}
         <div class="pc-meta">
           <span>${d.niche || (d.source||'lead')}</span>
           <span class="pc-value">${d.dealValue ? '$'+Number(d.dealValue).toLocaleString() : ''}</span>
         </div>
         ${d.nextAction ? `<div class="pc-next">→ ${escapeHtml(d.nextAction)}</div>` : ''}
+        <div class="pc-next">Priority: ${escapeHtml(d.priority||'normal')}${d.nextActionDate?' · Due: '+escapeHtml(d.nextActionDate):''}</div>
         <div class="pc-move">
           ${idx > 0 ? `<button class="pc-arrow" title="Move back" onclick="setStatus('${d.id}','${BELT[idx-1]}')">←</button>` : '<span></span>'}
-          ${d.status!=='won' ? `<button class="pc-arrow" title="Lose" onclick="if(confirm('Mark ${escapeHtml(d.name)} as lost?'))setStatus('${d.id}','lost')">✕</button>` : '<span></span>'}
+          ${d.status!=='won' ? `<button class="pc-arrow" title="Lose" data-lab-lose-record="${escapeHtml(d.id).replace(/'/g,'&#39;')}">✕</button>` : '<span></span>'}
           ${idx < BELT.length-1 ? `<button class="pc-arrow fwd" title="Advance" onclick="setStatus('${d.id}','${BELT[idx+1]}')">→</button>` : '<span></span>'}
         </div>
       </div>`;
@@ -6440,6 +6443,9 @@ initApp = function(){
 };
 
 </script>
-<script src="/lab-workspace.js?v=20260929.3"></script>
+<script src="/lab-workspace.js?v=20261002.1"></script>
+<script src="/lab-pipeline-editor.js?v=20261002.1"></script>
+<script src="/lab-management.js?v=20261002.1"></script>
+<script src="/lab-order-review.js?v=20261002.1"></script>
 </body>
 </html>

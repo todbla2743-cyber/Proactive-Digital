@@ -1,0 +1,32 @@
+{
+  "commit": "7e8b65b6ca1fdd14729563092f6e0c574d4577c9",
+  "regions": [
+    {
+      "label": "Design Fusion original feed",
+      "start": "// \u2500\u2500 Design Fusion Live Feed \u2500\u2500",
+      "end": "/* ============================================================\n   THE LAB v2",
+      "sha256": "f904572a59b0ec4ecee8683bda7d076dcccd1124309a152b6f9c922929d90e6d"
+    },
+    {
+      "label": "Legacy client/payment functions",
+      "start": "function renderClients(){",
+      "end": "/* ============================================================",
+      "sha256": "1e990ad06c50fbcc4728dbd724b11b0435feb1e629ce5aa156e01ea3277cee61"
+    },
+    {
+      "label": "Lab login and logout",
+      "start": "async function doLogin()",
+      "end": "function switchPanel(",
+      "sha256": "d0db128ea26aa8b0d4f7c3d31dc07ce9856a9f9c08bc7d6e05cdf53f4da95919"
+    }
+  ],
+  "files": {
+    "netlify.toml": "18209caf26a2128a6fea9096a8b1f81f1bc867d8d00ae36f47d30238872b10ba",
+    "_redirects": "3609a28ca4e9dc2a7016910a1b92e58fa0c1b2e9fe1d9241dfa3034b963f3faf",
+    "pay.html": "99f959cf39a40de9c9b7a17e9feb66338dfda3508b5854a6f96a70f420b41ada",
+    "site-navigation.js": "0d836f1cb1646adb7656f025f22b5117e6a949fa0d876db01708f3b4642eeccf",
+    "netlify/functions/lab-ai.mts": "65ab0e0188675727fa6b5a4595b46debe640f2915a54ffba489d28c04a3266de",
+    "package.json": "f4442119643dec38c8fa073eff4af5dce8f6204f01b1233991df5ba2541e05fa",
+    "package-lock.json": "f45777fca64f1419b370d664e5d2f826e566263a866fba33e44e138f056f2a32"
+  }
+}

@@ -1,0 +1,53 @@
+Lab draft-PR verification · October 2, 2026
+Base: 7e8b65b6ca1fdd14729563092f6e0c574d4577c9
+Node v24.19.0 · synthetic data · mocked network
+✔ default Activity view includes all open months and hides completed/archived history (17.39598ms)
+✔ explicit next action, priority and nullable due preserve legacy data and history (0.821943ms)
+✔ complete, reopen and complete again append transitions and preserve prior completion history (0.518213ms)
+✔ AI activity context includes explicit action and priority without manufacturing a due date (0.624903ms)
+✔ legacy entries without dates/status remain visible and usable in AI context (0.580403ms)
+✔ anonymous and incorrect access codes cannot spend API credit (10.221745ms)
+✔ health reports model configuration without revealing credentials (0.793846ms)
+✔ chat preserves text/image/PDF inputs and uses the bounded main model (3.508386ms)
+✔ light tasks route to Luna, honor gateway base URL, and count real searches (5.01696ms)
+✔ invalid input is rejected before provider call and upstream errors are sanitized (33.208174ms)
+✔ no-text output becomes a recoverable error instead of a false success (1.181583ms)
+✔ Design Fusion feed and legacy payment code remain byte-identical to verified production source (5.29506ms)
+✔ Lab order review has no network, persistence, original renderer override, or mutation calls (0.37463ms)
+✔ isolated management collection round trips without writes to existing collections (18.721958ms)
+✔ independent client has optional contact, description, amount and dates; no payments inferred (2.509968ms)
+✔ only explicitly active positive plans effective today count toward the isolated monthly total (1.778784ms)
+✔ edits preserve unknown top-level and nested fields and existing history, without mutating input (0.565224ms)
+✔ validation prevents invalid dates, amounts, duplicates and unsupported plan statuses (0.666257ms)
+✔ pipeline detail edit preserves identity, finances, sales stage and unknown history (2.759655ms)
+✔ order review labels candidates without mutating or recalculating source orders (1.33343ms)
+✔ review generation is fail-closed outside explicit preview contexts (72.901723ms)
+✔ generated copy removes real credentials, defaults, personal prompts, and live endpoints (35.455932ms)
+✔ private workspace storage rejects missing/wrong access and foreign origins before any data access (13.8628ms)
+✔ workspace save/load round-trip and preview isolation (8.35409ms)
+✔ production client import adds missing work once without replacing existing records or preview data (4.746433ms)
+✔ storage outage never returns a false save confirmation (1.19097ms)
+✔ Markdown formats headings/lists/code while keeping HTML and unsafe links inert (1.950528ms)
+✔ failed cloud saves remain pending across reload, then retry successfully (35.16581ms)
+✔ a newer edit during an in-flight save is sent last and cannot be cleared early (1.659208ms)
+✔ active project notes survive beyond recent chat memory and completed activities stay distinct (0.39693ms)
+✔ a different collection queued during a save is flushed in the same run (0.578362ms)
+✔ summary uses the original conversation identity even when New Chat resets state (4.30928ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 928.284989
+[Lab v2] Migrated to unified records: { total: 4, fromLeads: 0, fromPipeline: 4, fromClients: 0 }
+UI passed: notes/context, activity/completion/filter, backup round-trip, failure status, navigation, Markdown.
+[Lab v2] Migrated to unified records: { total: 4, fromLeads: 0, fromPipeline: 4, fromClients: 0 }
+Activity UI passed: cross-month defaults, optional dates, legacy preservation, cancel, repeated save/complete, filters, reopening history, context, escaping, backup round-trip, offline queue.
+Pipeline UI passed: edit/cancel/Escape/repeated save, escaped content, legacy field and finance preservation; order review read-only.
+UI passed: independent clients, optional care, MRR, same-name safety, edit/cancel/repeated submit, escaping, references, legacy isolation, backup, quota failure, pending queue, reload, delayed load, and offline-first protection.
+Lab review UI passed: generated page/parser boot, no live storage/network, synthetic care/activity/pipeline edits, seeded order review, blocked links/forms, and reset on reload at both paths.
+Built offline synthetic Lab review: /tmp/lab-synthetic-build/lab-review.html
+Syntax, preview build, production isolation and whitespace: PASS
+Hosted browser QA: pending draft deployment

@@ -42,6 +42,9 @@ files=(
   index.html
   lab.html
   lab-workspace.js
+  lab-pipeline-editor.js
+  lab-management.js
+  lab-order-review.js
   monthly-website-support.html
   mra-case-study.html
   pay.html
@@ -57,3 +60,11 @@ mkdir -p "$publish_dir"
 for file in "${files[@]}"; do
   install -D -m 644 "$repo_root/$file" "$publish_dir/$file"
 done
+
+# Preview builds get a network-isolated, synthetic-data Lab. Production never
+# includes the fixture and continues to publish the original authenticated Lab.
+rm -f "$publish_dir/lab-review.html" "$publish_dir/lab-review-harness.js"
+if [[ "${CONTEXT:-}" == "deploy-preview" || "${CONTEXT:-}" == "branch-deploy" ]]; then
+  node "$repo_root/scripts/build-lab-review.mjs" "$publish_dir"
+  cp "$publish_dir/lab-review.html" "$publish_dir/lab.html"
+fi
