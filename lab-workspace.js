@@ -59,20 +59,51 @@
     }
     return {save,flush,hasPending:()=>Object.keys(pending).length>0,overlay:store=>({...store,...Object.fromEntries(Object.entries(pending).map(([k,v])=>[k,v.value]))})};
   }
+  const activityPriorities=['high','normal','low'];
+  const activityPriority=item=>activityPriorities.includes(item.priority)?item.priority:'normal';
+  const activityIsOpen=item=>!['done','archived'].includes(item.status);
+  // Filters concern the activity date. Open work starts across all dates so an
+  // unfinished item does not disappear when the calendar turns to a new month.
+  function filterActivities(items,{month='',status='open',project=''}={}){
+    const query=project.trim().toLowerCase();
+    return items.filter(item=>(!month||String(item.date||'').startsWith(month))&&
+      (!query||String(item.project||'').toLowerCase().includes(query))&&
+      (status==='all'||(status==='done'?item.status==='done':status==='archived'?item.status==='archived':activityIsOpen(item))))
+      .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+  }
+  // Keep older/unknown fields and previous completion/status history on edits.
+  // A blank due date is explicitly null, never silently replaced with today.
+  function updateActivity(previous,values,at){
+    const item={...previous,...values,updatedAt:at};
+    item.due=item.due||null;
+    item.nextAction=values.nextAction??previous?.nextAction??'';
+    item.priority=activityPriority(item);
+    if(!previous)item.createdAt=at;
+    if(!previous||previous.status!==item.status){
+      const history=[...(Array.isArray(previous?.statusHistory)?previous.statusHistory:[])];
+      // Older entries may have only completedAt. Retain that evidence before a
+      // later completion replaces the latest-completion timestamp.
+      if(previous?.completedAt&&!history.some(entry=>entry?.status==='done'&&entry.at===previous.completedAt))history.push({status:'done',at:previous.completedAt});
+      item.statusHistory=[...history,{status:item.status,at}];
+    }
+    if(item.status==='done')item.completedAt=previous?.status==='done'&&previous.completedAt?previous.completedAt:at;
+    else item.completedAt=previous?.completedAt||null;
+    return item;
+  }
   function context(notes,activities){
     const pinned=notes.filter(n=>!n.archived).map(n=>`[${n.project} — ${n.title}; updated ${n.updatedAt?.slice(0,10)}]\n${n.body}`).join('\n\n');
-    const ordered=[...activities].sort((a,b)=>b.date.localeCompare(a.date));
+    const ordered=[...activities].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
     const open=ordered.filter(a=>a.status!=='done'&&a.status!=='archived').slice(0,50);
     const recent=ordered.filter(a=>a.status==='done').slice(0,20);
-    const rows=[...open,...recent].map(a=>`[${a.date}] ${a.project}: ${a.title} | ${a.status} | Owner: ${a.owner||'Unassigned'} | Due: ${a.due||'Not set'}\n${a.details}`).join('\n');
+    const rows=[...open,...recent].map(a=>`[${a.date||'Date not recorded'}] ${a.project}: ${a.title} | ${a.status||'open'} | Priority: ${activityPriority(a)} | Owner: ${a.owner||'Unassigned'} | Due: ${a.due||'Not set'} | Next action: ${a.nextAction||'Not set'}\n${a.details||''}`).join('\n');
     return '\n\nPINNED PROJECT NOTES (persistent reference; dates matter):\n'+(pinned||'None')+'\n\nACTIVITY AND FOLLOW-UPS (up to 50 open and 20 recent completed entries; not billing records):\n'+(rows||'None');
   }
-  root.LabWorkspaceCore={markdown,createSync,context};
+  root.LabWorkspaceCore={markdown,createSync,context,filterActivities,updateActivity};
   if(typeof document==='undefined')return;
   const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key)||'null')??fallback;}catch{return fallback;}};
   let notes=read('lab_project_notes',[]), activities=read('lab_activity',[]);
   const $=id=>document.getElementById(id);
-  const today=()=>new Date().toLocaleDateString('en-CA');
+  const today=()=>{const date=new Date();return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');};
   const style=document.createElement('style');
   style.textContent=`
     #workspace-save-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:8px 24px;background:var(--surface);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-mid)}
@@ -137,7 +168,7 @@
     const panel=document.createElement('div');panel.id='panel-'+id;panel.className='panel';panel.innerHTML=html;document.querySelector('#app .content').appendChild(panel);
   }
   mount('project-notes','Project Notes',`<div class="ws-wrap"><h2>Project notes</h2><p class="ws-muted">Active notes stay in AI context across conversations. Keep confirmed facts and decisions here; archive notes when they are no longer current.</p><div class="ws-toolbar"><button class="ws-btn" id="ws-add-note">Add project note</button><label>Show archived <input type="checkbox" id="ws-show-archived"></label></div><form id="ws-note-form" class="ws-editor" hidden><input type="hidden" id="ws-note-id"><div class="ws-fields"><label>Project<input id="ws-note-project" required maxlength="100"></label><label>Note title<input id="ws-note-title" required maxlength="150"></label></div><label>Confirmed facts and decisions<textarea id="ws-note-body" required maxlength="6000"></textarea></label><p class="ws-muted">Include the source and date. Active notes have a combined 30,000-character limit.</p><button class="ws-btn" type="submit">Save project note</button> <button class="ws-btn" type="button" id="ws-note-cancel">Cancel</button></form><div id="ws-note-list" class="ws-grid"></div></div>`);
-  mount('activity','Activity',`<div class="ws-wrap"><h2>Activity & follow-ups</h2><p class="ws-muted">A dated record of work and next actions. Track completion separately from sales and payments.</p><div class="ws-toolbar"><button class="ws-btn" id="ws-add-activity">Add activity</button><label>Month<input id="ws-month" type="month"></label><label>Status<select id="ws-status-filter"><option value="all">All statuses</option><option value="open">Open follow-ups</option><option value="done">Completed</option></select></label><label>Project<input id="ws-project-filter" placeholder="All projects"></label><button class="ws-btn" id="ws-all-dates">All dates</button></div><p id="ws-activity-count" class="ws-muted"></p><form id="ws-activity-form" class="ws-editor" hidden><input type="hidden" id="ws-activity-id"><div class="ws-fields"><label>Project<input id="ws-activity-project" required maxlength="100"></label><label>Activity title<input id="ws-activity-title" required maxlength="150"></label><label>Activity date<input id="ws-activity-date" type="date" required></label><label>Owner<input id="ws-activity-owner" maxlength="100" placeholder="Unassigned"></label><label>Due date (optional)<input id="ws-activity-due" type="date"></label><label>Status<select id="ws-activity-status"><option value="open">Open</option><option value="in_progress">In progress</option><option value="waiting">Waiting</option><option value="done">Completed</option><option value="archived">Archived</option></select></label></div><label>Details, evidence, or next action<textarea id="ws-activity-details" maxlength="2000"></textarea></label><button class="ws-btn" type="submit">Save activity</button> <button class="ws-btn" type="button" id="ws-activity-cancel">Cancel</button></form><div id="ws-activity-list" class="ws-grid"></div></div>`);
+  mount('activity','Activity',`<div class="ws-wrap"><h2>Activity & follow-ups</h2><p class="ws-muted">A dated record of work and next actions. Track completion separately from sales and payments.</p><div class="ws-toolbar"><button class="ws-btn" id="ws-add-activity">Add activity</button><label>Activity month<input id="ws-month" type="month" aria-describedby="ws-activity-filter-help"></label><label>Status<select id="ws-status-filter"><option value="open">Open follow-ups</option><option value="all">All statuses</option><option value="done">Completed</option><option value="archived">Archived</option></select></label><label>Project<input id="ws-project-filter" placeholder="All projects"></label><button class="ws-btn" id="ws-all-dates">All dates</button><button class="ws-btn" id="ws-open-work">Reset to open work</button></div><p id="ws-activity-filter-help" class="ws-muted">Open follow-ups start across all dates, newest activity first. Activity month filters when the work was recorded, not its due date. Choose Completed or All statuses to review past work.</p><p id="ws-activity-count" class="ws-muted" role="status" aria-live="polite"></p><form id="ws-activity-form" class="ws-editor" hidden><input type="hidden" id="ws-activity-id"><div class="ws-fields"><label>Project<input id="ws-activity-project" required maxlength="100"></label><label>Activity title<input id="ws-activity-title" required maxlength="150"></label><label>Activity date<input id="ws-activity-date" type="date" required></label><label>Owner<input id="ws-activity-owner" maxlength="100" placeholder="Unassigned"></label><label>Priority<select id="ws-activity-priority"><option value="high">High</option><option value="normal" selected>Normal</option><option value="low">Low</option></select></label><label>Due date (optional)<input id="ws-activity-due" type="date"></label><label>Status<select id="ws-activity-status"><option value="open">Open</option><option value="in_progress">In progress</option><option value="waiting">Waiting</option><option value="done">Completed</option><option value="archived">Archived</option></select></label></div><label>Next action<input id="ws-activity-nextAction" maxlength="1000" placeholder="The next concrete step"></label><label>Details and evidence<textarea id="ws-activity-details" maxlength="2000"></textarea></label><p class="ws-muted">Leave the due date empty when no deadline is confirmed. Earlier details stay available when adding a next action.</p><button class="ws-btn" type="submit">Save activity</button> <button class="ws-btn" type="button" id="ws-activity-cancel">Cancel</button></form><div id="ws-activity-list" class="ws-grid"></div></div>`);
   const save=(key,value)=>{try{localStorage.setItem('lab_'+key,JSON.stringify(value));SB.save(key,value);return true;}catch{status('error','Could not save on this device. Export a backup before closing.');return false;}};
   const uid=()=>crypto.randomUUID();
   const activeSize=items=>items.filter(n=>!n.archived).reduce((n,item)=>n+item.body.length+item.title.length+item.project.length,0);
@@ -149,17 +180,51 @@
   $('ws-add-note').onclick=()=>editNote();$('ws-note-cancel').onclick=()=>$('ws-note-form').hidden=true;$('ws-show-archived').onchange=renderNotes;
   $('ws-note-form').onsubmit=event=>{event.preventDefault();const id=$('ws-note-id').value||uid();const old=notes.find(n=>n.id===id);const note={id,project:$('ws-note-project').value.trim(),title:$('ws-note-title').value.trim(),body:$('ws-note-body').value.trim(),archived:old?.archived||false,updatedAt:new Date().toISOString()};if(!note.project||!note.title||!note.body)return;const next=[note,...notes.filter(n=>n.id!==id)];if(activeSize(next)>30000){alert('Active notes exceed 30,000 characters. Shorten or archive an older note first.');return;}if(save('project_notes',next)){notes=next;$('ws-note-form').hidden=true;renderNotes();}};
   $('ws-note-list').onclick=event=>{const edit=event.target.closest('[data-edit-note]');if(edit){editNote(edit.dataset.editNote);return;}const archive=event.target.closest('[data-archive-note]');if(!archive)return;const next=notes.map(n=>n.id===archive.dataset.archiveNote?{...n,archived:!n.archived,updatedAt:new Date().toISOString()}:n);if(activeSize(next)>30000){alert('Shorten or archive another note before restoring this one.');return;}if(save('project_notes',next)){notes=next;renderNotes();}};
-  function editActivity(id){const activity=activities.find(a=>a.id===id)||{date:today(),status:'open'};['id','project','title','date','owner','due','status','details'].forEach(key=>$('ws-activity-'+key).value=activity[key]||'');$('ws-activity-form').hidden=false;$('ws-activity-project').focus();}
-  function renderActivity(){
-    const month=$('ws-month').value,filter=$('ws-status-filter').value,project=$('ws-project-filter').value.toLowerCase();
-    const visible=activities.filter(a=>(!month||a.date.startsWith(month))&&(!project||a.project.toLowerCase().includes(project))&&(filter==='all'||(filter==='done'?a.status==='done':!['done','archived'].includes(a.status)))).sort((a,b)=>b.date.localeCompare(a.date));
-    const overdue=activities.filter(a=>a.due&&a.due<today()&&!['done','archived'].includes(a.status)).length;
-    $('ws-activity-count').textContent=`${visible.length} entries shown · ${overdue} overdue follow-ups across all dates`;
-    $('ws-activity-list').innerHTML=visible.length?visible.map(a=>`<article class="ws-card"><span class="ws-tag">${escape(a.project)} · ${escape(a.date)} · ${escape(a.status.replace('_',' '))}</span><h3>${escape(a.title)}</h3><p>${escape(a.details)}</p><p class="ws-muted">Owner: ${escape(a.owner||'Unassigned')}<br><span class="${a.due&&a.due<today()&&!['done','archived'].includes(a.status)?'ws-overdue':''}">Due: ${escape(a.due||'Not set')}</span>${a.completedAt?'<br>Completed: '+escape(a.completedAt.slice(0,10)):''}</p><footer><button class="ws-btn" data-edit-activity="${escape(a.id)}">Edit activity</button>${!['done','archived'].includes(a.status)?'<button class="ws-btn" data-complete-activity="'+escape(a.id)+'">Mark complete</button>':''}</footer></article>`).join(''):'<div class="ws-empty">No activity matches these filters.</div>';
+  function editActivity(id){
+    const activity=activities.find(a=>a.id===id)||{id:uid(),date:today(),status:'open'};
+    ['id','project','title','date','owner','due','status','details','nextAction'].forEach(key=>$('ws-activity-'+key).value=activity[key]||'');
+    $('ws-activity-priority').value=activityPriority(activity);
+    $('ws-activity-form').hidden=false;$('ws-activity-project').focus();
   }
-  $('ws-month').value=today().slice(0,7);['ws-month','ws-status-filter','ws-project-filter'].forEach(id=>$(id).oninput=renderActivity);
-  $('ws-all-dates').onclick=()=>{$('ws-month').value='';renderActivity();};$('ws-add-activity').onclick=()=>editActivity();$('ws-activity-cancel').onclick=()=>$('ws-activity-form').hidden=true;
-  $('ws-activity-form').onsubmit=event=>{event.preventDefault();const id=$('ws-activity-id').value||uid();const old=activities.find(a=>a.id===id);const item={id,updatedAt:new Date().toISOString()};['project','title','date','owner','due','status','details'].forEach(key=>item[key]=$('ws-activity-'+key).value.trim());if(!item.project||!item.title||!item.date)return;item.completedAt=item.status==='done'?(old?.completedAt||new Date().toISOString()):null;const next=[item,...activities.filter(a=>a.id!==id)];if(save('activity',next)){activities=next;$('ws-activity-form').hidden=true;renderActivity();}};
-  $('ws-activity-list').onclick=event=>{const edit=event.target.closest('[data-edit-activity]');if(edit){editActivity(edit.dataset.editActivity);return;}const complete=event.target.closest('[data-complete-activity]');if(!complete)return;const next=activities.map(a=>a.id===complete.dataset.completeActivity?{...a,status:'done',completedAt:new Date().toISOString()}:a);if(save('activity',next)){activities=next;renderActivity();}};
+  function closeActivity(){const form=$('ws-activity-form');form.hidden=true;form.reset();}
+  function renderActivity(){
+    const month=$('ws-month').value,filter=$('ws-status-filter').value,project=$('ws-project-filter').value;
+    const visible=filterActivities(activities,{month,status:filter,project});
+    const overdue=items=>items.filter(a=>a.due&&a.due<today()&&activityIsOpen(a)).length;
+    const scope=month?'activity month '+month:'all activity dates';
+    $('ws-activity-count').textContent=`${visible.length} entries shown · ${scope}${project.trim()?' · project contains “'+project.trim()+'”':''} · ${overdue(visible)} overdue shown (${overdue(activities)} across all projects and dates)`;
+    $('ws-activity-list').innerHTML=visible.length?visible.map(a=>`<article class="ws-card"><span class="ws-tag">${escape(a.project)} · ${escape(a.date||'Date not recorded')} · ${escape(String(a.status||'open').replace('_',' '))} · ${escape(activityPriority(a))} priority</span><h3>${escape(a.title)}</h3><p><strong>Next action:</strong> ${escape(a.nextAction||'Not set')}</p><p>${escape(a.details)}</p><p class="ws-muted">Owner: ${escape(a.owner||'Unassigned')}<br><span class="${a.due&&a.due<today()&&activityIsOpen(a)?'ws-overdue':''}">Due: ${escape(a.due||'Not set')}</span>${a.completedAt?'<br>'+(a.status==='done'?'Completed: ':'Last completed: ')+escape(a.completedAt.slice(0,10)):''}</p><footer><button class="ws-btn" data-edit-activity="${escape(a.id)}">Edit activity</button>${activityIsOpen(a)?'<button class="ws-btn" data-complete-activity="'+escape(a.id)+'">Mark complete</button>':''}</footer></article>`).join(''):'<div class="ws-empty">No activity matches these filters. Use All dates or Reset to open work to broaden the view.</div>';
+  }
+  $('ws-month').value='';$('ws-status-filter').value='open';
+  ['ws-month','ws-status-filter','ws-project-filter'].forEach(id=>$(id).oninput=renderActivity);
+  $('ws-all-dates').onclick=()=>{$('ws-month').value='';renderActivity();};
+  $('ws-open-work').onclick=()=>{$('ws-month').value='';$('ws-status-filter').value='open';$('ws-project-filter').value='';renderActivity();};
+  $('ws-add-activity').onclick=()=>editActivity();$('ws-activity-cancel').onclick=closeActivity;
+  let activitySubmitting=false;
+  $('ws-activity-form').onsubmit=event=>{
+    event.preventDefault();const form=$('ws-activity-form');
+    // A successful save or Cancel closes the draft. Late/repeated submits must
+    // not create another record or mutate a dismissed draft.
+    if(form.hidden||activitySubmitting)return;
+    activitySubmitting=true;
+    try{
+      const values={id:$('ws-activity-id').value||uid()};
+      $('ws-activity-id').value=values.id;
+      ['project','title','date','owner','due','status','details','nextAction','priority'].forEach(key=>values[key]=$('ws-activity-'+key).value.trim());
+      if(!values.project||!values.title||!values.date)return;
+      const old=activities.find(a=>a.id===values.id),item=updateActivity(old,values,new Date().toISOString());
+      const next=[item,...activities.filter(a=>a.id!==item.id)];
+      if(save('activity',next)){activities=next;closeActivity();renderActivity();}
+    }finally{activitySubmitting=false;}
+  };
+  $('ws-activity-list').onclick=event=>{
+    const edit=event.target.closest('[data-edit-activity]');if(edit){editActivity(edit.dataset.editActivity);return;}
+    const complete=event.target.closest('[data-complete-activity]');if(!complete)return;
+    const old=activities.find(a=>a.id===complete.dataset.completeActivity);
+    if(!old||!activityIsOpen(old))return;
+    const item=updateActivity(old,{...old,status:'done'},new Date().toISOString());
+    const next=activities.map(a=>a.id===item.id?item:a);
+    if(save('activity',next)){activities=next;renderActivity();}
+  };
   root.LabWorkspace={snapshot:()=>({project_notes:notes,activity:activities}),restore:data=>{if(Array.isArray(data.project_notes)){notes=data.project_notes;save('project_notes',notes);}if(Array.isArray(data.activity)){activities=data.activity;save('activity',activities);}renderNotes();renderActivity();}};
 })(typeof window==='undefined'?globalThis:window);
