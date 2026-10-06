@@ -47,7 +47,7 @@
       contact_click: { contact_method: params.contact_method === 'phone' ? 'phone' : 'email' },
       booking_click: { provider: 'calendly' }
     };
-    if (!allowed[name]) return;
+    if (!Object.hasOwn(allowed, name)) return;
     window.gtag('event', name, { ...allowed[name], send_to: id });
   }
   function clearCookies() {
@@ -72,7 +72,7 @@
       clearCookies();
     }
     banner.hidden = true;
-    settings.focus();
+    settings.focus({ preventScroll: true });
   }
   window.pdAnalytics = { event };
   function init() {
