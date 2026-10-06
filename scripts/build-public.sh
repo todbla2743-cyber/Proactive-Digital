@@ -5,6 +5,8 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 publish_dir="${1:-$repo_root/dist}"
 
 files=(
+  analytics.js
+  analytics.css
   _redirects
   angels-case-study.html
   anume-case-study.html
@@ -60,6 +62,8 @@ mkdir -p "$publish_dir"
 for file in "${files[@]}"; do
   install -D -m 644 "$repo_root/$file" "$publish_dir/$file"
 done
+
+node "$repo_root/scripts/add-analytics.mjs" "$publish_dir"
 
 # Preview builds get a network-isolated, synthetic-data Lab. Production never
 # includes the fixture and continues to publish the original authenticated Lab.
