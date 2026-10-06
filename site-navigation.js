@@ -24,5 +24,6 @@ async function submitForm(event){
   button.disabled=true;button.textContent='Sending…';if(status)status.textContent='Sending your message…';
   try{const response=await fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(form)).toString()});if(!response.ok)throw Error('Unable to submit');
     form.hidden=true;form.style.display='none';const success=document.getElementById('fsuccess');success.style.display='block';success.focus();if(status)status.textContent='';
+    try { window.pdAnalytics?.event('generate_lead'); } catch (_) { /* Measurement must never interrupt the contact workflow. */ }
   }catch(error){button.disabled=false;button.textContent=original;if(status)status.textContent='Your message could not be sent. Please try again or email hello@getproactivedigital.com.';}
 }
