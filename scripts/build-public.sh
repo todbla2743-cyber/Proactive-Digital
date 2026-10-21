@@ -5,6 +5,20 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 publish_dir="${1:-$repo_root/dist}"
 
 files=(
+  masonry-contractor-websites.html
+  masonry-review-thanks.html
+  masonry.css
+  masonry.js
+  masonry-assets/favicon.svg
+  masonry-assets/jakarta.woff2
+  masonry-assets/masonry-social.jpg
+  masonry-assets/outfit.woff2
+  masonry-assets/todd-founder.jpg
+  masonry-assets/todd-masonry-detail-1280.webp
+  masonry-assets/todd-masonry-detail-768.webp
+  masonry-assets/todd-masonry-hero-1280.webp
+  masonry-assets/todd-masonry-hero-1536.webp
+  masonry-assets/todd-masonry-hero-768.webp
   analytics.js
   analytics.css
   _redirects
