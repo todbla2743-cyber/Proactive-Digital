@@ -3,7 +3,7 @@ import type { Context } from "@netlify/edge-functions";
 // Password-gate for the private Lab dashboard.
 // Uses the SAME access code as the Lab API functions: the SHA256 of the
 // code must match LAB_ACCESS_CODE_SHA256 (already set in Netlify).
-// One code unlocks both the page and the Lab's data.
+// One code unlocks the page, the prospect CRM API, and the rest of the Lab.
 
 const REALM = "Proactive Digital Lab";
 const USERNAME = "todd";
@@ -54,4 +54,4 @@ export default async function gate(request: Request, context: Context) {
   return context.next();
 }
 
-export const config = { path: ["/lab.html", "/lab"] };
+export const config = { path: ["/lab.html", "/lab", "/.netlify/functions/lab-crm"] };

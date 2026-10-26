@@ -20,6 +20,11 @@ The Lab remains at `/lab.html` (also `/lab`). It is not linked from the public s
 Run `node --test tests/lab-ai.test.mjs` and `bash scripts/build-public.sh` before deployment. Node 24 can load the .mts function directly for these tests. No provider credentials or network access are required for the mocked tests.
 
 The public release retains the portfolio, MRA case study, `/pay` and `/payment` routes, and the Stripe payment link.
+
+## Prospect CRM
+
+The Prospects tab on `/lab` stores outreach records through `netlify/functions/lab-crm.mts` in site-scoped Netlify Blobs (`prospect-crm-v1-production` and `prospect-crm-v1-preview`). The page and that function both require the Lab basic auth gate (user `todd`, same access code). See README.md for day-to-day use and for JSON or CSV import. Deploy previews keep the real `/lab.html` page; the offline fixture remains at `/lab-review.html`.
+
 # Workspace updates (September 29, 2026)
 
 `lab-workspace.js` adds persistent Project Notes, dated Activity & Follow-ups,
