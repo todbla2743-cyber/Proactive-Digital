@@ -2159,6 +2159,7 @@ const LAB_AI_GATEWAY = '/.netlify/functions/lab-ai';
     </div>
     <div class="nav-tabs">
       <button class="nav-tab" onclick="switchPanel('today', this)">Today</button>
+      <button class="nav-tab" id="crm-tab" type="button" onclick="switchPanel('prospects', this)">Prospects</button>
       <button class="nav-tab active" onclick="switchPanel('ai', this)">AI Chat</button>
       <button class="nav-tab" onclick="switchPanel('news', this)">News</button>
       <button class="nav-tab" onclick="switchPanel('stocks', this)">Stocks</button>
@@ -2757,6 +2758,8 @@ const LAB_AI_GATEWAY = '/.netlify/functions/lab-ai';
         </div>
       </div>
     </div>
+
+    <div class="panel" id="panel-prospects" style="flex-direction:column;overflow:hidden;"></div>
 
   </div>
 </div>
@@ -6447,5 +6450,6 @@ initApp = function(){
 <script src="/lab-pipeline-editor.js?v=20261002.1"></script>
 <script src="/lab-management.js?v=20261002.1"></script>
 <script src="/lab-order-review.js?v=20261002.1"></script>
+<script src="/lab-crm.js?v=20261026.2"></script>
 </body>
 </html>

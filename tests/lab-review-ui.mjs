@@ -16,7 +16,10 @@ const allowed=new Set(['lab-workspace.js','lab-pipeline-editor.js','lab-manageme
 const assets=[],failures=[];
 // Inline only allowlisted local script bytes. No jsdom network loader is enabled.
 const executableHTML=html.replace(/<script src="([^"]+)"[^>]*><\/script>/g,(tag,src)=>{
-  const name=src.split('?')[0].slice(1);assets.push(name);
+  const name=src.split('?')[0].slice(1);
+  // The prospect CRM calls the authenticated blob API. The offline fixture does not boot it.
+  if(name==='lab-crm.js') return '';
+  assets.push(name);
   if(name==='lab-review-harness.js')return '<script>'+readFileSync(result.harnessPath,'utf8')+'</script>';
   if(allowed.has(name))return '<script>'+readFileSync(new URL('../'+name,import.meta.url),'utf8')+'</script>';
   failures.push('Unexpected network asset: '+src);return '';

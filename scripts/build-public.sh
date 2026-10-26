@@ -57,6 +57,7 @@ files=(
   contact.html
   index.html
   lab.html
+  lab-crm.js
   lab-workspace.js
   lab-pipeline-editor.js
   lab-management.js
@@ -79,10 +80,10 @@ done
 
 node "$repo_root/scripts/add-analytics.mjs" "$publish_dir"
 
-# Preview builds get a network-isolated, synthetic-data Lab. Production never
-# includes the fixture and continues to publish the original authenticated Lab.
+# Preview builds also publish the offline synthetic fixture at /lab-review.html.
+# /lab.html stays the real password-gated Lab on every context so the prospect
+# CRM and its blob API work in deploy previews. Production does not publish the fixture.
 rm -f "$publish_dir/lab-review.html" "$publish_dir/lab-review-harness.js"
 if [[ "${CONTEXT:-}" == "deploy-preview" || "${CONTEXT:-}" == "branch-deploy" ]]; then
   node "$repo_root/scripts/build-lab-review.mjs" "$publish_dir"
-  cp "$publish_dir/lab-review.html" "$publish_dir/lab.html"
 fi
