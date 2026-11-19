@@ -1,3 +1,4 @@
+import { labSessions } from '../lib/lab-session.mjs';
 import { createHash, timingSafeEqual } from 'node:crypto';
 
 declare const Netlify: { env: { get(name: string): string | undefined } };
@@ -60,8 +61,10 @@ export default async function handler(req: Request) {
   if (req.method !== 'POST') return error(405, 'Method not allowed.');
   const origin = req.headers.get('origin');
   if (origin && origin !== new URL(req.url).origin) return error(403, 'Please use The Lab on this website.');
-  if (!cfg.accessHash) return error(503, 'Lab access is not configured on the server.');
-  if (!authorized(req, cfg.accessHash)) return error(401, 'Please sign in with your Lab access code.');
+  if (!authorized(req, cfg.accessHash) && !(await labSessions.active(req))) {
+    if (!cfg.accessHash && !Netlify.env.get('LAB_GOOGLE_ALLOWED_EMAILS')) return error(503, 'Lab access is not configured on the server.');
+    return error(401, 'Please sign in to the Lab.');
+  }
   let body: any;
   try {
     const raw = await req.text();

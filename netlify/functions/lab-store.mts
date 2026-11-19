@@ -1,3 +1,4 @@
+import { labSessions } from '../lib/lab-session.mjs';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { getStore } from '@netlify/blobs';
 
@@ -51,8 +52,9 @@ export function makeHandler(openStore: typeof getStore = getStore) {
     if(origin && origin !== new URL(req.url).origin)return json(403,{error:'Use the Lab on this website.'});
     const expected=Netlify.env.get('LAB_ACCESS_CODE_SHA256')||'';
     const code=req.headers.get('X-Lab-Access-Code')||'';
-    if(!code || code.length>256 || !/^[a-f0-9]{64}$/i.test(expected) || !timingSafeEqual(createHash('sha256').update(code.replace(/\s/g,'').toUpperCase()).digest(),Buffer.from(expected,'hex')))
-      return json(401,{error:'Sign in with your Lab access code to sync.'});
+    const validCode = Boolean(code && code.length <= 256 && /^[a-f0-9]{64}$/i.test(expected) &&
+      timingSafeEqual(createHash('sha256').update(code.replace(/\s/g, '').toUpperCase()).digest(), Buffer.from(expected, 'hex')));
+    if (!validCode && !(await labSessions.active(req))) return json(401, { error: 'Sign in to the Lab to sync.' });
     let body: any;
     try{const raw=await req.text();if(Buffer.byteLength(raw)>4_000_000)return json(413,{error:'Workspace data is too large. Export a backup and reduce large attachments.'});body=JSON.parse(raw);}catch{return json(400,{error:'Invalid request.'});}
     if(!body || !['load','save'].includes(body.action))return json(400,{error:'Invalid action.'});

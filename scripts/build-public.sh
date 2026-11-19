@@ -87,3 +87,5 @@ rm -f "$publish_dir/lab-review.html" "$publish_dir/lab-review-harness.js"
 if [[ "${CONTEXT:-}" == "deploy-preview" || "${CONTEXT:-}" == "branch-deploy" ]]; then
   node "$repo_root/scripts/build-lab-review.mjs" "$publish_dir"
 fi
+
+node "$repo_root/scripts/build-lab-access.mjs" "$publish_dir"

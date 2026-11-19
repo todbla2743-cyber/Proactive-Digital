@@ -1,3 +1,4 @@
+import { labSessions } from '../lib/lab-session.mjs';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { getStore } from '@netlify/blobs';
 import {
@@ -59,8 +60,8 @@ export function makeHandler(openStore: typeof getStore = getStore, options: { no
   const maxProspects = options.maxProspects || MAX_PROSPECTS;
   return async (req: Request, context?: { deploy?: { context?: string } }) => {
     const expected = Netlify.env.get('LAB_ACCESS_CODE_SHA256') || '';
-    if (!/^[a-f0-9]{64}$/i.test(expected)) return text(503, 'The Lab access code is not configured yet.');
-    if (!labAuthorized(req.headers.get('authorization') || '', expected)) {
+    if (!labAuthorized(req.headers.get('authorization') || '', expected) && !(await labSessions.active(req))) {
+      if (!/^[a-f0-9]{64}$/i.test(expected) && !Netlify.env.get('LAB_GOOGLE_ALLOWED_EMAILS')) return text(503, 'The Lab access code is not configured yet.');
       return text(401, 'Restricted area. Authentication required.', { 'WWW-Authenticate': `Basic realm="${REALM}"` });
     }
     const origin = req.headers.get('origin');
