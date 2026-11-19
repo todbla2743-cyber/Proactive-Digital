@@ -1,5 +1,10 @@
 {
   "dependencies": {
-    "@netlify/blobs": "^11.1.1"
+    "@netlify/blobs": "^11.1.1",
+    "@netlify/identity": "2.0.1",
+    "gotrue-js": "1.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

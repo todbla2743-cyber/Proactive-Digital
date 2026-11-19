@@ -24,9 +24,9 @@
     "netlify.toml": "18209caf26a2128a6fea9096a8b1f81f1bc867d8d00ae36f47d30238872b10ba",
     "_redirects": "3609a28ca4e9dc2a7016910a1b92e58fa0c1b2e9fe1d9241dfa3034b963f3faf",
     "pay.html": "99f959cf39a40de9c9b7a17e9feb66338dfda3508b5854a6f96a70f420b41ada",
-    "site-navigation.js": "0d836f1cb1646adb7656f025f22b5117e6a949fa0d876db01708f3b4642eeccf",
-    "netlify/functions/lab-ai.mts": "65ab0e0188675727fa6b5a4595b46debe640f2915a54ffba489d28c04a3266de",
-    "package.json": "f4442119643dec38c8fa073eff4af5dce8f6204f01b1233991df5ba2541e05fa",
-    "package-lock.json": "f45777fca64f1419b370d664e5d2f826e566263a866fba33e44e138f056f2a32"
+    "site-navigation.js": "670177e84b333793328e0cd9976a32d783217978582af6dfd7e35d14d292fbf2",
+    "netlify/functions/lab-ai.mts": "96237055476fb6c9d4cc73b8d7387b84712c776dade007dd67841dc0de7ab40b",
+    "package.json": "3098fd6882e55db498f4390adf923078f9cc839461d125c5101a96ba5b9cacd9",
+    "package-lock.json": "66dd2d95814c51c1cebc19a224ce48e986ed181a8b104f58e9b7e86e295b18b3"
   }
 }
